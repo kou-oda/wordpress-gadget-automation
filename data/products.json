@@ -1,97 +1,1293 @@
 [
   {
-    "name": "ロジクール ワイヤレスマウス MX Master 3S",
+    "name": "Logicool MX Master 3S ワイヤレスマウス",
     "asin": "B0B4DQPH5K",
     "url": "https://www.amazon.co.jp/dp/B0B4DQPH5K",
     "price": "¥14,800",
     "image_url": "https://m.media-amazon.com/images/I/61ni3t1ryQL._AC_SL1500_.jpg",
-    "description": "高精度センサーと快適なエルゴノミクスデザインを備えたプレミアムワイヤレスマウス",
+    "description": "8,000 DPI高精度センサーと静音クリック設計を備えたプレミアムワイヤレスマウス",
     "category": "PC周辺機器",
     "features": [
       "8,000 DPI高精度センサー",
       "最大70日間のバッテリー寿命",
       "静音クリック設計",
-      "複数デバイス対応"
+      "複数デバイス対応",
+      "USB-C充電対応"
     ],
     "rating": null
   },
   {
-    "name": "HHKB Professional HYBRID Type-S",
-    "asin": "B082TSSZ3W",
-    "url": "https://www.amazon.co.jp/dp/B082TSSZ3W",
+    "name": "Razer DeathAdder V3 Pro ワイヤレスゲーミングマウス",
+    "asin": "B0B2H7K3XR",
+    "url": "https://www.amazon.co.jp/dp/B0B2H7K3XR",
+    "price": "¥18,980",
+    "image_url": "https://m.media-amazon.com/images/I/51XBqvXfxbL._AC_SL1500_.jpg",
+    "description": "Focus Pro 30K光学センサーを搭載したプロゲーマー向けワイヤレスマウス",
+    "category": "PC周辺機器",
+    "features": [
+      "30,000 DPI Focus Pro 30Kセンサー",
+      "最大90時間のバッテリー駆動",
+      "63gの軽量設計",
+      "Razer HyperSpeedワイヤレス",
+      "第3世代オプティカルスイッチ"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Microsoft Sculpt Ergonomic Desktop",
+    "asin": "B00CYX26BC",
+    "url": "https://www.amazon.co.jp/dp/B00CYX26BC",
+    "price": "¥12,800",
+    "image_url": "https://m.media-amazon.com/images/I/71zG8tYWnvL._AC_SL1500_.jpg",
+    "description": "自然な手の位置で長時間作業できるエルゴノミクスキーボード&マウスセット",
+    "category": "PC周辺機器",
+    "features": [
+      "分離型キーボード設計",
+      "リストレスト付属",
+      "ドーム型キーレイアウト",
+      "ワイヤレス接続",
+      "テンキー分離型"
+    ],
+    "rating": null
+  },
+  {
+    "name": "HHKB Professional HYBRID Type-S 英語配列",
+    "asin": "B082TSZ27D",
+    "url": "https://www.amazon.co.jp/dp/B082TSZ27D",
     "price": "¥36,850",
-    "image_url": "https://m.media-amazon.com/images/I/61dQWC2rqrL._AC_SL1500_.jpg",
-    "description": "プロフェッショナル向けコンパクトキーボード、静音モデル",
+    "image_url": "https://m.media-amazon.com/images/I/61wvS8YSUJL._AC_SL1500_.jpg",
+    "description": "静電容量無接点方式を採用したプログラマー向けプレミアムキーボード",
     "category": "PC周辺機器",
     "features": [
       "静電容量無接点方式",
-      "Bluetooth/USB接続対応",
-      "コンパクト配列",
-      "高速タイピング対応"
+      "Type-S静音モデル",
+      "Bluetooth/USB-C接続",
+      "最大3ヶ月駆動",
+      "コンパクト60%レイアウト"
     ],
     "rating": null
   },
   {
-    "name": "Samsung 980 PRO NVMe M.2 SSD 1TB",
-    "asin": "B08GLX7TNT",
-    "url": "https://www.amazon.co.jp/dp/B08GLX7TNT",
-    "price": "¥12,980",
-    "image_url": "https://m.media-amazon.com/images/I/81i87RaT+bL._AC_SL1500_.jpg",
-    "description": "PCIe 4.0対応の超高速SSD",
-    "category": "PCパーツ",
-    "features": [
-      "読み込み速度 最大7,000MB/s",
-      "書き込み速度 最大5,000MB/s",
-      "優れた耐久性",
-      "5年保証"
-    ],
-    "rating": null
-  },
-  {
-    "name": "Crucial DDR5-4800 32GB(16GBx2)",
-    "asin": "B09Q81KB2P",
-    "url": "https://www.amazon.co.jp/dp/B09Q81KB2P",
-    "price": "¥16,800",
-    "image_url": "https://m.media-amazon.com/images/I/61nMFVs9lDL._AC_SL1200_.jpg",
-    "description": "次世代DDR5メモリで高速処理を実現",
-    "category": "PCパーツ",
-    "features": [
-      "DDR5-4800MHz",
-      "32GB(16GBx2枚組)",
-      "Intel/AMD対応",
-      "生涯保証"
-    ],
-    "rating": null
-  },
-  {
-    "name": "Anker 521 Power Bank (PowerCore Fusion 45W)",
-    "asin": "B09SG31NPT",
-    "url": "https://www.amazon.co.jp/dp/B09SG31NPT",
-    "price": "¥7,990",
-    "image_url": "https://m.media-amazon.com/images/I/61lNhK8WDSL._AC_SL1500_.jpg",
-    "description": "充電器とモバイルバッテリーの2in1",
+    "name": "Corsair K70 RGB PRO メカニカルゲーミングキーボード",
+    "asin": "B09NCLR4M6",
+    "url": "https://www.amazon.co.jp/dp/B09NCLR4M6",
+    "price": "¥16,980",
+    "image_url": "https://m.media-amazon.com/images/I/71rZGdXJ-JL._AC_SL1500_.jpg",
+    "description": "Cherry MX スイッチ搭載、RGB バックライト付きフルサイズキーボード",
     "category": "PC周辺機器",
     "features": [
-      "45W高出力充電",
-      "5,000mAh容量",
-      "USB-C & USB-A ポート",
-      "コンパクト設計"
+      "Cherry MX Red スイッチ",
+      "PBTダブルショットキーキャップ",
+      "アルミニウムフレーム",
+      "RGB バックライト",
+      "専用メディアキー"
+    ],
+    "rating": null
+  },
+  {
+    "name": "ASUS TUF Gaming VG27AQ 27インチゲーミングモニター",
+    "asin": "B07WQ4FXY9",
+    "url": "https://www.amazon.co.jp/dp/B07WQ4FXY9",
+    "price": "¥39,800",
+    "image_url": "https://m.media-amazon.com/images/I/81u9csOOVTL._AC_SL1500_.jpg",
+    "description": "165Hz駆動のWQHD IPSパネル搭載ゲーミングモニター",
+    "category": "PC周辺機器",
+    "features": [
+      "27インチ WQHD (2560x1440)",
+      "165Hz リフレッシュレート",
+      "1ms応答速度 (MPRT)",
+      "G-SYNC Compatible",
+      "HDR10対応"
     ],
     "rating": null
   },
   {
     "name": "BenQ ScreenBar Plus モニターライト",
-    "asin": "B07VWLCQ63",
-    "url": "https://www.amazon.co.jp/dp/B07VWLCQ63",
+    "asin": "B07HBH73M7",
+    "url": "https://www.amazon.co.jp/dp/B07HBH73M7",
     "price": "¥13,900",
-    "image_url": "https://m.media-amazon.com/images/I/61W7NVQfxkL._AC_SL1500_.jpg",
-    "description": "デスク環境を快適にするモニター掛け式ライト",
+    "image_url": "https://m.media-amazon.com/images/I/61A5zU3QQHL._AC_SL1500_.jpg",
+    "description": "モニター上部に取り付ける画面反射ゼロのデスクライト",
     "category": "PC周辺機器",
     "features": [
       "自動調光機能",
-      "ワイヤレスコントローラー",
-      "画面に反射しない設計",
-      "省スペース"
+      "色温度調整 2700K-6500K",
+      "USB給電",
+      "ワイヤレスコントローラー付属",
+      "モニター画面への反射ゼロ"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Anker PowerCore III Elite 25600 87W モバイルバッテリー",
+    "asin": "B08FBXNYN1",
+    "url": "https://www.amazon.co.jp/dp/B08FBXNYN1",
+    "price": "¥11,990",
+    "image_url": "https://m.media-amazon.com/images/I/61wT5c3PHHL._AC_SL1500_.jpg",
+    "description": "ノートPC充電対応の大容量87W出力モバイルバッテリー",
+    "category": "PC周辺機器",
+    "features": [
+      "25,600mAh大容量",
+      "最大87W USB-C出力",
+      "2ポート同時充電",
+      "低電流モード搭載",
+      "18ヶ月保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Anker 747 Charger (GaNPrime 150W)",
+    "asin": "B0B2MJF1PS",
+    "url": "https://www.amazon.co.jp/dp/B0B2MJF1PS",
+    "price": "¥12,990",
+    "image_url": "https://m.media-amazon.com/images/I/51-M1GaWEuL._AC_SL1500_.jpg",
+    "description": "4ポート搭載150W出力GaN充電器",
+    "category": "PC周辺機器",
+    "features": [
+      "GaN技術採用",
+      "最大150W出力",
+      "USB-C×2、USB-A×2",
+      "ActiveShield 2.0搭載",
+      "折りたたみプラグ"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Logicool StreamCam C980 Webカメラ",
+    "asin": "B086R71LG8",
+    "url": "https://www.amazon.co.jp/dp/B086R71LG8",
+    "price": "¥19,800",
+    "image_url": "https://m.media-amazon.com/images/I/61qh4J+wqCL._AC_SL1500_.jpg",
+    "description": "1080p 60fps配信対応フルHD Webカメラ",
+    "category": "PC周辺機器",
+    "features": [
+      "1080p 60fps撮影",
+      "自動フレーミング",
+      "縦向き撮影対応",
+      "AI顔追跡",
+      "USB-C接続"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Sony ECM-B1M XLRショットガンマイク",
+    "asin": "B09GFT9BG5",
+    "url": "https://www.amazon.co.jp/dp/B09GFT9BG5",
+    "price": "¥38,500",
+    "image_url": "https://m.media-amazon.com/images/I/51Y7LxJXxLL._AC_SL1500_.jpg",
+    "description": "デジタルオーディオインターフェース搭載プロ向けマイク",
+    "category": "PC周辺機器",
+    "features": [
+      "3つの指向特性切替",
+      "デジタル音声出力",
+      "ノイズキャンセリング",
+      "風切り音低減",
+      "ショックマウント内蔵"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Razer BlackShark V2 Pro ワイヤレスゲーミングヘッドセット",
+    "asin": "B08FRBY9HT",
+    "url": "https://www.amazon.co.jp/dp/B08FRBY9HT",
+    "price": "¥17,980",
+    "image_url": "https://m.media-amazon.com/images/I/61xNnz9CHBL._AC_SL1500_.jpg",
+    "description": "THX Spatial Audio対応の軽量ワイヤレスヘッドセット",
+    "category": "PC周辺機器",
+    "features": [
+      "Razer Triforce 50mmドライバー",
+      "THX Spatial Audio",
+      "最大24時間駆動",
+      "取り外し可能マイク",
+      "320gの軽量設計"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Creative Sound BlasterX AE-5 Plus サウンドカード",
+    "asin": "B082JQLD9H",
+    "url": "https://www.amazon.co.jp/dp/B082JQLD9H",
+    "price": "¥16,800",
+    "image_url": "https://m.media-amazon.com/images/I/71KBxLmQyxL._AC_SL1500_.jpg",
+    "description": "RGB LED搭載ハイレゾ対応PCIeサウンドカード",
+    "category": "PC周辺機器",
+    "features": [
+      "32bit/384kHz DAC",
+      "122dB SNR",
+      "7.1ch サラウンド",
+      "Scout Radar機能",
+      "RGB オーロラライティング"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Anker 7-in-1 USB-C ハブ",
+    "asin": "B07ZVKTP53",
+    "url": "https://www.amazon.co.jp/dp/B07ZVKTP53",
+    "price": "¥5,990",
+    "image_url": "https://m.media-amazon.com/images/I/61DgBqR3WCL._AC_SL1500_.jpg",
+    "description": "HDMI、USB-A、SD/microSD対応多機能USBハブ",
+    "category": "PC周辺機器",
+    "features": [
+      "4K@30Hz HDMI出力",
+      "USB 3.0×2ポート",
+      "SD/microSDカードリーダー",
+      "100W PD充電パススルー",
+      "コンパクト設計"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Dell WD19S ドッキングステーション",
+    "asin": "B07VNTBD2F",
+    "url": "https://www.amazon.co.jp/dp/B07VNTBD2F",
+    "price": "¥24,800",
+    "image_url": "https://m.media-amazon.com/images/I/61hEZLjgLaL._AC_SL1500_.jpg",
+    "description": "USB-C接続でマルチディスプレイ対応ドッキングステーション",
+    "category": "PC周辺機器",
+    "features": [
+      "90W電源供給",
+      "デュアルディスプレイ対応",
+      "USB-A×3、USB-C×2",
+      "ギガビットイーサネット",
+      "DisplayPort×2、HDMI×1"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Logicool G640r ゲーミングマウスパッド",
+    "asin": "B07L5JVQWP",
+    "url": "https://www.amazon.co.jp/dp/B07L5JVQWP",
+    "price": "¥3,900",
+    "image_url": "https://m.media-amazon.com/images/I/71zFO9rqikL._AC_SL1500_.jpg",
+    "description": "適度な滑りと止まりを両立した大型クロス素材マウスパッド",
+    "category": "PC周辺機器",
+    "features": [
+      "460×400mm大型サイズ",
+      "クロス素材表面",
+      "ラバーベース",
+      "3mm厚",
+      "洗濯可能"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Corsair HS80 RGB WIRELESS ゲーミングヘッドセット",
+    "asin": "B09G2MYC3V",
+    "url": "https://www.amazon.co.jp/dp/B09G2MYC3V",
+    "price": "¥15,980",
+    "image_url": "https://m.media-amazon.com/images/I/71XCVpkrYtL._AC_SL1500_.jpg",
+    "description": "Dolby Atmos対応の高音質ワイヤレスゲーミングヘッドセット",
+    "category": "PC周辺機器",
+    "features": [
+      "Dolby Atmos対応",
+      "カスタム50mmネオジムドライバー",
+      "最大20時間駆動",
+      "全指向性マイク",
+      "RGB照明"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Samsung 870 EVO 1TB SATA SSD",
+    "asin": "B08PC5DKZQ",
+    "url": "https://www.amazon.co.jp/dp/B08PC5DKZQ",
+    "price": "¥11,980",
+    "image_url": "https://m.media-amazon.com/images/I/81gYYqN3gBL._AC_SL1500_.jpg",
+    "description": "高耐久性と安定性を実現した2.5インチSATA SSD",
+    "category": "PCパーツ",
+    "features": [
+      "最大読込速度 560MB/s",
+      "最大書込速度 530MB/s",
+      "TBW 600TB",
+      "5年保証",
+      "DRAM キャッシュ搭載"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Crucial P5 Plus 2TB NVMe M.2 SSD",
+    "asin": "B098WL46RS",
+    "url": "https://www.amazon.co.jp/dp/B098WL46RS",
+    "price": "¥24,800",
+    "image_url": "https://m.media-amazon.com/images/I/81iC8hqoELL._AC_SL1500_.jpg",
+    "description": "PCIe Gen4対応の超高速NVMe SSD",
+    "category": "PCパーツ",
+    "features": [
+      "最大読込速度 6,600MB/s",
+      "最大書込速度 5,000MB/s",
+      "Micron 176層3D NAND",
+      "5年保証",
+      "DirectStorageサポート"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Western Digital WD_BLACK SN850X 1TB NVMe SSD",
+    "asin": "B0B7CKVCCV",
+    "url": "https://www.amazon.co.jp/dp/B0B7CKVCCV",
+    "price": "¥16,800",
+    "image_url": "https://m.media-amazon.com/images/I/71FqghQc+kL._AC_SL1500_.jpg",
+    "description": "ゲーミング向け最高速PCIe Gen4 NVMe SSD",
+    "category": "PCパーツ",
+    "features": [
+      "最大読込速度 7,300MB/s",
+      "最大書込速度 6,300MB/s",
+      "Game Mode 2.0対応",
+      "5年保証",
+      "ヒートシンク搭載モデルあり"
+    ],
+    "rating": null
+  },
+  {
+    "name": "SanDisk Extreme PRO 2TB ポータブルSSD",
+    "asin": "B08GTXVG9P",
+    "url": "https://www.amazon.co.jp/dp/B08GTXVG9P",
+    "price": "¥29,800",
+    "image_url": "https://m.media-amazon.com/images/I/61vI4yoKOFL._AC_SL1500_.jpg",
+    "description": "IP55防塵防滴対応の高速外付けSSD",
+    "category": "PCパーツ",
+    "features": [
+      "最大読込速度 2,000MB/s",
+      "USB 3.2 Gen 2x2対応",
+      "IP55防塵防滴",
+      "2mの落下耐性",
+      "5年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Samsung T7 Shield 1TB ポータブルSSD",
+    "asin": "B09VLK9W9H",
+    "url": "https://www.amazon.co.jp/dp/B09VLK9W9H",
+    "price": "¥14,800",
+    "image_url": "https://m.media-amazon.com/images/I/71EcEdh+KfL._AC_SL1500_.jpg",
+    "description": "IP65防塵防水対応のタフネス外付けSSD",
+    "category": "PCパーツ",
+    "features": [
+      "最大読込速度 1,050MB/s",
+      "IP65防塵防水",
+      "3m落下耐性",
+      "AES 256bit暗号化",
+      "3年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Crucial DDR5-5600 32GB (16GB×2) デスクトップメモリ",
+    "asin": "B09SYBXMXR",
+    "url": "https://www.amazon.co.jp/dp/B09SYBXMXR",
+    "price": "¥16,800",
+    "image_url": "https://m.media-amazon.com/images/I/61iRqU1kpPL._AC_SL1500_.jpg",
+    "description": "次世代DDR5メモリで高速データ転送を実現",
+    "category": "PCパーツ",
+    "features": [
+      "DDR5-5600MHz",
+      "32GB (16GB×2枚)",
+      "CL46レイテンシ",
+      "オンダイECC",
+      "限定生涯保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Corsair VENGEANCE DDR5-6000 32GB RGB メモリ",
+    "asin": "B09QYGZ4K4",
+    "url": "https://www.amazon.co.jp/dp/B09QYGZ4K4",
+    "price": "¥19,980",
+    "image_url": "https://m.media-amazon.com/images/I/71bUmr5zt8L._AC_SL1500_.jpg",
+    "description": "RGB照明搭載のハイスピードDDR5メモリ",
+    "category": "PCパーツ",
+    "features": [
+      "DDR5-6000MHz",
+      "32GB (16GB×2枚)",
+      "CL36レイテンシ",
+      "カスタムRGB照明",
+      "アルミヒートスプレッダ"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Kingston FURY Beast DDR4-3200 32GB メモリ",
+    "asin": "B097K2GC1Q",
+    "url": "https://www.amazon.co.jp/dp/B097K2GC1Q",
+    "price": "¥9,980",
+    "image_url": "https://m.media-amazon.com/images/I/71rYMBhGhQL._AC_SL1500_.jpg",
+    "description": "高い互換性と安定性を誇るDDR4メモリ",
+    "category": "PCパーツ",
+    "features": [
+      "DDR4-3200MHz",
+      "32GB (16GB×2枚)",
+      "CL16レイテンシ",
+      "Intel XMP対応",
+      "限定生涯保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "NVIDIA GeForce RTX 4070 Ti SUPER 16GB グラフィックボード",
+    "asin": "B0CS9Q1W7Y",
+    "url": "https://www.amazon.co.jp/dp/B0CS9Q1W7Y",
+    "price": "¥129,800",
+    "image_url": "https://m.media-amazon.com/images/I/71dAKqjFgpL._AC_SL1500_.jpg",
+    "description": "4K解像度でのゲーミングに最適なハイエンドGPU",
+    "category": "PCパーツ",
+    "features": [
+      "Ada Lovelaceアーキテクチャ",
+      "16GB GDDR6X VRAM",
+      "DLSS 3対応",
+      "レイトレーシング対応",
+      "AV1エンコード対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "AMD Radeon RX 7800 XT 16GB グラフィックボード",
+    "asin": "B0CGQVR39R",
+    "url": "https://www.amazon.co.jp/dp/B0CGQVR39R",
+    "price": "¥79,800",
+    "image_url": "https://m.media-amazon.com/images/I/71qS3wJKjmL._AC_SL1500_.jpg",
+    "description": "1440p解像度で高フレームレートを実現するミドルハイGPU",
+    "category": "PCパーツ",
+    "features": [
+      "RDNA 3アーキテクチャ",
+      "16GB GDDR6 VRAM",
+      "FSR 3対応",
+      "レイトレーシング対応",
+      "AV1エンコード対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Seagate BarraCuda 4TB 3.5インチ HDD",
+    "asin": "B07H28SY39",
+    "url": "https://www.amazon.co.jp/dp/B07H28SY39",
+    "price": "¥9,980",
+    "image_url": "https://m.media-amazon.com/images/I/81B8MKzW0YL._AC_SL1500_.jpg",
+    "description": "大容量ストレージに最適なコストパフォーマンスHDD",
+    "category": "PCパーツ",
+    "features": [
+      "4TB容量",
+      "5400 RPM",
+      "256MB キャッシュ",
+      "SATA 6Gb/s",
+      "2年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Western Digital WD Blue 6TB 3.5インチ HDD",
+    "asin": "B087QTMZRW",
+    "url": "https://www.amazon.co.jp/dp/B087QTMZRW",
+    "price": "¥13,800",
+    "image_url": "https://m.media-amazon.com/images/I/71z4xTVPR9L._AC_SL1500_.jpg",
+    "description": "信頼性と静音性を両立した大容量HDD",
+    "category": "PCパーツ",
+    "features": [
+      "6TB容量",
+      "5400 RPM",
+      "256MB キャッシュ",
+      "低消費電力",
+      "2年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Corsair 4000D Airflow ミドルタワーケース",
+    "asin": "B08C7BGV3D",
+    "url": "https://www.amazon.co.jp/dp/B08C7BGV3D",
+    "price": "¥11,980",
+    "image_url": "https://m.media-amazon.com/images/I/71S8rZT0aeL._AC_SL1500_.jpg",
+    "description": "優れたエアフローと組み立てやすさを実現したケース",
+    "category": "PCパーツ",
+    "features": [
+      "高エアフローフロントパネル",
+      "強化ガラスサイドパネル",
+      "最大360mmラジエーター対応",
+      "2.5インチ×4、3.5インチ×2",
+      "ケーブルマネジメント最適化"
+    ],
+    "rating": null
+  },
+  {
+    "name": "NZXT H7 Flow ミドルタワーケース",
+    "asin": "B0B9QVFD6K",
+    "url": "https://www.amazon.co.jp/dp/B0B9QVFD6K",
+    "price": "¥14,980",
+    "image_url": "https://m.media-amazon.com/images/I/71IxEBjkFaL._AC_SL1500_.jpg",
+    "description": "大型パーツ対応の広々としたエアフローケース",
+    "category": "PCパーツ",
+    "features": [
+      "デュアルチャンバー設計",
+      "メッシュフロントパネル",
+      "最大420mmラジエーター対応",
+      "GPUサグ防止ブラケット",
+      "USB-C フロントパネル"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Thermaltake Toughpower GF3 850W 80PLUS GOLD 電源ユニット",
+    "asin": "B0BJKNN5ZL",
+    "url": "https://www.amazon.co.jp/dp/B0BJKNN5ZL",
+    "price": "¥14,800",
+    "image_url": "https://m.media-amazon.com/images/I/71kw8hGv2nL._AC_SL1500_.jpg",
+    "description": "高効率80PLUS GOLD認証のフルモジュラー電源",
+    "category": "PCパーツ",
+    "features": [
+      "850W出力",
+      "80PLUS GOLD認証",
+      "フルモジュラーケーブル",
+      "ATX 3.0対応",
+      "10年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Corsair RM1000x Shift 1000W 80PLUS GOLD 電源ユニット",
+    "asin": "B0BNMFVV62",
+    "url": "https://www.amazon.co.jp/dp/B0BNMFVV62",
+    "price": "¥22,800",
+    "image_url": "https://m.media-amazon.com/images/I/71XLO5kv1pL._AC_SL1500_.jpg",
+    "description": "ケーブル接続部を底面に配置した革新的デザインの電源",
+    "category": "PCパーツ",
+    "features": [
+      "1000W出力",
+      "80PLUS GOLD認証",
+      "底面ケーブルコネクタ",
+      "PCIe 5.0対応",
+      "10年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Noctua NH-D15 chromax.black CPUクーラー",
+    "asin": "B07Y3DCQBV",
+    "url": "https://www.amazon.co.jp/dp/B07Y3DCQBV",
+    "price": "¥13,980",
+    "image_url": "https://m.media-amazon.com/images/I/71FzYLfYG7L._AC_SL1500_.jpg",
+    "description": "最高峰の冷却性能を誇る大型デュアルタワークーラー",
+    "category": "PCパーツ",
+    "features": [
+      "デュアルタワーヒートシンク",
+      "140mm PWMファン×2",
+      "最大TDP 250W",
+      "低騒音設計",
+      "6年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Corsair iCUE H150i ELITE CAPELLIX 簡易水冷CPUクーラー",
+    "asin": "B08G1Q799P",
+    "url": "https://www.amazon.co.jp/dp/B08G1Q799P",
+    "price": "¥24,980",
+    "image_url": "https://m.media-amazon.com/images/I/71eNFOp4VwL._AC_SL1500_.jpg",
+    "description": "RGB照明搭載360mmラジエーター簡易水冷クーラー",
+    "category": "PCパーツ",
+    "features": [
+      "360mmラジエーター",
+      "ML RGB ELITE ファン×3",
+      "CAPELLIX RGB LED",
+      "iCUEソフトウェア対応",
+      "5年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Noctua NF-A12x25 PWM 120mm ケースファン",
+    "asin": "B07C5VG64V",
+    "url": "https://www.amazon.co.jp/dp/B07C5VG64V",
+    "price": "¥3,980",
+    "image_url": "https://m.media-amazon.com/images/I/71gLKCKLR6L._AC_SL1500_.jpg",
+    "description": "最高の静音性と冷却性能を両立した120mmファン",
+    "category": "PCパーツ",
+    "features": [
+      "最大2000 RPM",
+      "最大風量 102.1 m³/h",
+      "最大騒音 22.6 dBA",
+      "PWM制御",
+      "6年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Arctic P12 PWM PST 120mm ケースファン 5個パック",
+    "asin": "B07HC7P3HJ",
+    "url": "https://www.amazon.co.jp/dp/B07HC7P3HJ",
+    "price": "¥4,980",
+    "image_url": "https://m.media-amazon.com/images/I/71cQWdnrvTL._AC_SL1500_.jpg",
+    "description": "コストパフォーマンスに優れた高性能ファン5個セット",
+    "category": "PCパーツ",
+    "features": [
+      "最大1800 RPM",
+      "最大風量 56.3 CFM",
+      "PWM制御",
+      "PST機能（デイジーチェーン接続）",
+      "10年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Intel Core i7-14700K プロセッサー",
+    "asin": "B0CHBJ4BLM",
+    "url": "https://www.amazon.co.jp/dp/B0CHBJ4BLM",
+    "price": "¥64,800",
+    "image_url": "https://m.media-amazon.com/images/I/61G0+jxuaYL._AC_SL1500_.jpg",
+    "description": "20コア28スレッドの高性能デスクトップCPU",
+    "category": "PCパーツ",
+    "features": [
+      "20コア (8P+12E) 28スレッド",
+      "最大5.6GHz ターボブースト",
+      "33MB Lキャッシュ",
+      "DDR5-5600対応",
+      "Intel UHD Graphics 770"
+    ],
+    "rating": null
+  },
+  {
+    "name": "AMD Ryzen 7 7800X3D プロセッサー",
+    "asin": "B0BTZB7F88",
+    "url": "https://www.amazon.co.jp/dp/B0BTZB7F88",
+    "price": "¥59,800",
+    "image_url": "https://m.media-amazon.com/images/I/61sSwN2zeuL._AC_SL1500_.jpg",
+    "description": "3D V-Cache搭載のゲーミング最強CPU",
+    "category": "PCパーツ",
+    "features": [
+      "8コア16スレッド",
+      "最大5.0GHz ブースト",
+      "96MB L3キャッシュ",
+      "DDR5-5200対応",
+      "105W TDP"
+    ],
+    "rating": null
+  },
+  {
+    "name": "ASUS ROG Strix B650E-F Gaming WiFi マザーボード",
+    "asin": "B0BFT42F82",
+    "url": "https://www.amazon.co.jp/dp/B0BFT42F82",
+    "price": "¥39,800",
+    "image_url": "https://m.media-amazon.com/images/I/81VrXS1CKGL._AC_SL1500_.jpg",
+    "description": "PCIe 5.0対応のハイエンドAM5マザーボード",
+    "category": "PCパーツ",
+    "features": [
+      "AMD B650E チップセット",
+      "PCIe 5.0 x16スロット",
+      "DDR5-6400+対応",
+      "WiFi 6E搭載",
+      "14+2フェーズ電源設計"
+    ],
+    "rating": null
+  },
+  {
+    "name": "MSI MAG B760 TOMAHAWK WIFI DDR4 マザーボード",
+    "asin": "B0BNVCDK7R",
+    "url": "https://www.amazon.co.jp/dp/B0BNVCDK7R",
+    "price": "¥29,800",
+    "image_url": "https://m.media-amazon.com/images/I/81hN7gxTFjL._AC_SL1500_.jpg",
+    "description": "DDR4対応でコストパフォーマンスに優れたIntel 13/14世代対応マザーボード",
+    "category": "PCパーツ",
+    "features": [
+      "Intel B760 チップセット",
+      "PCIe 5.0 x16スロット",
+      "DDR4-5333+対応",
+      "WiFi 6E搭載",
+      "12+1+1フェーズ電源設計"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Transcend 128GB microSDXC UHS-I U3 A2 メモリーカード",
+    "asin": "B08LLHC19X",
+    "url": "https://www.amazon.co.jp/dp/B08LLHC19X",
+    "price": "¥2,980",
+    "image_url": "https://m.media-amazon.com/images/I/71EfVvB0ByL._AC_SL1500_.jpg",
+    "description": "4K動画撮影対応の高速microSDカード",
+    "category": "PC周辺機器",
+    "features": [
+      "最大読込速度 100MB/s",
+      "最大書込速度 85MB/s",
+      "UHS-I U3 / V30対応",
+      "Application Performance Class 2",
+      "5年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "SanDisk Extreme PRO 256GB SDXC UHS-I メモリーカード",
+    "asin": "B07H9J1YXN",
+    "url": "https://www.amazon.co.jp/dp/B07H9J1YXN",
+    "price": "¥5,980",
+    "image_url": "https://m.media-amazon.com/images/I/71CPVMWB9pL._AC_SL1500_.jpg",
+    "description": "プロ向け高速SDカード、4K/8K動画撮影対応",
+    "category": "PC周辺機器",
+    "features": [
+      "最大読込速度 200MB/s",
+      "最大書込速度 90MB/s",
+      "UHS-I U3 / V30対応",
+      "耐温度・防水・耐衝撃",
+      "限定生涯保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Philips 276E8VJSB/11 27インチ 4K IPS モニター",
+    "asin": "B07JXCR263",
+    "url": "https://www.amazon.co.jp/dp/B07JXCR263",
+    "price": "¥34,800",
+    "image_url": "https://m.media-amazon.com/images/I/71fRq8rK9lL._AC_SL1500_.jpg",
+    "description": "コストパフォーマンスに優れた4K IPSモニター",
+    "category": "PC周辺機器",
+    "features": [
+      "27インチ 4K (3840×2160)",
+      "IPS パネル",
+      "HDR10対応",
+      "フレームレスデザイン",
+      "HDMI×2、DisplayPort×1"
+    ],
+    "rating": null
+  },
+  {
+    "name": "LG 27UP850-W 27インチ 4K USB-C モニター",
+    "asin": "B093TT6SG2",
+    "url": "https://www.amazon.co.jp/dp/B093TT6SG2",
+    "price": "¥54,800",
+    "image_url": "https://m.media-amazon.com/images/I/71p2pXo7gyL._AC_SL1500_.jpg",
+    "description": "90W給電対応USB-C接続の高品質4Kモニター",
+    "category": "PC周辺機器",
+    "features": [
+      "27インチ 4K IPS",
+      "USB-C 90W給電",
+      "HDR10対応",
+      "DCI-P3 95%カバー",
+      "高さ調整・ピボット対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Dell S2722DC 27インチ QHD USB-C モニター",
+    "asin": "B09GLP9MNX",
+    "url": "https://www.amazon.co.jp/dp/B09GLP9MNX",
+    "price": "¥39,800",
+    "image_url": "https://m.media-amazon.com/images/I/71t5bYPMBZL._AC_SL1500_.jpg",
+    "description": "65W給電対応USB-C接続のQHDモニター",
+    "category": "PC周辺機器",
+    "features": [
+      "27インチ QHD (2560×1440)",
+      "IPS パネル",
+      "USB-C 65W給電",
+      "75Hz リフレッシュレート",
+      "AMD FreeSync対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Acer Nitro XV272UV 27インチ WQHD ゲーミングモニター",
+    "asin": "B08XDWMPS9",
+    "url": "https://www.amazon.co.jp/dp/B08XDWMPS9",
+    "price": "¥34,800",
+    "image_url": "https://m.media-amazon.com/images/I/71yX3bEjUZL._AC_SL1500_.jpg",
+    "description": "170Hz駆動の高リフレッシュレートゲーミングモニター",
+    "category": "PC周辺機器",
+    "features": [
+      "27インチ WQHD IPS",
+      "170Hz リフレッシュレート",
+      "1ms応答速度 (VRB)",
+      "AMD FreeSync Premium",
+      "HDR10対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "HP OMEN 27qs 27インチ QHD ゲーミングモニター",
+    "asin": "B0BVWYX9ZV",
+    "url": "https://www.amazon.co.jp/dp/B0BVWYX9ZV",
+    "price": "¥44,800",
+    "image_url": "https://m.media-amazon.com/images/I/71nMf8TmgjL._AC_SL1500_.jpg",
+    "description": "165Hz IPS搭載の高品質ゲーミングモニター",
+    "category": "PC周辺機器",
+    "features": [
+      "27インチ QHD IPS",
+      "165Hz リフレッシュレート",
+      "1ms応答速度 (MPRT)",
+      "AMD FreeSync Premium",
+      "USB-C接続対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Lenovo Legion Y25-30 24.5インチ FHD ゲーミングモニター",
+    "asin": "B08FCRRLQY",
+    "url": "https://www.amazon.co.jp/dp/B08FCRRLQY",
+    "price": "¥29,800",
+    "image_url": "https://m.media-amazon.com/images/I/71dPRPGdLsL._AC_SL1500_.jpg",
+    "description": "240Hz駆動のeスポーツ向け高速モニター",
+    "category": "PC周辺機器",
+    "features": [
+      "24.5インチ FHD IPS",
+      "240Hz リフレッシュレート",
+      "1ms応答速度 (MPRT)",
+      "AMD FreeSync Premium",
+      "NVIDIA G-SYNC Compatible"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Razer Huntsman V2 Analog メカニカルゲーミングキーボード",
+    "asin": "B09CKQ4BXK",
+    "url": "https://www.amazon.co.jp/dp/B09CKQ4BXK",
+    "price": "¥29,800",
+    "image_url": "https://m.media-amazon.com/images/I/71KvhNSYOVL._AC_SL1500_.jpg",
+    "description": "アナログ入力対応の革新的光学スイッチキーボード",
+    "category": "PC周辺機器",
+    "features": [
+      "Razer Analog Optical Switch",
+      "アナログ入力対応",
+      "アクチュエーションポイント調整可能",
+      "Razer Chroma RGB",
+      "リストレスト付属"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Logitech G PRO X キーボード テンキーレス",
+    "asin": "B08C5DS263",
+    "url": "https://www.amazon.co.jp/dp/B08C5DS263",
+    "price": "¥17,980",
+    "image_url": "https://m.media-amazon.com/images/I/71k1qqN8NHL._AC_SL1500_.jpg",
+    "description": "プロゲーマー向けコンパクトメカニカルキーボード",
+    "category": "PC周辺機器",
+    "features": [
+      "GX Blue/Brown/Red スイッチ選択可能",
+      "テンキーレス設計",
+      "取り外し可能ケーブル",
+      "LIGHTSYNC RGB",
+      "アルミ合金トップケース"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Microsoft Ergonomic Keyboard",
+    "asin": "B07XJBFQ96",
+    "url": "https://www.amazon.co.jp/dp/B07XJBFQ96",
+    "price": "¥8,980",
+    "image_url": "https://m.media-amazon.com/images/I/61ykqjR7DlL._AC_SL1500_.jpg",
+    "description": "手首に優しい分離型エルゴノミクスキーボード",
+    "category": "PC周辺機器",
+    "features": [
+      "スプリット型キーレイアウト",
+      "パームレスト一体型",
+      "Bluetoothワイヤレス",
+      "バッテリー寿命12ヶ月",
+      "Windows Hello対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Keychron K8 Pro QMK/VIA ワイヤレスメカニカルキーボード",
+    "asin": "B0BCP84L7M",
+    "url": "https://www.amazon.co.jp/dp/B0BCP84L7M",
+    "price": "¥14,800",
+    "image_url": "https://m.media-amazon.com/images/I/71ZlxYZxmJL._AC_SL1500_.jpg",
+    "description": "QMK/VIAカスタマイズ対応のワイヤレスメカニカルキーボード",
+    "category": "PC周辺機器",
+    "features": [
+      "テンキーレス 75%レイアウト",
+      "Gateron Proスイッチ",
+      "QMK/VIA対応",
+      "ホットスワップ対応",
+      "RGB バックライト"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Elgato Stream Deck MK.2",
+    "asin": "B09QT7LMN5",
+    "url": "https://www.amazon.co.jp/dp/B09QT7LMN5",
+    "price": "¥18,980",
+    "image_url": "https://m.media-amazon.com/images/I/61PJaOp7cjL._AC_SL1500_.jpg",
+    "description": "15個のLCDキーを搭載した配信者向けコントロールデバイス",
+    "category": "PC周辺機器",
+    "features": [
+      "15個のカスタマイズ可能LCDキー",
+      "交換可能なフェースプレート",
+      "無制限のページ数",
+      "1000以上のプラグイン対応",
+      "調整可能スタンド"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Elgato Wave:3 USBコンデンサーマイク",
+    "asin": "B088P4Q4VJ",
+    "url": "https://www.amazon.co.jp/dp/B088P4Q4VJ",
+    "price": "¥17,800",
+    "image_url": "https://m.media-amazon.com/images/I/61dXAXQJA+L._AC_SL1500_.jpg",
+    "description": "配信者向けプレミアムUSBコンデンサーマイク",
+    "category": "PC周辺機器",
+    "features": [
+      "24bit/96kHz録音",
+      "Clipguard技術",
+      "Wave Link ミキシングソフト",
+      "タップミュート機能",
+      "ポップフィルター内蔵"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Blue Yeti X プロフェッショナル USBマイク",
+    "asin": "B07WYMRKWW",
+    "url": "https://www.amazon.co.jp/dp/B07WYMRKWW",
+    "price": "¥24,800",
+    "image_url": "https://m.media-amazon.com/images/I/61Q+UOqGPjL._AC_SL1500_.jpg",
+    "description": "4つの指向性パターン搭載プロ向けUSBマイク",
+    "category": "PC周辺機器",
+    "features": [
+      "4つの指向性パターン",
+      "24bit/48kHz録音",
+      "LEDメーター搭載",
+      "Blue VO!CE エフェクト",
+      "ヘッドホン出力内蔵"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Audio-Technica AT2020USB+ USBコンデンサーマイク",
+    "asin": "B00B5ZX9FM",
+    "url": "https://www.amazon.co.jp/dp/B00B5ZX9FM",
+    "price": "¥16,800",
+    "image_url": "https://m.media-amazon.com/images/I/71CtZbpZPCL._AC_SL1500_.jpg",
+    "description": "スタジオ品質の音声収録が可能なUSBマイク",
+    "category": "PC周辺機器",
+    "features": [
+      "16bit/48kHz録音",
+      "カーディオイド指向性",
+      "ヘッドホン出力搭載",
+      "三脚デスクスタンド付属",
+      "ポップフィルター付属"
+    ],
+    "rating": null
+  },
+  {
+    "name": "HyperX Cloud Alpha Wireless ゲーミングヘッドセット",
+    "asin": "B09N8G6CPQ",
+    "url": "https://www.amazon.co.jp/dp/B09N8G6CPQ",
+    "price": "¥23,980",
+    "image_url": "https://m.media-amazon.com/images/I/61uZZlvpshL._AC_SL1500_.jpg",
+    "description": "最大300時間駆動の長時間バッテリーワイヤレスヘッドセット",
+    "category": "PC周辺機器",
+    "features": [
+      "最大300時間駆動",
+      "50mm デュアルチャンバードライバー",
+      "DTS Headphone:X対応",
+      "取り外し可能マイク",
+      "アルミフレーム"
+    ],
+    "rating": null
+  },
+  {
+    "name": "SteelSeries Arctis Nova Pro Wireless ゲーミングヘッドセット",
+    "asin": "B09T5FWFKG",
+    "url": "https://www.amazon.co.jp/dp/B09T5FWFKG",
+    "price": "¥44,800",
+    "image_url": "https://m.media-amazon.com/images/I/71DF1vKyC2L._AC_SL1500_.jpg",
+    "description": "バッテリー交換可能な最高峰ワイヤレスゲーミングヘッドセット",
+    "category": "PC周辺機器",
+    "features": [
+      "交換可能バッテリーシステム",
+      "Hi-Res Audio認証",
+      "360度 Spatial Audio",
+      "GameDACコントロールユニット",
+      "ClearCast Genマイク"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Bose QuietComfort 45 ノイズキャンセリングヘッドホン",
+    "asin": "B098FKXT8L",
+    "url": "https://www.amazon.co.jp/dp/B098FKXT8L",
+    "price": "¥39,600",
+    "image_url": "https://m.media-amazon.com/images/I/61K4l5qN8tL._AC_SL1500_.jpg",
+    "description": "業界トップクラスのノイズキャンセリングヘッドホン",
+    "category": "PC周辺機器",
+    "features": [
+      "アクティブノイズキャンセリング",
+      "最大24時間再生",
+      "Aware Mode搭載",
+      "マルチポイント接続",
+      "USB-C充電"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Sony WH-1000XM5 ワイヤレスノイズキャンセリングヘッドホン",
+    "asin": "B09XB1VMXQ",
+    "url": "https://www.amazon.co.jp/dp/B09XB1VMXQ",
+    "price": "¥44,000",
+    "image_url": "https://m.media-amazon.com/images/I/51K8VCpAXhL._AC_SL1500_.jpg",
+    "description": "AI技術による高精度ノイズキャンセリングヘッドホン",
+    "category": "PC周辺機器",
+    "features": [
+      "統合プロセッサーV1",
+      "8つのマイクによるNC",
+      "最大30時間再生",
+      "LDAC対応",
+      "マルチポイント接続"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Apple AirPods Pro (第2世代)",
+    "asin": "B0BDHB9Y8H",
+    "url": "https://www.amazon.co.jp/dp/B0BDHB9Y8H",
+    "price": "¥39,800",
+    "image_url": "https://m.media-amazon.com/images/I/61SUj2aKoEL._AC_SL1500_.jpg",
+    "description": "H2チップ搭載の次世代完全ワイヤレスイヤホン",
+    "category": "PC周辺機器",
+    "features": [
+      "H2チップ搭載",
+      "2倍のノイズキャンセリング",
+      "適応型外部音取り込み",
+      "空間オーディオ",
+      "MagSafe充電ケース"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Anker Soundcore Liberty 4 NC 完全ワイヤレスイヤホン",
+    "asin": "B0C1QKB5LP",
+    "url": "https://www.amazon.co.jp/dp/B0C1QKB5LP",
+    "price": "¥12,990",
+    "image_url": "https://m.media-amazon.com/images/I/61jV9cUUh5L._AC_SL1500_.jpg",
+    "description": "ウルトラノイズキャンセリング2.0搭載ワイヤレスイヤホン",
+    "category": "PC周辺機器",
+    "features": [
+      "ウルトラノイズキャンセリング2.0",
+      "11mmドライバー",
+      "最大50時間再生",
+      "LDAC対応",
+      "マルチポイント接続"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Creative Sound Blaster X3 外付けサウンドカード",
+    "asin": "B07TQM6QMY",
+    "url": "https://www.amazon.co.jp/dp/B07TQM6QMY",
+    "price": "¥14,980",
+    "image_url": "https://m.media-amazon.com/images/I/71FJ4pCxzDL._AC_SL1500_.jpg",
+    "description": "USB Type-C接続のハイレゾ対応外付けサウンドカード",
+    "category": "PC周辺機器",
+    "features": [
+      "32bit/192kHz DAC",
+      "7.1ch バーチャルサラウンド",
+      "Super X-Fi",
+      "Scout Radar",
+      "USB-C & USB-A対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Focusrite Scarlett 2i2 (3rd Gen) オーディオインターフェース",
+    "asin": "B07QR6Z1JB",
+    "url": "https://www.amazon.co.jp/dp/B07QR6Z1JB",
+    "price": "¥18,800",
+    "image_url": "https://m.media-amazon.com/images/I/71F8iNNjMeL._AC_SL1500_.jpg",
+    "description": "クリエイター向け高品質オーディオインターフェース",
+    "category": "PC周辺機器",
+    "features": [
+      "24bit/192kHz録音",
+      "Scarlett第3世代プリアンプ",
+      "Air Mode搭載",
+      "USB-C接続",
+      "DAW ソフト付属"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Elgato Game Capture HD60 X 外付けキャプチャーカード",
+    "asin": "B09PTL73HP",
+    "url": "https://www.amazon.co.jp/dp/B09PTL73HP",
+    "price": "¥24,980",
+    "image_url": "https://m.media-amazon.com/images/I/61MHW6GqsEL._AC_SL1500_.jpg",
+    "description": "4K60 HDRパススルー対応の外付けキャプチャーデバイス",
+    "category": "PC周辺機器",
+    "features": [
+      "1080p60 HDR10キャプチャ",
+      "4K60 HDR10パススルー",
+      "VRR対応",
+      "USB 3.0接続",
+      "OBS/Streamlabs対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "AVerMedia Live Gamer EXTREME 3 GC551G2",
+    "asin": "B09K7DWJ2F",
+    "url": "https://www.amazon.co.jp/dp/B09K7DWJ2F",
+    "price": "¥29,800",
+    "image_url": "https://m.media-amazon.com/images/I/61V6YqGVTTL._AC_SL1500_.jpg",
+    "description": "4K144Hzパススルー対応の高性能キャプチャーボード",
+    "category": "PC周辺機器",
+    "features": [
+      "1080p240 / 1440p144キャプチャ",
+      "4K144Hzパススルー",
+      "VRR対応",
+      "USB 3.2 Gen1 Type-C",
+      "RECentral 4ソフト付属"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Elgato Key Light Air LEDパネルライト",
+    "asin": "B082QHRZFW",
+    "url": "https://www.amazon.co.jp/dp/B082QHRZFW",
+    "price": "¥14,980",
+    "image_url": "https://m.media-amazon.com/images/I/51gkqJ3FAQL._AC_SL1500_.jpg",
+    "description": "配信者向けWiFi制御可能LEDパネルライト",
+    "category": "PC周辺機器",
+    "features": [
+      "1400ルーメン",
+      "色温度調整 2900-7000K",
+      "WiFi制御",
+      "Stream Deck連携",
+      "省エネLED"
+    ],
+    "rating": null
+  },
+  {
+    "name": "BenQ GW2480 23.8インチ アイケアモニター",
+    "asin": "B072XFQW8M",
+    "url": "https://www.amazon.co.jp/dp/B072XFQW8M",
+    "price": "¥14,980",
+    "image_url": "https://m.media-amazon.com/images/I/71QBCBMeKNL._AC_SL1500_.jpg",
+    "description": "ブルーライト軽減機能搭載のビジネス向けモニター",
+    "category": "PC周辺機器",
+    "features": [
+      "23.8インチ FHD IPS",
+      "ブルーライト軽減",
+      "フリッカーフリー",
+      "ブライトネスインテリジェンスプラス",
+      "高さ調整対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Logitech MX Keys S ワイヤレスキーボード",
+    "asin": "B0BDRPHB98",
+    "url": "https://www.amazon.co.jp/dp/B0BDRPHB98",
+    "price": "¥16,800",
+    "image_url": "https://m.media-amazon.com/images/I/71j5B+Q8CzL._AC_SL1500_.jpg",
+    "description": "静音キー搭載のプレミアムワイヤレスキーボード",
+    "category": "PC周辺機器",
+    "features": [
+      "スマートイルミネーション",
+      "最大10日間駆動",
+      "USB-C充電",
+      "最大3デバイス接続",
+      "バックライト付き"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Logitech MX Vertical エルゴノミクスマウス",
+    "asin": "B07FNJB8TT",
+    "url": "https://www.amazon.co.jp/dp/B07FNJB8TT",
+    "price": "¥12,800",
+    "image_url": "https://m.media-amazon.com/images/I/61-wR9A9voL._AC_SL1500_.jpg",
+    "description": "手首の負担を軽減する57度傾斜のエルゴノミクスマウス",
+    "category": "PC周辺機器",
+    "features": [
+      "57度垂直角度",
+      "4000 DPIセンサー",
+      "最大4ヶ月駆動",
+      "高速充電対応",
+      "複数デバイス対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Anker 622 Magnetic Battery (MagGo) マグネット式ワイヤレス充電器",
+    "asin": "B09925S3R9",
+    "url": "https://www.amazon.co.jp/dp/B09925S3R9",
+    "price": "¥5,990",
+    "image_url": "https://m.media-amazon.com/images/I/61-OXFdXCyL._AC_SL1500_.jpg",
+    "description": "マグネット式で簡単装着できるモバイルバッテリー",
+    "category": "PC周辺機器",
+    "features": [
+      "5,000mAh容量",
+      "マグネット式装着",
+      "7.5W ワイヤレス充電",
+      "折りたたみスタンド",
+      "18ヶ月保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Elecom EX-G ワイヤレスマウス",
+    "asin": "B084KQRBVQ",
+    "url": "https://www.amazon.co.jp/dp/B084KQRBVQ",
+    "price": "¥2,980",
+    "image_url": "https://m.media-amazon.com/images/I/71dxUOBSLNL._AC_SL1500_.jpg",
+    "description": "握りやすさを追求した日本製エルゴノミクスマウス",
+    "category": "PC周辺機器",
+    "features": [
+      "エルゴノミクスデザイン",
+      "5ボタン設計",
+      "2400 DPI",
+      "静音スイッチ",
+      "単3電池×1本"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Buffalo WSR-5400AX6S/DBK WiFi 6ルーター",
+    "asin": "B09MYTDCVH",
+    "url": "https://www.amazon.co.jp/dp/B09MYTDCVH",
+    "price": "¥12,800",
+    "image_url": "https://m.media-amazon.com/images/I/61f8qI5gL4L._AC_SL1500_.jpg",
+    "description": "高速通信対応のWiFi 6ルーター",
+    "category": "PC周辺機器",
+    "features": [
+      "最大4803Mbps (5GHz)",
+      "WiFi 6対応",
+      "IPv6対応",
+      "ビームフォーミング",
+      "4本外付けアンテナ"
+    ],
+    "rating": null
+  },
+  {
+    "name": "TP-Link Archer AX73 WiFi 6ルーター",
+    "asin": "B08KTXG3L5",
+    "url": "https://www.amazon.co.jp/dp/B08KTXG3L5",
+    "price": "¥9,800",
+    "image_url": "https://m.media-amazon.com/images/I/51m9dJ9HbUL._AC_SL1500_.jpg",
+    "description": "コストパフォーマンスに優れたWiFi 6ルーター",
+    "category": "PC周辺機器",
+    "features": [
+      "AX5400 (最大4804Mbps)",
+      "WiFi 6対応",
+      "OFDMA/MU-MIMO",
+      "1.5GHz トリプルコアCPU",
+      "OneMesh対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Crucial X10 Pro 1TB ポータブルSSD",
+    "asin": "B0C4DDXKH1",
+    "url": "https://www.amazon.co.jp/dp/B0C4DDXKH1",
+    "price": "¥16,800",
+    "image_url": "https://m.media-amazon.com/images/I/61ZfqD+tgxL._AC_SL1500_.jpg",
+    "description": "2,100MB/s高速転送対応ポータブルSSD",
+    "category": "PCパーツ",
+    "features": [
+      "最大読込速度 2,100MB/s",
+      "USB 3.2 Gen 2x2",
+      "IP55防塵防滴",
+      "3m落下耐性",
+      "5年保証"
     ],
     "rating": null
   }

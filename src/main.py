@@ -36,8 +36,13 @@ def main():
         print(f"エラー: WordPress接続に失敗しました - {e}")
         sys.exit(1)
 
+    # 商品マネージャーを初期化（50日経過チェックと自動リフレッシュを含む）
+    products_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'products.json')
+    product_manager = AmazonProductManager(products_file)
+
     # Amazon PA-APIを使用して商品を自動取得
     use_paapi = os.getenv('USE_AMAZON_PAAPI', 'true').lower() == 'true'
+    product = None
 
     if use_paapi:
         # PA-APIから商品を取得
@@ -45,10 +50,19 @@ def main():
             from amazon_paapi_client import AmazonPAAPIClient
             print("Amazon PA-APIを使用して商品を検索中...")
             paapi_client = AmazonPAAPIClient()
-            product = paapi_client.get_random_product()
+
+            # 投稿済みでない商品を取得するまでリトライ
+            max_attempts = 10
+            for attempt in range(max_attempts):
+                candidate = paapi_client.get_random_product()
+                if candidate and candidate.asin not in product_manager.posted_asins:
+                    product = candidate
+                    break
+                elif candidate:
+                    print(f"商品 {candidate.asin} は投稿済みです。別の商品を検索中... ({attempt + 1}/{max_attempts})")
 
             if not product:
-                print("警告: PA-APIで商品が見つかりませんでした。ローカルデータを使用します。")
+                print("警告: PA-APIで未投稿の商品が見つかりませんでした。ローカルデータを使用します。")
                 use_paapi = False
         except Exception as e:
             print(f"警告: PA-APIの使用中にエラーが発生しました - {e}")
@@ -59,9 +73,6 @@ def main():
 
     if not use_paapi:
         # ローカルの商品データを使用（フォールバック）
-        products_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'products.json')
-        product_manager = AmazonProductManager(products_file)
-
         if not product_manager.get_all_products():
             print("エラー: 商品データが見つかりません。")
             print(f"products.json ファイルを {products_file} に配置してください。")
@@ -69,13 +80,14 @@ def main():
 
         print(f"✓ {len(product_manager.get_all_products())}件のローカル商品データを読み込みました。")
 
-        # ランダムに商品を選択
+        # 投稿済みでない商品をランダムに選択
         product = product_manager.get_random_product()
         if not product:
             print("エラー: 投稿する商品が見つかりません。")
             sys.exit(1)
 
     print(f"選択された商品: {product.name}")
+    print(f"商品ASIN: {product.asin}")
     print("-" * 50)
 
     # ブログ記事生成
@@ -115,6 +127,22 @@ def main():
         print(f"URL: {post_url}")
         print(f"ステータス: {post_status}")
         print("=" * 50)
+
+        # 投稿成功後、商品を投稿済みとしてマーク
+        product_manager.mark_as_posted(product.asin)
+
+        # 投稿済み商品の統計を表示
+        total_products = len(product_manager.get_all_products())
+        posted_count = len(product_manager.posted_asins)
+        remaining_count = total_products - posted_count
+
+        print("\n商品投稿状況:")
+        print(f"  総商品数: {total_products}個")
+        print(f"  投稿済み: {posted_count}個")
+        print(f"  残り: {remaining_count}個")
+
+        if remaining_count == 0:
+            print("  ⚠ 全商品の投稿が完了しました。次回実行時に履歴がリセットされます。")
 
         return 0
 

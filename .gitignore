@@ -44,3 +44,7 @@ Thumbs.db
 # 一時ファイル
 *.tmp
 *.bak
+
+# 投稿済み商品データとメタデータ（ローカルで管理）
+data/posted_products.json
+data/products_metadata.json

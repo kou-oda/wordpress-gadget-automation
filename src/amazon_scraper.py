@@ -3,6 +3,7 @@ import random
 from typing import Dict, List, Optional
 from dataclasses import dataclass, asdict
 import os
+from datetime import datetime, timedelta
 
 
 @dataclass
@@ -34,7 +35,16 @@ class AmazonProductManager:
         """
         self.products_file = products_file
         self.products: List[GadgetProduct] = []
+
+        # 投稿済み商品とメタデータのファイルパス
+        data_dir = os.path.dirname(self.products_file)
+        self.posted_file = os.path.join(data_dir, 'posted_products.json')
+        self.metadata_file = os.path.join(data_dir, 'products_metadata.json')
+
+        self.posted_asins: List[str] = []
         self.load_products()
+        self.load_posted_asins()
+        self.check_and_refresh_products()
 
     def load_products(self):
         """商品データをファイルから読み込み"""
@@ -66,9 +76,131 @@ class AmazonProductManager:
         self.products.append(product)
         self.save_products()
 
+    def load_posted_asins(self):
+        """投稿済み商品ASINリストを読み込み"""
+        if os.path.exists(self.posted_file):
+            try:
+                with open(self.posted_file, 'r', encoding='utf-8') as f:
+                    self.posted_asins = json.load(f)
+            except Exception as e:
+                print(f"投稿済み商品データの読み込みに失敗: {e}")
+                self.posted_asins = []
+
+    def save_posted_asins(self):
+        """投稿済み商品ASINリストを保存"""
+        os.makedirs(os.path.dirname(self.posted_file), exist_ok=True)
+        with open(self.posted_file, 'w', encoding='utf-8') as f:
+            json.dump(self.posted_asins, f, ensure_ascii=False, indent=2)
+
+    def load_metadata(self) -> Dict:
+        """メタデータを読み込み"""
+        if os.path.exists(self.metadata_file):
+            try:
+                with open(self.metadata_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"メタデータの読み込みに失敗: {e}")
+        return {}
+
+    def save_metadata(self, metadata: Dict):
+        """メタデータを保存"""
+        os.makedirs(os.path.dirname(self.metadata_file), exist_ok=True)
+        with open(self.metadata_file, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, ensure_ascii=False, indent=2)
+
+    def check_and_refresh_products(self):
+        """50日経過していたら商品データをリフレッシュ"""
+        metadata = self.load_metadata()
+        last_refresh = metadata.get('last_refresh_date')
+
+        if last_refresh:
+            last_refresh_date = datetime.fromisoformat(last_refresh)
+            days_passed = (datetime.now() - last_refresh_date).days
+
+            if days_passed >= 50:
+                print(f"最後の更新から{days_passed}日経過しています。商品データをリフレッシュします。")
+                self.refresh_products()
+            else:
+                print(f"最後の更新から{days_passed}日経過しています。（50日でリフレッシュ）")
+        else:
+            # 初回起動時
+            print("商品データの初回起動です。メタデータを作成します。")
+            metadata['last_refresh_date'] = datetime.now().isoformat()
+            self.save_metadata(metadata)
+
+    def refresh_products(self):
+        """商品データと投稿履歴をリフレッシュ"""
+        print("=" * 50)
+        print("商品データのリフレッシュを開始します")
+        print("=" * 50)
+
+        # 投稿済みASINをクリア
+        self.posted_asins = []
+        self.save_posted_asins()
+        print("✓ 投稿済み商品履歴をクリアしました")
+
+        # メタデータを更新
+        metadata = {
+            'last_refresh_date': datetime.now().isoformat(),
+            'refresh_count': self.load_metadata().get('refresh_count', 0) + 1
+        }
+        self.save_metadata(metadata)
+        print(f"✓ メタデータを更新しました（リフレッシュ回数: {metadata['refresh_count']}回）")
+
+        # 新しい商品データを生成
+        try:
+            # PA-APIを使用して新しい商品を取得
+            from amazon_paapi_client import AmazonPAAPIClient
+
+            print("PA-APIから新しい商品データを取得中...")
+            paapi_client = AmazonPAAPIClient()
+
+            new_products = []
+            categories = list(paapi_client.SEARCH_KEYWORDS.keys())
+
+            for category in categories:
+                keywords = paapi_client.SEARCH_KEYWORDS[category]
+                for keyword in keywords[:5]:  # 各カテゴリーから5キーワード
+                    products = paapi_client.search_products(keyword, category, max_results=2)
+                    new_products.extend(products)
+
+                    if len(new_products) >= 100:
+                        break
+
+                if len(new_products) >= 100:
+                    break
+
+            # 重複を削除（ASINベース）
+            seen_asins = set()
+            unique_products = []
+            for p in new_products:
+                if p.asin not in seen_asins:
+                    seen_asins.add(p.asin)
+                    unique_products.append(p)
+
+            # 100個に制限
+            self.products = unique_products[:100]
+            self.save_products()
+            print(f"✓ PA-APIから{len(self.products)}個の新商品を取得しました")
+
+        except Exception as e:
+            print(f"警告: PA-APIでの商品取得に失敗しました - {e}")
+            print("既存のローカルデータを維持します")
+
+        print("=" * 50)
+        print("商品データのリフレッシュが完了しました")
+        print("=" * 50)
+
+    def mark_as_posted(self, asin: str):
+        """商品を投稿済みとしてマーク"""
+        if asin not in self.posted_asins:
+            self.posted_asins.append(asin)
+            self.save_posted_asins()
+            print(f"✓ 商品 {asin} を投稿済みとしてマークしました")
+
     def get_random_product(self, category: Optional[str] = None) -> Optional[GadgetProduct]:
         """
-        ランダムに商品を取得
+        投稿済みでない商品をランダムに取得
 
         Args:
             category: カテゴリーでフィルター（省略可）
@@ -79,13 +211,22 @@ class AmazonProductManager:
         if not self.products:
             return None
 
+        # 投稿済みでない商品をフィルター
+        available_products = [p for p in self.products if p.asin not in self.posted_asins]
+
+        if not available_products:
+            print("警告: 全ての商品が投稿済みです。投稿履歴をリセットします。")
+            self.posted_asins = []
+            self.save_posted_asins()
+            available_products = self.products
+
         if category:
-            filtered = [p for p in self.products if p.category == category]
+            filtered = [p for p in available_products if p.category == category]
             if not filtered:
                 return None
             return random.choice(filtered)
 
-        return random.choice(self.products)
+        return random.choice(available_products)
 
     def get_product_by_asin(self, asin: str) -> Optional[GadgetProduct]:
         """ASINで商品を取得"""

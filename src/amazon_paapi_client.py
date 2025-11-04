@@ -4,6 +4,7 @@ Amazon PA-API クライアント
 """
 import os
 import random
+import time
 from typing import List, Optional
 
 try:
