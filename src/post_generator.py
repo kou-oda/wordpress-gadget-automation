@@ -324,6 +324,90 @@ class BlogPostGenerator:
 
         return html
 
+    def generate_user_experience(self, product: GadgetProduct) -> str:
+        """実際の使用感・期待できる効果セクションを生成"""
+        html = "<h2>実際の使用感と期待できる効果</h2>\n"
+
+        if "マウス" in product.name:
+            html += "<p>このマウスを日常的に使用することで、作業効率の向上が期待できます。"
+            html += "高精度なセンサーにより、細かな作業でもストレスなく操作でき、カーソルの動きも滑らかで快適です。"
+            html += "エルゴノミクスデザインを採用しているため、長時間使用しても手首や腕への負担が少なく、疲労を軽減できます。</p>\n"
+
+            html += "<p>複数のカスタマイズ可能なボタンを活用すれば、よく使う機能にすぐにアクセスでき、作業のスピードアップが図れます。"
+            html += "特に、コピー＆ペーストやウィンドウ切り替えなど、頻繁に使う操作を割り当てることで、マウスだけで多くの作業が完結します。</p>\n"
+
+        elif "キーボード" in product.name:
+            html += "<p>このキーボードを使用することで、タイピングの快適性が大幅に向上します。"
+            html += "キースイッチの感触が良好で、入力時のフィードバックが明確なため、タイプミスが減少し、入力精度が向上します。"
+            html += "長時間のタイピング作業でも指の疲労が少なく、効率的な文字入力が可能です。</p>\n"
+
+            html += "<p>コンパクトな配列により、デスクスペースを有効活用でき、マウスとの距離も近くなるため、作業効率が向上します。"
+            html += "静音性が高いため、周囲を気にせず集中して作業に取り組めるのも大きなメリットです。</p>\n"
+
+        elif "SSD" in product.name:
+            html += "<p>このSSDを導入することで、PCの動作速度が劇的に改善されます。"
+            html += "システムの起動時間が大幅に短縮され、アプリケーションの立ち上がりも高速化します。"
+            html += "従来のHDDやSATA SSDと比較して、体感できるレベルでの速度向上が期待できます。</p>\n"
+
+            html += "<p>大容量ファイルの読み書きも高速で、動画編集やゲームのロード時間が短縮されます。"
+            html += "作業中のストレスが大幅に軽減され、生産性の向上につながります。"
+            html += "また、発熱も少なく、安定した動作が長期間維持されます。</p>\n"
+
+        elif "メモリ" in product.name:
+            html += "<p>このメモリを増設することで、PC全体のパフォーマンスが向上します。"
+            html += "複数のアプリケーションを同時に起動してもメモリ不足によるパフォーマンス低下が起こりにくくなり、快適なマルチタスク作業が可能になります。"
+            html += "特に、ブラウザで多数のタブを開きながら他の作業を行う場合に、その効果を実感できます。</p>\n"
+
+            html += "<p>動画編集や3DCG制作、プログラミングなど、メモリを多く消費する作業も快適に行えます。"
+            html += "仮想環境を使用する開発者の方にとっても、複数の仮想マシンを同時に起動できるため、作業効率が大幅に向上します。</p>\n"
+
+        else:
+            html += "<p>この製品を導入することで、日常的な作業環境が改善され、より快適な使用体験が得られます。"
+            html += "品質の高い製品ですので、長期間安心して使用することができます。</p>\n"
+
+            html += "<p>機能性とデザイン性を両立しており、デスク周りの環境を整えるのにも役立ちます。"
+            html += "日々の作業効率向上に貢献する、実用的な製品です。</p>\n"
+
+        return html
+
+    def generate_comparison_points(self, product: GadgetProduct) -> str:
+        """他製品との比較ポイントセクションを生成"""
+        html = "<h2>他製品との比較ポイント</h2>\n"
+
+        if "マウス" in product.name:
+            html += "<p>同価格帯のワイヤレスマウスと比較した場合、この製品はセンサー精度とバッテリー寿命のバランスが優れています。"
+            html += "一般的なワイヤレスマウスのバッテリー寿命が1〜2週間程度であるのに対し、この製品は数週間から数ヶ月の使用が可能です。</p>\n"
+
+            html += "<p>また、エルゴノミクスデザインの完成度も高く、長時間使用時の疲労軽減効果は、通常の左右対称デザインのマウスと比較して明確な差があります。"
+            html += "カスタマイズ機能の充実度も高く、専用ソフトウェアを使用することで、細かい設定が可能です。</p>\n"
+
+        elif "キーボード" in product.name:
+            html += "<p>一般的なメンブレンキーボードと比較すると、キースイッチの品質と耐久性が大きく異なります。"
+            html += "タイピング時の感触が格段に良く、長期間使用してもキーの反応が変わらないため、安定した入力環境を維持できます。</p>\n"
+
+            html += "<p>他のメカニカルキーボードと比較した場合、この製品はコンパクトさと機能性のバランスが優れています。"
+            html += "フルサイズキーボードと比べて省スペースでありながら、必要な機能は全て備えており、携帯性にも優れています。</p>\n"
+
+        elif "SSD" in product.name:
+            html += "<p>SATA接続のSSDと比較すると、読み書き速度が3〜5倍程度高速です。"
+            html += "特に、大容量ファイルの転送や、複数のファイルを同時に扱う作業において、その差は顕著に現れます。</p>\n"
+
+            html += "<p>同じNVMe接続のSSDの中でも、この製品はPCIe 4.0に対応しており、PCIe 3.0製品と比較して理論値で2倍の速度を実現しています。"
+            html += "価格面でも、性能を考慮すればコストパフォーマンスに優れた選択肢となっています。</p>\n"
+
+        elif "メモリ" in product.name:
+            html += "<p>DDR4メモリと比較すると、DDR5は動作周波数が高く、より高速なデータ転送が可能です。"
+            html += "マルチタスク作業やメモリを大量に消費するアプリケーションの使用時に、その差が体感できます。</p>\n"
+
+            html += "<p>同容量の他社製品と比較した場合、この製品は品質と価格のバランスが良好です。"
+            html += "メーカーの信頼性も高く、長期保証が付帯しているため、安心して使用できます。</p>\n"
+
+        else:
+            html += "<p>同カテゴリの製品と比較した場合、この製品は機能性と価格のバランスが優れています。"
+            html += "品質面でも信頼できるメーカーの製品であり、長期使用を前提として選ぶ価値があります。</p>\n"
+
+        return html
+
     def generate_conclusion(self, product: GadgetProduct) -> str:
         """まとめセクションを生成（総合評価なし）"""
         html = "<h2>まとめ</h2>\n"
@@ -341,6 +425,9 @@ class BlogPostGenerator:
 
         html += f"<p>{product.category}の購入を検討している方で、品質と性能を重視するなら、「{product.name}」は有力な選択肢となるでしょう。"
         html += "製品の詳細については、公式ページや販売ページで最新の情報をご確認ください。</p>\n"
+
+        html += f"<p>この製品は、日常的な使用からプロフェッショナルな用途まで、幅広いシーンで活躍します。"
+        html += "初めて{product.category}を選ぶ方にも、買い替えを検討している方にも、自信を持っておすすめできる製品です。</p>\n"
 
         return html
 
@@ -363,8 +450,16 @@ class BlogPostGenerator:
         content += self.generate_usage_scenarios(product)
         content += "\n"
 
+        # 実際の使用感と期待できる効果（新規追加）
+        content += self.generate_user_experience(product)
+        content += "\n"
+
         # メリット・デメリット
         content += self.generate_pros_cons(product)
+        content += "\n"
+
+        # 他製品との比較ポイント（新規追加）
+        content += self.generate_comparison_points(product)
         content += "\n"
 
         # どのような方におすすめか
@@ -394,67 +489,3 @@ class BlogPostGenerator:
 
         # 重複を削除
         return list(set(tags))
-
-    def generate_meta_description(self, product: GadgetProduct) -> str:
-        """メタディスクリプションを生成（100文字程度）"""
-        intro = self.generate_introduction(product)
-        # HTMLタグを削除
-        intro = re.sub(r'<[^>]+>', '', intro)
-        # 最初の文を抽出（「。」または「！」または「？」で区切る）
-        sentences = re.split(r'[。！？]', intro)
-
-        description = ""
-        for sentence in sentences:
-            sentence = sentence.strip()
-            if not sentence:
-                continue
-            # 100文字以内に収まるように調整
-            if len(description + sentence) <= 100:
-                description += sentence + "。"
-            else:
-                # 100文字を超える場合は現在の文を切り詰める
-                remaining = 100 - len(description)
-                if remaining > 20:  # 最低限の文字数を確保
-                    description += sentence[:remaining-1] + "。"
-                break
-
-        # 100文字を超えている場合は切り詰め
-        if len(description) > 100:
-            description = description[:97] + "..."
-
-        return description
-
-    def generate_meta_keywords(self, product: GadgetProduct) -> str:
-        """メタキーワードを生成（10個程度、カンマ区切り）"""
-        keywords = []
-
-        # 製品名から主要なキーワードを抽出
-        keywords.append(product.name)
-        keywords.append(product.category)
-        keywords.append("レビュー")
-
-        # カテゴリー別のキーワード
-        if "マウス" in product.name:
-            keywords.extend(["マウス", "ワイヤレスマウス", "PC周辺機器", "エルゴノミクス", "高精度センサー"])
-        elif "キーボード" in product.name:
-            keywords.extend(["キーボード", "メカニカルキーボード", "PC周辺機器", "タイピング", "静音"])
-        elif "SSD" in product.name:
-            keywords.extend(["SSD", "NVMe", "ストレージ", "高速化", "PCパーツ", "M.2"])
-        elif "メモリ" in product.name:
-            keywords.extend(["メモリ", "RAM", "DDR5", "PC性能向上", "PCパーツ"])
-        elif "バッテリー" in product.name or "充電" in product.name:
-            keywords.extend(["モバイルバッテリー", "充電器", "USB-C", "急速充電"])
-        elif "モニター" in product.name or "ライト" in product.name:
-            keywords.extend(["モニターライト", "デスクライト", "作業環境", "目の疲れ"])
-        else:
-            keywords.extend(["ガジェット", "おすすめ", "比較"])
-
-        # 重複を削除し、最大10個まで
-        unique_keywords = []
-        for kw in keywords:
-            if kw not in unique_keywords:
-                unique_keywords.append(kw)
-            if len(unique_keywords) >= 10:
-                break
-
-        return ",".join(unique_keywords)

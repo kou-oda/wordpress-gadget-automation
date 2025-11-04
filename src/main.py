@@ -61,15 +61,7 @@ def main():
     title = generator.generate_title(product)
     content = generator.generate_post_content(product)
 
-    # SEOメタデータ生成
-    seo_title = title  # SEOタイトルは記事タイトルと同じ
-    meta_description = generator.generate_meta_description(product)
-    meta_keywords = generator.generate_meta_keywords(product)
-
     print(f"記事タイトル: {title}")
-    print(f"SEOタイトル: {seo_title}")
-    print(f"メタディスクリプション: {meta_description}")
-    print(f"メタキーワード: {meta_keywords}")
     print("-" * 50)
 
     # カテゴリーの準備
@@ -82,24 +74,6 @@ def main():
         print(f"警告: カテゴリーの設定中にエラーが発生しました - {e}")
         category_id = None
 
-    # アイキャッチ画像のアップロード
-    featured_media_id = None
-    if product.image_url:
-        try:
-            print("アイキャッチ画像をアップロード中...")
-            # ファイル名を生成（商品名から安全なファイル名を作成）
-            import re
-            safe_name = re.sub(r'[^\w\s-]', '', product.name)
-            safe_name = re.sub(r'[-\s]+', '-', safe_name)
-            filename = f"{safe_name}.jpg"
-
-            media_data = wp_client.upload_media(product.image_url, filename)
-            featured_media_id = media_data.get('id')
-            print(f"✓ アイキャッチ画像をアップロードしました (ID: {featured_media_id})")
-        except Exception as e:
-            print(f"警告: アイキャッチ画像のアップロードに失敗しました - {e}")
-            # 画像アップロードに失敗しても記事投稿は続行
-
     # 記事を投稿
     try:
         post_data = wp_client.create_post(
@@ -107,11 +81,7 @@ def main():
             content=content,
             status=post_status,
             categories=[category_id] if category_id else None,
-            tags=None,
-            featured_media=featured_media_id,
-            seo_title=seo_title,
-            meta_description=meta_description,
-            meta_keywords=meta_keywords
+            tags=None
         )
 
         post_url = post_data.get('link', '')
@@ -122,8 +92,6 @@ def main():
         print(f"投稿ID: {post_id}")
         print(f"URL: {post_url}")
         print(f"ステータス: {post_status}")
-        if featured_media_id:
-            print(f"アイキャッチ画像: 設定済み")
         print("=" * 50)
 
         return 0
