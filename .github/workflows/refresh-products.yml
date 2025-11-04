@@ -1,0 +1,52 @@
+name: 商品データ更新
+
+on:
+  # 手動実行のみ
+  workflow_dispatch:
+
+jobs:
+  refresh-products:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 依存関係のインストール
+        run: |
+          pip install -r requirements.txt
+
+      - name: 商品データを更新
+        env:
+          AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
+          AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
+          AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
+          AMAZON_REGION: 'jp'
+        run: |
+          python scripts/refresh_products.py
+
+      - name: 変更をコミット
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add data/products.json data/products_metadata.json data/posted_products.json
+          git commit -m "商品データを更新（現在販売中の100商品）
+
+          🤖 Generated with GitHub Actions" || echo "変更なし"
+
+      - name: 変更をプッシュ
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+      - name: 更新結果の確認
+        if: success()
+        run: |
+          echo "✓ 商品データの更新が完了しました"
