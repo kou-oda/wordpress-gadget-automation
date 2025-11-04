@@ -76,7 +76,7 @@ class BlogPostGenerator:
         html += "<thead>\n<tr>\n<th>項目</th>\n<th>詳細</th>\n</tr>\n</thead>\n"
         html += "<tbody>\n"
 
-        # 製品名
+        # 製品名とカテゴリー
         html += f"<tr>\n<td>製品名</td>\n<td>{product.name}</td>\n</tr>\n"
         html += f"<tr>\n<td>カテゴリー</td>\n<td>{product.category}</td>\n</tr>\n"
 
@@ -126,11 +126,12 @@ class BlogPostGenerator:
             html += "<tr>\n<td>保証期間</td>\n<td>無期限保証</td>\n</tr>\n"
 
         else:
-            html += "<tr>\n<td>カテゴリー</td>\n<td>" + product.category + "</td>\n</tr>\n"
             html += "<tr>\n<td>対応デバイス</td>\n<td>PC / Mac</td>\n</tr>\n"
             html += "<tr>\n<td>接続方式</td>\n<td>USB Type-C</td>\n</tr>\n"
             html += "<tr>\n<td>ケーブル長</td>\n<td>約1.5m</td>\n</tr>\n"
+            html += "<tr>\n<td>電源</td>\n<td>USBバスパワー</td>\n</tr>\n"
             html += "<tr>\n<td>重量</td>\n<td>約200g</td>\n</tr>\n"
+            html += "<tr>\n<td>サイズ</td>\n<td>約100 x 50 x 20 mm</td>\n</tr>\n"
             html += "<tr>\n<td>保証期間</td>\n<td>1年間</td>\n</tr>\n"
 
         price_range = self.get_price_range(product.price) if product.price else ""
