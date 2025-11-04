@@ -42,12 +42,21 @@ jobs:
           WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
           POST_STATUS: ${{ github.event.inputs.post_status || 'draft' }}
           # Amazon PA-API設定
+          # レート制限: PA-API 5.0は10秒に1リクエスト（安全マージン込みで12秒推奨）
+          # このワークフローは1商品のみ取得するため、レート制限の影響は最小限
           USE_AMAZON_PAAPI: 'true'
           AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
           AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
           AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
           AMAZON_REGION: 'jp'
+          # リクエスト上限増加機能:
+          # - 記事末尾に商品購入リンク（PA-API URL）を自動追加
+          # - AMAZON_ASSOCIATE_TAGを含むリンク経由での購入でPA-APIリクエスト上限が増加
+          # - 詳細: src/post_generator.py の generate_product_link() を参照
         run: |
+          echo "PA-API 5.0 レート制限: 10秒に1リクエスト（安全マージン込みで12秒推奨）"
+          echo "このワークフローは1商品のみを取得します"
+          echo "記事末尾にPA-API商品リンクを自動追加（リクエスト上限増加に貢献）"
           python src/main.py
 
       - name: 投稿結果の確認
