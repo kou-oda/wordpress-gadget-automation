@@ -195,7 +195,11 @@ def create_sample_products() -> List[GadgetProduct]:
 
 if __name__ == "__main__":
     # サンプル商品データを作成して保存
-    manager = AmazonProductManager("../data/products.json")
+    import os
+    data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+    os.makedirs(data_dir, exist_ok=True)
+    products_file = os.path.join(data_dir, 'products.json')
+    manager = AmazonProductManager(products_file)
 
     sample_products = create_sample_products()
     for product in sample_products:

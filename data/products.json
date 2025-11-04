@@ -1,0 +1,98 @@
+[
+  {
+    "name": "ロジクール ワイヤレスマウス MX Master 3S",
+    "asin": "B0B4DQPH5K",
+    "url": "https://www.amazon.co.jp/dp/B0B4DQPH5K",
+    "price": "¥14,800",
+    "image_url": null,
+    "description": "高精度センサーと快適なエルゴノミクスデザインを備えたプレミアムワイヤレスマウス",
+    "category": "PC周辺機器",
+    "features": [
+      "8,000 DPI高精度センサー",
+      "最大70日間のバッテリー寿命",
+      "静音クリック設計",
+      "複数デバイス対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "HHKB Professional HYBRID Type-S",
+    "asin": "B082TSSZ3W",
+    "url": "https://www.amazon.co.jp/dp/B082TSSZ3W",
+    "price": "¥36,850",
+    "image_url": null,
+    "description": "プロフェッショナル向けコンパクトキーボード、静音モデル",
+    "category": "PC周辺機器",
+    "features": [
+      "静電容量無接点方式",
+      "Bluetooth/USB接続対応",
+      "コンパクト配列",
+      "高速タイピング対応"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Samsung 980 PRO NVMe M.2 SSD 1TB",
+    "asin": "B08GLX7TNT",
+    "url": "https://www.amazon.co.jp/dp/B08GLX7TNT",
+    "price": "¥12,980",
+    "image_url": null,
+    "description": "PCIe 4.0対応の超高速SSD",
+    "category": "PCパーツ",
+    "features": [
+      "読み込み速度 最大7,000MB/s",
+      "書き込み速度 最大5,000MB/s",
+      "優れた耐久性",
+      "5年保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Crucial DDR5-4800 32GB(16GBx2)",
+    "asin": "B09Q81KB2P",
+    "url": "https://www.amazon.co.jp/dp/B09Q81KB2P",
+    "price": "¥16,800",
+    "image_url": null,
+    "description": "次世代DDR5メモリで高速処理を実現",
+    "category": "PCパーツ",
+    "features": [
+      "DDR5-4800MHz",
+      "32GB(16GBx2枚組)",
+      "Intel/AMD対応",
+      "生涯保証"
+    ],
+    "rating": null
+  },
+  {
+    "name": "Anker 521 Power Bank (PowerCore Fusion 45W)",
+    "asin": "B09SG31NPT",
+    "url": "https://www.amazon.co.jp/dp/B09SG31NPT",
+    "price": "¥7,990",
+    "image_url": null,
+    "description": "充電器とモバイルバッテリーの2in1",
+    "category": "PC周辺機器",
+    "features": [
+      "45W高出力充電",
+      "5,000mAh容量",
+      "USB-C & USB-A ポート",
+      "コンパクト設計"
+    ],
+    "rating": null
+  },
+  {
+    "name": "BenQ ScreenBar Plus モニターライト",
+    "asin": "B07VWLCQ63",
+    "url": "https://www.amazon.co.jp/dp/B07VWLCQ63",
+    "price": "¥13,900",
+    "image_url": null,
+    "description": "デスク環境を快適にするモニター掛け式ライト",
+    "category": "PC周辺機器",
+    "features": [
+      "自動調光機能",
+      "ワイヤレスコントローラー",
+      "画面に反射しない設計",
+      "省スペース"
+    ],
+    "rating": null
+  }
+]
