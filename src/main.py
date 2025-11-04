@@ -5,6 +5,7 @@ WordPress ガジェットブログ自動投稿スクリプト
 
 import os
 import sys
+import time
 from wordpress_client import WordPressClient
 from amazon_scraper import AmazonProductManager, GadgetProduct
 from post_generator import BlogPostGenerator
@@ -49,11 +50,20 @@ def main():
         try:
             from amazon_paapi_client import AmazonPAAPIClient
             print("Amazon PA-APIを使用して商品を検索中...")
+            print("PA-API 5.0 レート制限: 10秒に1リクエスト（安全マージン込みで12秒）")
             paapi_client = AmazonPAAPIClient()
 
             # 投稿済みでない商品を取得するまでリトライ
+            # PA-API 5.0のレート制限を考慮: 10秒に1リクエスト + 安全マージン2秒 = 12秒
             max_attempts = 10
+            request_interval = 12.0  # 秒
+
             for attempt in range(max_attempts):
+                # 2回目以降のリクエストでは12秒待機
+                if attempt > 0:
+                    print(f"PA-APIレート制限を考慮し、{request_interval}秒待機中...")
+                    time.sleep(request_interval)
+
                 candidate = paapi_client.get_random_product()
                 if candidate and candidate.asin not in product_manager.posted_asins:
                     product = candidate
