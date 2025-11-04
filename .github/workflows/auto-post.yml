@@ -41,6 +41,12 @@ jobs:
           WP_USERNAME: ${{ secrets.WP_USERNAME }}
           WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
           POST_STATUS: ${{ github.event.inputs.post_status || 'draft' }}
+          # Amazon PA-API設定
+          USE_AMAZON_PAAPI: 'true'
+          AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
+          AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
+          AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
+          AMAZON_REGION: 'jp'
         run: |
           python src/main.py
 

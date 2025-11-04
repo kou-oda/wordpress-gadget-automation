@@ -42,7 +42,16 @@ git remote add origin https://github.com/<あなたのユーザー名>/wordpress
 git push -u origin main
 ```
 
-### 3. GitHub Secretsの設定
+### 3. Amazon PA-APIの設定
+
+Amazon Associate（アソシエイト）アカウントでPA-APIの認証情報を取得します：
+
+1. [Amazon Associate Central](https://affiliate.amazon.co.jp/)にログイン
+2. `ツール` → `Product Advertising API` に移動
+3. Access KeyとSecret Keyを取得
+4. Associate Tag（トラッキングID）を確認
+
+### 4. GitHub Secretsの設定
 
 GitHubリポジトリの `Settings` → `Secrets and variables` → `Actions` → `New repository secret` で以下を設定：
 
@@ -51,35 +60,19 @@ GitHubリポジトリの `Settings` → `Secrets and variables` → `Actions` �
 | `WP_SITE_URL` | `https://wwnaoya.com` |
 | `WP_USERNAME` | WordPressのユーザー名 |
 | `WP_APP_PASSWORD` | 作成したApplication Password（スペースなし） |
+| `AMAZON_ACCESS_KEY` | Amazon PA-APIのAccess Key |
+| `AMAZON_SECRET_KEY` | Amazon PA-APIのSecret Key |
+| `AMAZON_ASSOCIATE_TAG` | AmazonアソシエイトのトラッキングID |
 
-### 4. 商品データの追加
+### 5. 動作確認
 
-[data/products.json](data/products.json) に投稿したい商品情報を追加します。
+**PA-APIを使用する場合**（推奨）：
+- 毎日自動的にAmazonから大手メーカーの商品を検索して投稿
+- 手動でのデータ追加は不要
 
-```json
-[
-  {
-    "name": "ロジクール ワイヤレスマウス MX Master 3S",
-    "asin": "B0B4DQPH5K",
-    "url": "https://www.amazon.co.jp/dp/B0B4DQPH5K",
-    "price": "¥14,800",
-    "category": "PC周辺機器",
-    "description": "高精度センサーと快適なエルゴノミクスデザインを備えたプレミアムワイヤレスマウス",
-    "features": [
-      "8,000 DPI高精度センサー",
-      "最大70日間のバッテリー寿命",
-      "静音クリック設計",
-      "複数デバイス対応"
-    ]
-  }
-]
-```
-
-サンプルデータを生成するには：
-
-```bash
-python src/amazon_scraper.py
-```
+**ローカルデータを使用する場合**（フォールバック）：
+- PA-APIが利用できない場合は、[data/products.json](data/products.json)のデータを使用
+- サンプルデータを生成: `python src/amazon_scraper.py`
 
 ## 使用方法
 

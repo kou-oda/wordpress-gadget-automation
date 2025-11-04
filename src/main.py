@@ -36,22 +36,42 @@ def main():
         print(f"エラー: WordPress接続に失敗しました - {e}")
         sys.exit(1)
 
-    # Amazon 商品マネージャー初期化
-    products_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'products.json')
-    product_manager = AmazonProductManager(products_file)
+    # Amazon PA-APIを使用して商品を自動取得
+    use_paapi = os.getenv('USE_AMAZON_PAAPI', 'true').lower() == 'true'
 
-    if not product_manager.get_all_products():
-        print("エラー: 商品データが見つかりません。")
-        print(f"products.json ファイルを {products_file} に配置してください。")
-        sys.exit(1)
+    if use_paapi:
+        # PA-APIから商品を取得
+        try:
+            from amazon_paapi_client import AmazonPAAPIClient
+            print("Amazon PA-APIを使用して商品を検索中...")
+            paapi_client = AmazonPAAPIClient()
+            product = paapi_client.get_random_product()
 
-    print(f"✓ {len(product_manager.get_all_products())}件の商品データを読み込みました。")
+            if not product:
+                print("警告: PA-APIで商品が見つかりませんでした。ローカルデータを使用します。")
+                use_paapi = False
+        except Exception as e:
+            print(f"警告: PA-APIの使用中にエラーが発生しました - {e}")
+            print("ローカルの商品データを使用します。")
+            use_paapi = False
 
-    # ランダムに商品を選択
-    product = product_manager.get_random_product()
-    if not product:
-        print("エラー: 投稿する商品が見つかりません。")
-        sys.exit(1)
+    if not use_paapi:
+        # ローカルの商品データを使用（フォールバック）
+        products_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'products.json')
+        product_manager = AmazonProductManager(products_file)
+
+        if not product_manager.get_all_products():
+            print("エラー: 商品データが見つかりません。")
+            print(f"products.json ファイルを {products_file} に配置してください。")
+            sys.exit(1)
+
+        print(f"✓ {len(product_manager.get_all_products())}件のローカル商品データを読み込みました。")
+
+        # ランダムに商品を選択
+        product = product_manager.get_random_product()
+        if not product:
+            print("エラー: 投稿する商品が見つかりません。")
+            sys.exit(1)
 
     print(f"選択された商品: {product.name}")
     print("-" * 50)
