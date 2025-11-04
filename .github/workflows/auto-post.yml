@@ -1,0 +1,55 @@
+name: WordPress Auto Post
+
+on:
+  # スケジュール実行（毎日午前10時に実行）
+  schedule:
+    - cron: '0 1 * * *'  # UTC 1:00 = JST 10:00
+
+  # 手動実行も可能
+  workflow_dispatch:
+    inputs:
+      post_status:
+        description: '投稿ステータス (draft/publish)'
+        required: false
+        default: 'draft'
+
+jobs:
+  post-to-wordpress:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 依存関係のインストール
+        run: |
+          pip install -r requirements.txt
+
+      - name: 商品データの初期化
+        run: |
+          python src/amazon_scraper.py
+
+      - name: WordPress に記事を投稿
+        env:
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          POST_STATUS: ${{ github.event.inputs.post_status || 'draft' }}
+        run: |
+          python src/main.py
+
+      - name: 投稿結果の通知
+        if: always()
+        run: |
+          if [ $? -eq 0 ]; then
+            echo "✓ 記事の投稿に成功しました"
+          else
+            echo "✗ 記事の投稿に失敗しました"
+            exit 1
+          fi
