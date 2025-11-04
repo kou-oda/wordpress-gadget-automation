@@ -5,11 +5,7 @@ Amazon PA-API クライアント
 import os
 import random
 from typing import List, Optional
-from paapi5_python_sdk.api.default_api import DefaultApi
-from paapi5_python_sdk.rest import ApiException
-from paapi5_python_sdk.search_items_request import SearchItemsRequest
-from paapi5_python_sdk.search_items_resource import SearchItemsResource
-from paapi5_python_sdk.partner_type import PartnerType
+from amazon.paapi import AmazonAPI
 from amazon_scraper import GadgetProduct
 
 
@@ -105,8 +101,8 @@ class AmazonPAAPIClient:
                 "Set AMAZON_ACCESS_KEY, AMAZON_SECRET_KEY, and AMAZON_ASSOCIATE_TAG environment variables."
             )
 
-        # 地域マッピング
-        region_map = {
+        # 地域コードマッピング
+        country_map = {
             'jp': 'JP',
             'us': 'US',
             'uk': 'UK',
@@ -116,27 +112,14 @@ class AmazonPAAPIClient:
             'it': 'IT',
             'es': 'ES'
         }
-        self.country = region_map.get(self.region.lower(), 'JP')
-
-        # ホストマッピング
-        host_map = {
-            'JP': 'webservices.amazon.co.jp',
-            'US': 'webservices.amazon.com',
-            'UK': 'webservices.amazon.co.uk',
-            'DE': 'webservices.amazon.de',
-            'FR': 'webservices.amazon.fr',
-            'CA': 'webservices.amazon.ca',
-            'IT': 'webservices.amazon.it',
-            'ES': 'webservices.amazon.es'
-        }
-        self.host = host_map.get(self.country, 'webservices.amazon.co.jp')
+        country = country_map.get(self.region.lower(), 'JP')
 
         # PA-API クライアント初期化
-        self.api_instance = DefaultApi(
-            access_key=self.access_key,
-            secret_key=self.secret_key,
-            host=self.host,
-            region=self.country
+        self.api = AmazonAPI(
+            self.access_key,
+            self.secret_key,
+            self.associate_tag,
+            country
         )
 
     def is_major_brand(self, product_title: str, brand: Optional[str] = None) -> bool:
@@ -176,45 +159,21 @@ class AmazonPAAPIClient:
             商品リスト
         """
         try:
-            # 検索リソースの設定
-            search_items_resource = [
-                SearchItemsResource.IMAGES_PRIMARY_LARGE,
-                SearchItemsResource.ITEMINFO_TITLE,
-                SearchItemsResource.ITEMINFO_FEATURES,
-                SearchItemsResource.ITEMINFO_BYLINEINFO,
-                SearchItemsResource.OFFERS_LISTINGS_PRICE,
-            ]
-
-            # 検索リクエストの作成
-            search_items_request = SearchItemsRequest(
-                partner_tag=self.associate_tag,
-                partner_type=PartnerType.ASSOCIATES,
-                keywords=keyword,
-                item_count=max_results,
-                resources=search_items_resource
-            )
-
             # PA-APIで商品検索
-            response = self.api_instance.search_items(search_items_request)
+            items = self.api.search_items(keywords=keyword, item_count=max_results)
 
             gadget_products = []
 
-            # レスポンスの確認
-            if response.search_result is None:
-                return []
-
             # 各商品を処理
-            for item in response.search_result.items:
+            for item in items:
                 try:
                     # ブランド取得
                     brand = None
-                    if item.item_info and item.item_info.by_line_info and item.item_info.by_line_info.brand:
-                        brand = item.item_info.by_line_info.brand.display_value
+                    if hasattr(item, 'brand') and item.brand:
+                        brand = item.brand
 
                     # タイトル取得
-                    title = ""
-                    if item.item_info and item.item_info.title:
-                        title = item.item_info.title.display_value
+                    title = item.item_info.title if hasattr(item, 'item_info') and item.item_info.title else ""
 
                     # 大手メーカーの商品のみを選定
                     if not self.is_major_brand(title, brand):
@@ -225,20 +184,18 @@ class AmazonPAAPIClient:
 
                     # 価格取得
                     price = None
-                    if item.offers and item.offers.listings and len(item.offers.listings) > 0:
-                        listing = item.offers.listings[0]
-                        if listing.price:
-                            price = listing.price.display_amount
+                    if hasattr(item, 'offers') and item.offers and hasattr(item.offers, 'price'):
+                        price = item.offers.price
 
                     # 画像URL取得
                     image_url = None
-                    if item.images and item.images.primary and item.images.primary.large:
-                        image_url = item.images.primary.large.url
+                    if hasattr(item, 'images') and item.images and hasattr(item.images, 'large'):
+                        image_url = item.images.large
 
                     # 特徴取得
                     features = []
-                    if item.item_info and item.item_info.features and item.item_info.features.display_values:
-                        features = [f.display_value for f in item.item_info.features.display_values[:5]]
+                    if hasattr(item, 'features') and item.features:
+                        features = item.features[:5]
 
                     # 説明文生成（ブランド名とキーワードから）
                     description = f"{brand or ''}の{keyword}として高い評価を得ている製品"
@@ -264,9 +221,6 @@ class AmazonPAAPIClient:
 
             return gadget_products
 
-        except ApiException as e:
-            print(f"PA-API エラー: {e}")
-            return []
         except Exception as e:
             print(f"商品検索中にエラー: {e}")
             return []
