@@ -437,6 +437,31 @@ class BlogPostGenerator:
 
         return html
 
+    def generate_product_link(self, product: GadgetProduct) -> str:
+        """商品購入リンクセクションを生成"""
+        html = "<h2>商品情報</h2>\n"
+
+        html += f"<p>この記事で紹介した商品の詳細情報や最新の価格は、以下のリンクからご確認いただけます。</p>\n"
+
+        html += "<div style='background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;'>\n"
+        html += f"<h3 style='margin-top: 0;'>{product.name}</h3>\n"
+
+        if product.price:
+            html += f"<p><strong>価格:</strong> {product.price}</p>\n"
+
+        html += f"<p><strong>ASIN:</strong> {product.asin}</p>\n"
+
+        html += f"<p style='margin-bottom: 15px;'><a href='{product.url}' target='_blank' rel='noopener noreferrer' "
+        html += "style='display: inline-block; background-color: #ff9900; color: white; padding: 12px 24px; "
+        html += "text-decoration: none; border-radius: 5px; font-weight: bold;'>"
+        html += "Amazonで詳細を見る</a></p>\n"
+
+        html += "<p style='font-size: 0.9em; color: #6c757d; margin-bottom: 0;'>"
+        html += "※商品の価格や在庫状況は変動する可能性があります。最新情報はリンク先でご確認ください。</p>\n"
+        html += "</div>\n"
+
+        return html
+
     def generate_post_content(self, product: GadgetProduct) -> str:
         """完全な記事コンテンツを生成（2000-4000文字）"""
         content = ""
@@ -474,6 +499,10 @@ class BlogPostGenerator:
 
         # まとめ（総合評価なし）
         content += self.generate_conclusion(product)
+        content += "\n"
+
+        # 商品購入リンク（PA-APIリクエスト上限増加のため）
+        content += self.generate_product_link(product)
 
         return content
 
