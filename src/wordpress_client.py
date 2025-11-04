@@ -37,7 +37,10 @@ class WordPressClient:
         status: str = 'draft',
         categories: Optional[List[int]] = None,
         tags: Optional[List[int]] = None,
-        featured_media: Optional[int] = None
+        featured_media: Optional[int] = None,
+        seo_title: Optional[str] = None,
+        meta_description: Optional[str] = None,
+        meta_keywords: Optional[str] = None
     ) -> Dict:
         """
         新しい投稿を作成
@@ -49,6 +52,9 @@ class WordPressClient:
             categories: カテゴリーIDのリスト
             tags: タグIDのリスト
             featured_media: アイキャッチ画像のメディアID
+            seo_title: SEOタイトル
+            meta_description: メタディスクリプション
+            meta_keywords: メタキーワード
 
         Returns:
             作成された投稿の情報
@@ -67,6 +73,18 @@ class WordPressClient:
             data['tags'] = tags
         if featured_media:
             data['featured_media'] = featured_media
+
+        # Yoast SEO メタデータ
+        meta = {}
+        if seo_title:
+            meta['yoast_wpseo_title'] = seo_title
+        if meta_description:
+            meta['yoast_wpseo_metadesc'] = meta_description
+        if meta_keywords:
+            meta['yoast_wpseo_focuskw'] = meta_keywords
+
+        if meta:
+            data['meta'] = meta
 
         response = requests.post(
             endpoint,
@@ -94,9 +112,13 @@ class WordPressClient:
 
         endpoint = f"{self.api_url}/media"
 
+        # Content-Typeを適切に設定
+        content_type = img_response.headers.get('Content-Type', 'image/jpeg')
+
         headers = {
             'Authorization': self.headers['Authorization'],
             'Content-Disposition': f'attachment; filename="{filename}"',
+            'Content-Type': content_type
         }
 
         response = requests.post(

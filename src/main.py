@@ -61,7 +61,15 @@ def main():
     title = generator.generate_title(product)
     content = generator.generate_post_content(product)
 
+    # SEOメタデータ生成
+    seo_title = title  # SEOタイトルは記事タイトルと同じ
+    meta_description = generator.generate_meta_description(product)
+    meta_keywords = generator.generate_meta_keywords(product)
+
     print(f"記事タイトル: {title}")
+    print(f"SEOタイトル: {seo_title}")
+    print(f"メタディスクリプション: {meta_description}")
+    print(f"メタキーワード: {meta_keywords}")
     print("-" * 50)
 
     # カテゴリーの準備
@@ -100,7 +108,10 @@ def main():
             status=post_status,
             categories=[category_id] if category_id else None,
             tags=None,
-            featured_media=featured_media_id
+            featured_media=featured_media_id,
+            seo_title=seo_title,
+            meta_description=meta_description,
+            meta_keywords=meta_keywords
         )
 
         post_url = post_data.get('link', '')

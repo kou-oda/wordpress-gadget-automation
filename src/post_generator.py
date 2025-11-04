@@ -394,3 +394,67 @@ class BlogPostGenerator:
 
         # 重複を削除
         return list(set(tags))
+
+    def generate_meta_description(self, product: GadgetProduct) -> str:
+        """メタディスクリプションを生成（100文字程度）"""
+        intro = self.generate_introduction(product)
+        # HTMLタグを削除
+        intro = re.sub(r'<[^>]+>', '', intro)
+        # 最初の文を抽出（「。」または「！」または「？」で区切る）
+        sentences = re.split(r'[。！？]', intro)
+
+        description = ""
+        for sentence in sentences:
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+            # 100文字以内に収まるように調整
+            if len(description + sentence) <= 100:
+                description += sentence + "。"
+            else:
+                # 100文字を超える場合は現在の文を切り詰める
+                remaining = 100 - len(description)
+                if remaining > 20:  # 最低限の文字数を確保
+                    description += sentence[:remaining-1] + "。"
+                break
+
+        # 100文字を超えている場合は切り詰め
+        if len(description) > 100:
+            description = description[:97] + "..."
+
+        return description
+
+    def generate_meta_keywords(self, product: GadgetProduct) -> str:
+        """メタキーワードを生成（10個程度、カンマ区切り）"""
+        keywords = []
+
+        # 製品名から主要なキーワードを抽出
+        keywords.append(product.name)
+        keywords.append(product.category)
+        keywords.append("レビュー")
+
+        # カテゴリー別のキーワード
+        if "マウス" in product.name:
+            keywords.extend(["マウス", "ワイヤレスマウス", "PC周辺機器", "エルゴノミクス", "高精度センサー"])
+        elif "キーボード" in product.name:
+            keywords.extend(["キーボード", "メカニカルキーボード", "PC周辺機器", "タイピング", "静音"])
+        elif "SSD" in product.name:
+            keywords.extend(["SSD", "NVMe", "ストレージ", "高速化", "PCパーツ", "M.2"])
+        elif "メモリ" in product.name:
+            keywords.extend(["メモリ", "RAM", "DDR5", "PC性能向上", "PCパーツ"])
+        elif "バッテリー" in product.name or "充電" in product.name:
+            keywords.extend(["モバイルバッテリー", "充電器", "USB-C", "急速充電"])
+        elif "モニター" in product.name or "ライト" in product.name:
+            keywords.extend(["モニターライト", "デスクライト", "作業環境", "目の疲れ"])
+        else:
+            keywords.extend(["ガジェット", "おすすめ", "比較"])
+
+        # 重複を削除し、最大10個まで
+        unique_keywords = []
+        for kw in keywords:
+            if kw not in unique_keywords:
+                unique_keywords.append(kw)
+            if len(unique_keywords) >= 10:
+                break
+
+        return ",".join(unique_keywords)
