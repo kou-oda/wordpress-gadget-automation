@@ -5,7 +5,13 @@ Amazon PA-API クライアント
 import os
 import random
 from typing import List, Optional
-from amazon.paapi import AmazonAPI
+
+try:
+    from amazon_paapi import AmazonApi
+except ImportError:
+    # フォールバック: 古いバージョンの場合
+    from amazon.paapi import AmazonAPI as AmazonApi
+
 from amazon_scraper import GadgetProduct
 
 
@@ -115,7 +121,7 @@ class AmazonPAAPIClient:
         country = country_map.get(self.region.lower(), 'JP')
 
         # PA-API クライアント初期化
-        self.api = AmazonAPI(
+        self.api = AmazonApi(
             self.access_key,
             self.secret_key,
             self.associate_tag,
@@ -160,42 +166,63 @@ class AmazonPAAPIClient:
         """
         try:
             # PA-APIで商品検索
-            items = self.api.search_items(keywords=keyword, item_count=max_results)
+            search_result = self.api.search_items(keywords=keyword, item_count=max_results)
 
             gadget_products = []
 
+            # 検索結果が存在するか確認
+            if not search_result or not hasattr(search_result, 'items'):
+                return []
+
             # 各商品を処理
-            for item in items:
+            for item in search_result.items:
                 try:
                     # ブランド取得
                     brand = None
-                    if hasattr(item, 'brand') and item.brand:
-                        brand = item.brand
+                    if hasattr(item, 'item_info') and item.item_info:
+                        if hasattr(item.item_info, 'by_line_info') and item.item_info.by_line_info:
+                            if hasattr(item.item_info.by_line_info, 'brand') and item.item_info.by_line_info.brand:
+                                brand = item.item_info.by_line_info.brand.display_value
 
                     # タイトル取得
-                    title = item.item_info.title if hasattr(item, 'item_info') and item.item_info.title else ""
+                    title = ""
+                    if hasattr(item, 'item_info') and item.item_info:
+                        if hasattr(item.item_info, 'title') and item.item_info.title:
+                            title = item.item_info.title.display_value
 
                     # 大手メーカーの商品のみを選定
                     if not self.is_major_brand(title, brand):
                         continue
 
                     # ASIN取得
-                    asin = item.asin
+                    asin = item.asin if hasattr(item, 'asin') else None
+                    if not asin:
+                        continue
 
                     # 価格取得
                     price = None
-                    if hasattr(item, 'offers') and item.offers and hasattr(item.offers, 'price'):
-                        price = item.offers.price
+                    if hasattr(item, 'offers') and item.offers:
+                        if hasattr(item.offers, 'listings') and item.offers.listings:
+                            if len(item.offers.listings) > 0:
+                                listing = item.offers.listings[0]
+                                if hasattr(listing, 'price') and listing.price:
+                                    if hasattr(listing.price, 'display_amount'):
+                                        price = listing.price.display_amount
 
                     # 画像URL取得
                     image_url = None
-                    if hasattr(item, 'images') and item.images and hasattr(item.images, 'large'):
-                        image_url = item.images.large
+                    if hasattr(item, 'images') and item.images:
+                        if hasattr(item.images, 'primary') and item.images.primary:
+                            if hasattr(item.images.primary, 'large') and item.images.primary.large:
+                                if hasattr(item.images.primary.large, 'url'):
+                                    image_url = item.images.primary.large.url
 
                     # 特徴取得
                     features = []
-                    if hasattr(item, 'features') and item.features:
-                        features = item.features[:5]
+                    if hasattr(item, 'item_info') and item.item_info:
+                        if hasattr(item.item_info, 'features') and item.item_info.features:
+                            if hasattr(item.item_info.features, 'display_values'):
+                                features = [f.display_value for f in item.item_info.features.display_values[:5]]
 
                     # 説明文生成（ブランド名とキーワードから）
                     description = f"{brand or ''}の{keyword}として高い評価を得ている製品"
@@ -217,12 +244,16 @@ class AmazonPAAPIClient:
 
                 except Exception as e:
                     print(f"商品データの処理中にエラー: {e}")
+                    import traceback
+                    traceback.print_exc()
                     continue
 
             return gadget_products
 
         except Exception as e:
             print(f"商品検索中にエラー: {e}")
+            import traceback
+            traceback.print_exc()
             return []
 
     def get_random_product(self) -> Optional[GadgetProduct]:
