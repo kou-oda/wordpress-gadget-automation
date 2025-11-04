@@ -9,17 +9,23 @@ class BlogPostGenerator:
 
     def __init__(self):
         self.review_templates = [
-            "徹底解説",
-            "詳細レビュー",
-            "性能チェック",
-            "製品レビュー",
-            "スペック解説"
+            "徹底解説！",
+            "詳細レビュー！",
+            "性能チェック！",
+            "本当におすすめ？",
+            "買うべき？"
         ]
 
     def generate_title(self, product: GadgetProduct) -> str:
-        """記事タイトルを生成"""
-        template = random.choice(self.review_templates)
-        return f"【{template}】{product.name} - {product.category}の注目モデル"
+        """記事タイトルを生成（感情的な表現）"""
+        templates = [
+            f"【{random.choice(self.review_templates)}】{product.name} - {product.category}の注目モデル",
+            f"{product.name}は買い？{product.category}として徹底解説！",
+            f"【{product.category}】{product.name}のスペックと実力を検証！",
+            f"{product.name}をレビュー！本当におすすめできる？",
+            f"話題の{product.name}！{product.category}選びの決定版？"
+        ]
+        return random.choice(templates)
 
     def get_price_range(self, price_str: str) -> str:
         """具体的な価格から価格帯を抽出"""
