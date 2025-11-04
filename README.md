@@ -10,7 +10,8 @@ GitHub Actionsを使用して、Amazonのガジェット商品レビュー記事
 - 手動実行にも対応
 - カテゴリーとタグの自動管理
 - **投稿済み商品の追跡機能**（同じ商品の重複投稿を防止）
-- **50日ごとの自動商品データ更新**（PA-APIから新しい商品を自動取得）
+- **1日2回の自動投稿**（午前10時・午後8時）
+- **商品データ自動更新**（PA-APIから1.5秒間隔で安全に取得）
 
 ## セットアップ手順
 
@@ -76,19 +77,29 @@ GitHubリポジトリの `Settings` → `Secrets and variables` → `Actions` �
 - PA-APIが利用できない場合は、[data/products.json](data/products.json)のデータを使用
 - サンプルデータを生成: `python src/amazon_scraper.py`
 
-### 6. 自動商品更新機能
+### 6. 商品データ更新機能
 
-システムは以下の自動管理機能を持っています：
+#### 自動更新（推奨）
 
-- **投稿済み商品の追跡**: 一度投稿した商品は再投稿されません
-- **50日ごとの自動更新**:
-  - 最後の更新から50日経過すると、自動的に新しい商品データに置き換わります
-  - PA-APIから100個の新商品を自動取得します
-  - 投稿履歴もリセットされます
-- **データファイル**:
-  - `data/products.json`: 商品データ（100個）
-  - `data/posted_products.json`: 投稿済み商品のASINリスト
-  - `data/products_metadata.json`: 最終更新日とリフレッシュ回数
+GitHub Actionsで商品データを自動更新できます：
+
+1. GitHubリポジトリの「Actions」タブを開く
+2. 「商品データ自動更新（レート制限対応）」を選択
+3. 「Run workflow」→「Run workflow」をクリック
+
+**特徴:**
+- PA-APIから1.5秒間隔でリクエスト送信（レート制限対策）
+- 100個の最新商品を自動取得（所要時間: 約3-4分）
+- 既存データを自動バックアップ
+- カテゴリー別の集計表示
+
+詳細は [PRODUCT_UPDATE_GUIDE.md](PRODUCT_UPDATE_GUIDE.md) を参照してください。
+
+#### データファイル
+
+- `data/products.json`: 商品データ（100個）
+- `data/posted_products.json`: 投稿済み商品のASINリスト（ローカルのみ）
+- `data/products_metadata.json`: 最終更新日とリフレッシュ回数
 
 ## 使用方法
 

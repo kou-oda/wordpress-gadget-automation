@@ -1,0 +1,92 @@
+name: 商品データ自動更新（レート制限対応）
+
+on:
+  # 手動実行
+  workflow_dispatch:
+
+  # 毎月1日と15日の深夜2時に自動実行（オプション）
+  # schedule:
+  #   - cron: '0 17 1,15 * *'  # UTC 17:00 = JST 2:00（翌日）
+
+jobs:
+  refresh-products:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10  # 最大10分でタイムアウト
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 依存関係のインストール
+        run: |
+          pip install -r requirements.txt
+
+      - name: 商品データを更新（1.5秒間隔）
+        env:
+          AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
+          AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
+          AMAZON_ASSOCIATE_TAG: ${{ secrets.AMAZON_ASSOCIATE_TAG }}
+          AMAZON_REGION: 'jp'
+        run: |
+          echo "開始時刻: $(date)"
+          python scripts/refresh_products_slow.py
+          echo "完了時刻: $(date)"
+
+      - name: 変更をコミット
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # 変更されたファイルを確認
+          if git diff --quiet data/products.json data/products_metadata.json; then
+            echo "変更なし"
+            exit 0
+          fi
+
+          # 変更をコミット
+          git add data/products.json data/products_metadata.json
+          git commit -m "商品データを自動更新（現在販売中の100商品）
+
+          PA-APIから1.5秒間隔で安全に取得
+
+          🤖 Generated with GitHub Actions
+          $(date '+%Y-%m-%d %H:%M:%S')"
+
+      - name: 変更をプッシュ
+        if: success()
+        run: |
+          git push origin main
+
+      - name: 更新結果のサマリー
+        if: success()
+        run: |
+          echo "✓ 商品データの更新が完了しました"
+          echo "更新された商品数を確認中..."
+          python -c "
+          import json
+          with open('data/products.json', 'r', encoding='utf-8') as f:
+              products = json.load(f)
+              print(f'総商品数: {len(products)}個')
+
+              # カテゴリー別集計
+              categories = {}
+              for p in products:
+                  cat = p.get('category', '不明')
+                  categories[cat] = categories.get(cat, 0) + 1
+
+              print('\\nカテゴリー別:')
+              for cat, count in sorted(categories.items()):
+                  print(f'  {cat}: {count}個')
+          "
+
+      - name: エラー時の通知
+        if: failure()
+        run: |
+          echo "✗ 商品データの更新に失敗しました"
+          echo "ログを確認してください"
