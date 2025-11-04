@@ -60,26 +60,19 @@ def main():
     generator = BlogPostGenerator()
     title = generator.generate_title(product)
     content = generator.generate_post_content(product)
-    tags = generator.generate_tags(product)
 
     print(f"記事タイトル: {title}")
-    print(f"タグ: {', '.join(tags)}")
     print("-" * 50)
 
-    # カテゴリーとタグの準備
+    # カテゴリーの準備
     try:
         # カテゴリーの取得または作成
         category_id = wp_client.get_or_create_category(product.category)
         print(f"✓ カテゴリー設定: {product.category} (ID: {category_id})")
 
-        # タグの取得または作成
-        tag_ids = wp_client.get_or_create_tags(tags)
-        print(f"✓ タグ設定: {len(tag_ids)}個のタグを設定しました。")
-
     except Exception as e:
-        print(f"警告: カテゴリー/タグの設定中にエラーが発生しました - {e}")
+        print(f"警告: カテゴリーの設定中にエラーが発生しました - {e}")
         category_id = None
-        tag_ids = []
 
     # アイキャッチ画像のアップロード
     featured_media_id = None
@@ -106,7 +99,7 @@ def main():
             content=content,
             status=post_status,
             categories=[category_id] if category_id else None,
-            tags=tag_ids if tag_ids else None,
+            tags=None,
             featured_media=featured_media_id
         )
 
