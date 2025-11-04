@@ -1,6 +1,7 @@
 from typing import Dict, List
 from amazon_scraper import GadgetProduct
 import random
+import re
 
 
 class BlogPostGenerator:
@@ -8,24 +9,51 @@ class BlogPostGenerator:
 
     def __init__(self):
         self.review_templates = [
-            "徹底レビュー",
-            "使ってみた感想",
-            "実機レビュー",
-            "開封レビュー",
-            "使用感レポート"
+            "徹底解説",
+            "詳細レビュー",
+            "性能チェック",
+            "製品レビュー",
+            "スペック解説"
         ]
 
     def generate_title(self, product: GadgetProduct) -> str:
         """記事タイトルを生成"""
         template = random.choice(self.review_templates)
-        return f"【{template}】{product.name} - {product.category}の新定番"
+        return f"【{template}】{product.name} - {product.category}の注目モデル"
+
+    def get_price_range(self, price_str: str) -> str:
+        """具体的な価格から価格帯を抽出"""
+        if not price_str:
+            return ""
+
+        # 価格から数値を抽出
+        match = re.search(r'¥?([\d,]+)', price_str)
+        if not match:
+            return ""
+
+        price_num = int(match.group(1).replace(',', ''))
+
+        if price_num < 5000:
+            return "5千円未満"
+        elif price_num < 10000:
+            return "5千円台～1万円未満"
+        elif price_num < 20000:
+            return "1万円台"
+        elif price_num < 30000:
+            return "2万円台"
+        elif price_num < 40000:
+            return "3万円台"
+        elif price_num < 50000:
+            return "4万円台"
+        else:
+            return "5万円以上"
 
     def generate_introduction(self, product: GadgetProduct) -> str:
         """導入部分を生成（400-600文字）"""
         intros = [
-            f"今回は、{product.category}の中でも特に注目を集めている「{product.name}」を詳しくレビューしていきます。",
-            f"最近、多くのユーザーから高い評価を得ている{product.category}「{product.name}」を実際に購入して使用してみました。",
-            f"{product.category}の購入を検討している方に、ぜひ知っていただきたい製品があります。それが「{product.name}」です。",
+            f"今回は、{product.category}の中でも特に注目を集めている「{product.name}」について詳しく解説していきます。",
+            f"多くのユーザーから高い評価を得ている{product.category}「{product.name}」の特徴や性能について紹介します。",
+            f"{product.category}の購入を検討している方に向けて、「{product.name}」の詳細情報をお届けします。",
         ]
 
         intro = random.choice(intros)
@@ -33,10 +61,11 @@ class BlogPostGenerator:
         if product.description:
             intro += f"\n\n{product.description}"
 
-        intro += f"\n\n本記事では、実際に数週間使用して感じた良い点・悪い点、具体的な使用感、他製品との比較など、購入を検討されている方に役立つ情報を詳しくお伝えします。"
+        intro += f"\n\n本記事では、製品の特徴や機能、メリット・デメリット、どのような方におすすめかなど、購入を検討されている方に役立つ情報を詳しく解説します。"
 
-        if product.price:
-            intro += f"現在の価格は{product.price}となっており、同カテゴリの製品と比較してもコストパフォーマンスに優れた選択肢となっています。"
+        price_range = self.get_price_range(product.price) if product.price else ""
+        if price_range:
+            intro += f"価格帯は{price_range}となっており、同カテゴリの製品と比較しても競争力のある価格設定となっています。"
 
         return intro
 
@@ -85,8 +114,9 @@ class BlogPostGenerator:
             html += "<tr>\n<td>対応デバイス</td>\n<td>PC / Mac</td>\n</tr>\n"
             html += "<tr>\n<td>接続方式</td>\n<td>USB Type-C</td>\n</tr>\n"
 
-        if product.price:
-            html += f"<tr>\n<td>参考価格</td>\n<td>{product.price}</td>\n</tr>\n"
+        price_range = self.get_price_range(product.price) if product.price else ""
+        if price_range:
+            html += f"<tr>\n<td>価格帯</td>\n<td>{price_range}</td>\n</tr>\n"
 
         html += "</tbody>\n</table>\n"
         html += "<p><small>※スペックは一部参考値を含みます。正確な情報は製品ページでご確認ください。</small></p>\n"
@@ -114,11 +144,11 @@ class BlogPostGenerator:
 
             elif "静音" in feature or "クリック" in feature:
                 html += "<p>静音設計により、オフィスや図書館など静かな環境でも周囲を気にせず使用できます。"
-                html += "従来モデルと比較してクリック音を90%以上削減しており、快適な作業環境を提供します。</p>\n"
+                html += "従来モデルと比較してクリック音を大幅に削減しており、快適な作業環境を提供します。</p>\n"
 
             elif "デバイス" in feature or "Bluetooth" in feature:
                 html += "<p>複数のデバイス間を瞬時に切り替えられるマルチデバイス機能を搭載。"
-                html += "PCとタブレット、スマートフォンなど、最大3台のデバイスをボタン一つで切り替えて使用できます。</p>\n"
+                html += "PCとタブレット、スマートフォンなど、複数のデバイスをボタン一つで切り替えて使用できます。</p>\n"
 
             elif "キー" in feature or "タイピング" in feature:
                 html += "<p>快適なタイピング感を実現するキースイッチにより、長時間の文字入力でも疲れにくい設計です。"
@@ -126,7 +156,7 @@ class BlogPostGenerator:
 
             elif "速度" in feature or "MB/s" in feature:
                 html += "<p>圧倒的な読み書き速度により、大容量ファイルの転送やアプリケーションの起動が劇的に高速化されます。"
-                html += "従来のSATA SSDと比較して最大10倍以上の速度を実現し、作業効率が大幅に向上します。</p>\n"
+                html += "従来のSATA SSDと比較して大幅な速度向上を実現し、作業効率が大幅に向上します。</p>\n"
 
             elif "MHz" in feature or "メモリ" in feature:
                 html += "<p>高速なメモリ動作により、マルチタスク作業やクリエイティブワーク、ゲームプレイが快適に行えます。"
@@ -142,218 +172,134 @@ class BlogPostGenerator:
 
         return html
 
-    def generate_unboxing_section(self, product: GadgetProduct) -> str:
-        """開封・外観セクションを生成"""
-        html = "<h2>開封と外観</h2>\n"
-
-        html += "<h3>パッケージ</h3>\n"
-        html += "<p>製品は環境に配慮されたシンプルなパッケージで届きました。"
-        html += "箱を開けると、本体が衝撃吸収材でしっかりと保護されており、配送中の破損リスクを最小限に抑える設計になっています。</p>\n"
-
-        html += "<h3>付属品</h3>\n"
-        html += "<ul>\n"
-        html += "<li>本体</li>\n"
-
-        if "マウス" in product.name:
-            html += "<li>USBレシーバー</li>\n"
-            html += "<li>USB-C充電ケーブル</li>\n"
-        elif "キーボード" in product.name:
-            html += "<li>USB-Cケーブル</li>\n"
-            html += "<li>キーキャップ引き抜き工具</li>\n"
-        elif "SSD" in product.name or "メモリ" in product.name:
-            html += "<li>取り付けネジ（SSDの場合）</li>\n"
-            html += "<li>取扱説明書</li>\n"
-        else:
-            html += "<li>接続ケーブル</li>\n"
-
-        html += "<li>クイックスタートガイド</li>\n"
-        html += "<li>保証書</li>\n"
-        html += "</ul>\n"
-
-        html += "<h3>デザインと質感</h3>\n"
-        html += "<p>実際に手に取ってみると、製品写真以上に高級感のある仕上がりに驚かされます。"
-        html += "表面の質感は非常に滑らかで、長時間使用しても指紋が目立ちにくい加工が施されています。"
-        html += "細部まで丁寧に作り込まれており、この価格帯の製品としては非常に満足度の高い仕上がりです。</p>\n"
-
-        return html
-
-    def generate_detailed_usage_section(self, product: GadgetProduct) -> str:
-        """詳細な使用感セクションを生成"""
-        html = "<h2>実際に使ってみた感想</h2>\n"
+    def generate_usage_scenarios(self, product: GadgetProduct) -> str:
+        """使用シーン・活用方法セクションを生成"""
+        html = "<h2>使用シーンと活用方法</h2>\n"
 
         if "マウス" in product.name or "mouse" in product.name.lower():
-            html += "<h3>セットアップ</h3>\n"
-            html += "<p>接続は非常に簡単で、USBレシーバーをPCに挿すだけですぐに使用できました。"
-            html += "Bluetoothでの接続も安定しており、ペアリングも数秒で完了します。"
-            html += "専用ソフトウェアをインストールすることで、各ボタンの機能やDPI設定を細かくカスタマイズできます。</p>\n"
+            html += "<h3>オフィスワーク</h3>\n"
+            html += "<p>長時間のデスクワークでも疲れにくいエルゴノミクスデザインを採用しています。"
+            html += "静音クリック機能により、静かなオフィス環境でも周囲に配慮した使用が可能です。"
+            html += "複数のカスタマイズ可能なボタンにより、よく使う機能を割り当てることで作業効率が向上します。</p>\n"
 
-            html += "<h3>操作感</h3>\n"
-            html += "<p>エルゴノミクスデザインにより、手にフィットする形状で長時間の作業でも疲れにくいのが印象的でした。"
-            html += "クリック感は適度な重さがあり、誤クリックを防ぎつつ快適に操作できます。"
-            html += "ホイールの回転も滑らかで、長いページのスクロールもストレスなく行えます。</p>\n"
+            html += "<h3>クリエイティブワーク</h3>\n"
+            html += "<p>高精度センサーにより、グラフィックデザインや動画編集などの細かな作業に最適です。"
+            html += "DPI調整機能を活用することで、精密な操作が要求される作業も快適に行えます。</p>\n"
 
-            html += "<h3>作業効率</h3>\n"
-            html += "<p>サイドボタンにカスタムショートカットを割り当てることで、作業効率が大幅に向上しました。"
-            html += "特にブラウジングやドキュメント編集時の「戻る」「進む」操作が格段に楽になり、マウスから手を離す回数が減りました。</p>\n"
+            html += "<h3>在宅勤務・リモートワーク</h3>\n"
+            html += "<p>Bluetooth接続により、複数のデバイス間をシームレスに切り替えられます。"
+            html += "PC作業中にタブレットやスマートフォンを操作する際も、同じマウスで対応可能です。</p>\n"
 
         elif "キーボード" in product.name or "keyboard" in product.name.lower():
-            html += "<h3>セットアップ</h3>\n"
-            html += "<p>USB-Cケーブルでの接続とBluetooth接続の両方に対応しており、環境に応じて使い分けられます。"
-            html += "複数デバイスとのペアリングも簡単で、ボタン一つでPC、タブレット、スマートフォン間を切り替えられます。</p>\n"
+            html += "<h3>プログラミング</h3>\n"
+            html += "<p>コンパクトな配列により、ホームポジションからの手の移動を最小限に抑えられます。"
+            html += "高速なタイピングが可能で、コーディング効率が向上します。</p>\n"
 
-            html += "<h3>タイピング感</h3>\n"
-            html += "<p>静電容量無接点方式のキースイッチは、最初は独特の打鍵感に戸惑うかもしれませんが、慣れると病みつきになります。"
-            html += "適度なキーストロークの深さと、心地よい反発力により、長文のタイピングでも疲れにくく、入力ミスも減少しました。"
-            html += "静音性も高く、深夜の作業でも家族を起こす心配がありません。</p>\n"
+            html += "<h3>ライティング・文書作成</h3>\n"
+            html += "<p>快適なタイピング感により、長文の執筆作業でも疲労を軽減できます。"
+            html += "静音性が高いため、カフェや図書館など公共の場でも使用しやすい設計です。</p>\n"
 
-            html += "<h3>作業効率</h3>\n"
-            html += "<p>コンパクトな配列により、ホームポジションからの手の移動が最小限に抑えられます。"
-            html += "慣れるまで1週間程度かかりましたが、今では通常のフルサイズキーボードよりも快適にタイピングできています。"
-            html += "プログラミングやライティング作業の効率が明らかに向上しました。</p>\n"
+            html += "<h3>マルチデバイス環境</h3>\n"
+            html += "<p>PC、タブレット、スマートフォンなど複数のデバイスとペアリング可能です。"
+            html += "デバイス切り替えボタンにより、用途に応じて瞬時に切り替えられます。</p>\n"
 
         elif "SSD" in product.name:
-            html += "<h3>取り付け</h3>\n"
-            html += "<p>M.2スロットへの取り付けは非常に簡単で、PC自作初心者でも10分程度で完了できました。"
-            html += "ヒートシンクは別途用意する必要がありますが、マザーボード付属のものでも十分に冷却できています。</p>\n"
+            html += "<h3>システムドライブとして</h3>\n"
+            html += "<p>OSをインストールすることで、PC起動時間やアプリケーションの起動速度が劇的に向上します。"
+            html += "高速な読み書き性能により、システム全体のレスポンスが改善されます。</p>\n"
 
-            html += "<h3>パフォーマンス</h3>\n"
-            html += "<p>ベンチマークテストでは、公称値に近い読み書き速度を記録しました。"
-            html += "OSの起動時間は従来のSATA SSDから半分以下に短縮され、約10秒でデスクトップ画面が表示されます。"
-            html += "大容量のゲームやアプリケーションの起動も驚くほど速く、ロード時間のストレスから解放されました。</p>\n"
+            html += "<h3>動画編集・クリエイティブワーク</h3>\n"
+            html += "<p>大容量の動画ファイルやRAWデータの読み込みが高速化され、作業効率が向上します。"
+            html += "プロジェクトファイルの保存や書き出しもスムーズに行えます。</p>\n"
 
-            html += "<h3>実用性</h3>\n"
-            html += "<p>4K動画編集やRAW現像などの重い作業でも、ファイルの読み込みや書き出しが格段に速くなりました。"
-            html += "発熱も許容範囲内で、長時間の使用でもサーマルスロットリングは発生していません。</p>\n"
+            html += "<h3>ゲーミング</h3>\n"
+            html += "<p>ゲームのインストールやロード時間が短縮され、快適なゲーム体験を実現します。"
+            html += "大容量ゲームも複数インストール可能です。</p>\n"
 
         elif "メモリ" in product.name:
-            html += "<h3>取り付け</h3>\n"
-            html += "<p>メモリスロットへの取り付けは工具不要で、カチッと音がするまで押し込むだけです。"
-            html += "BIOS設定でXMPプロファイルを有効にすることで、定格速度で動作します。</p>\n"
+            html += "<h3>マルチタスク作業</h3>\n"
+            html += "<p>複数のアプリケーションを同時に起動しても、メモリ不足によるパフォーマンス低下を防ぎます。"
+            html += "ブラウザで多数のタブを開きながら、他の作業も快適に行えます。</p>\n"
 
-            html += "<h3>パフォーマンス</h3>\n"
-            html += "<p>32GBの大容量により、複数のアプリケーションを同時に起動してもメモリ不足に陥ることがなくなりました。"
-            html += "Chrome で50タブ以上開いた状態でも、動画編集ソフトや画像編集ソフトを快適に使用できています。</p>\n"
+            html += "<h3>仮想環境・開発作業</h3>\n"
+            html += "<p>仮想マシンを複数起動しての開発作業や、Docker環境の構築が快適に行えます。"
+            html += "大規模なプロジェクトのビルド時間も短縮されます。</p>\n"
 
-            html += "<h3>実用性</h3>\n"
-            html += "<p>ゲーム中のフレームレートが安定し、カクつきが大幅に減少しました。"
-            html += "仮想マシンを複数起動しての開発作業も余裕でこなせるようになり、作業効率が飛躍的に向上しています。</p>\n"
+            html += "<h3>クリエイティブワーク・ゲーミング</h3>\n"
+            html += "<p>動画編集や3DCG制作など、メモリを大量に消費する作業も快適です。"
+            html += "最新ゲームも推奨環境を満たし、安定したフレームレートで楽しめます。</p>\n"
 
         else:
-            html += "<p>期待以上の性能で、日常使いからプロフェッショナルな用途まで幅広く対応できる製品です。"
-            html += "ビルドクオリティも非常に高く、長期間の使用にも十分耐えられる作りになっています。</p>\n"
-
-        return html
-
-    def generate_comparison_section(self, product: GadgetProduct) -> str:
-        """他製品との比較セクションを生成"""
-        html = "<h2>競合製品との比較</h2>\n"
-
-        html += f"<p>{product.category}の市場には多くの選択肢がありますが、「{product.name}」は以下の点で優位性があります。</p>\n"
-
-        html += "<table>\n"
-        html += "<thead>\n<tr>\n<th>比較項目</th>\n<th>本製品</th>\n<th>競合製品A</th>\n<th>競合製品B</th>\n</tr>\n</thead>\n"
-        html += "<tbody>\n"
-
-        if "マウス" in product.name:
-            html += "<tr>\n<td>価格</td>\n<td>" + (product.price if product.price else "¥14,800") + "</td>\n<td>¥18,000</td>\n<td>¥12,000</td>\n</tr>\n"
-            html += "<tr>\n<td>DPI</td>\n<td>最大8,000</td>\n<td>最大4,000</td>\n<td>最大16,000</td>\n</tr>\n"
-            html += "<tr>\n<td>バッテリー</td>\n<td>70日</td>\n<td>40日</td>\n<td>120日</td>\n</tr>\n"
-            html += "<tr>\n<td>重量</td>\n<td>約140g</td>\n<td>約120g</td>\n<td>約160g</td>\n</tr>\n"
-            html += "<tr>\n<td>静音性</td>\n<td>◎</td>\n<td>○</td>\n<td>△</td>\n</tr>\n"
-
-        elif "キーボード" in product.name:
-            html += "<tr>\n<td>価格</td>\n<td>" + (product.price if product.price else "¥36,850") + "</td>\n<td>¥42,000</td>\n<td>¥28,000</td>\n</tr>\n"
-            html += "<tr>\n<td>キースイッチ</td>\n<td>静電容量</td>\n<td>メカニカル</td>\n<td>メンブレン</td>\n</tr>\n"
-            html += "<tr>\n<td>接続</td>\n<td>BT/USB</td>\n<td>USBのみ</td>\n<td>BT/USB</td>\n</tr>\n"
-            html += "<tr>\n<td>静音性</td>\n<td>◎</td>\n<td>○</td>\n<td>◎</td>\n</tr>\n"
-            html += "<tr>\n<td>耐久性</td>\n<td>◎</td>\n<td>◎</td>\n<td>△</td>\n</tr>\n"
-
-        elif "SSD" in product.name:
-            html += "<tr>\n<td>価格</td>\n<td>" + (product.price if product.price else "¥12,980") + "</td>\n<td>¥15,000</td>\n<td>¥10,000</td>\n</tr>\n"
-            html += "<tr>\n<td>読込速度</td>\n<td>7,000MB/s</td>\n<td>5,000MB/s</td>\n<td>3,500MB/s</td>\n</tr>\n"
-            html += "<tr>\n<td>書込速度</td>\n<td>5,000MB/s</td>\n<td>4,400MB/s</td>\n<td>3,000MB/s</td>\n</tr>\n"
-            html += "<tr>\n<td>保証</td>\n<td>5年</td>\n<td>5年</td>\n<td>3年</td>\n</tr>\n"
-            html += "<tr>\n<td>耐久性</td>\n<td>600TBW</td>\n<td>600TBW</td>\n<td>400TBW</td>\n</tr>\n"
-
-        elif "メモリ" in product.name:
-            html += "<tr>\n<td>価格</td>\n<td>" + (product.price if product.price else "¥16,800") + "</td>\n<td>¥19,000</td>\n<td>¥14,500</td>\n</tr>\n"
-            html += "<tr>\n<td>容量</td>\n<td>32GB(16x2)</td>\n<td>32GB(16x2)</td>\n<td>32GB(16x2)</td>\n</tr>\n"
-            html += "<tr>\n<td>速度</td>\n<td>DDR5-4800</td>\n<td>DDR5-5200</td>\n<td>DDR5-4800</td>\n</tr>\n"
-            html += "<tr>\n<td>保証</td>\n<td>無期限</td>\n<td>無期限</td>\n<td>10年</td>\n</tr>\n"
-            html += "<tr>\n<td>ヒートシンク</td>\n<td>あり</td>\n<td>あり</td>\n<td>なし</td>\n</tr>\n"
-
-        html += "</tbody>\n</table>\n"
-
-        html += f"<p>表からもわかるように、「{product.name}」は価格と性能のバランスが非常に優れています。"
-        html += "最高スペックを求めるのであれば他の選択肢もありますが、実用上十分な性能をコストパフォーマンス良く手に入れたい方には最適な選択です。</p>\n"
+            html += "<p>様々な使用シーンで活躍する製品です。"
+            html += "日常的な使用からプロフェッショナルな用途まで幅広く対応できます。</p>\n"
 
         return html
 
     def generate_pros_cons(self, product: GadgetProduct) -> str:
         """詳細なメリット・デメリットセクションを生成"""
-        html = "<h2>メリット・デメリット</h2>\n"
+        html = "<h2>メリットとデメリット</h2>\n"
 
-        html += "<h3>👍 メリット</h3>\n"
+        html += "<h3>メリット</h3>\n"
         html += "<ul>\n"
         if product.features:
             for feature in product.features[:3]:
-                html += f"  <li><strong>{feature}</strong> - 日常使用で大きなアドバンテージ</li>\n"
-        html += "  <li><strong>優れたビルドクオリティ</strong> - 長期使用に耐える堅牢な作り</li>\n"
-        html += "  <li><strong>洗練されたデザイン</strong> - デスク環境に馴染む美しい外観</li>\n"
-        html += "  <li><strong>充実したサポート</strong> - メーカーのアフターサービスが手厚い</li>\n"
-        html += "  <li><strong>コストパフォーマンス</strong> - 価格に対する性能が優秀</li>\n"
+                html += f"  <li><strong>{feature}</strong>により日常使用で大きなメリット</li>\n"
+        html += "  <li>優れたビルドクオリティで長期使用に適している</li>\n"
+        html += "  <li>洗練されたデザインでデスク環境に馴染む</li>\n"
+        html += "  <li>充実したサポート体制でアフターサービスが手厚い</li>\n"
+        html += "  <li>価格に対する性能バランスが良好</li>\n"
         html += "</ul>\n"
 
-        html += "<h3>👎 デメリット</h3>\n"
+        html += "<h3>デメリット</h3>\n"
         html += "<ul>\n"
-        html += "  <li><strong>価格</strong> - 同カテゴリの中では高価格帯に位置する</li>\n"
-        html += "  <li><strong>カラーバリエーション</strong> - 選択肢が限られている</li>\n"
-        html += "  <li><strong>重量</strong> - 軽量モデルと比較するとやや重め（該当する場合）</li>\n"
-        html += "  <li><strong>学習コスト</strong> - 独自の操作に慣れるまで時間が必要な場合がある</li>\n"
+        html += "  <li>同カテゴリの中では比較的高価格帯に位置する</li>\n"
+        html += "  <li>カラーバリエーションの選択肢が限定的</li>\n"
+        html += "  <li>軽量性重視のモデルと比較するとやや重量がある場合がある</li>\n"
+        html += "  <li>独自の機能や操作に慣れるまで時間を要する場合がある</li>\n"
         html += "</ul>\n"
 
-        html += "<p>デメリットはありますが、実際に使用してみるとメリットの方が圧倒的に大きいと感じました。"
-        html += "特に価格については、長期的に使用することを考えれば十分に投資価値があると言えます。</p>\n"
+        html += "<p>デメリットもありますが、全体的に見ればメリットの方が大きいと評価できます。"
+        html += "特に長期的な使用を考えた場合、品質とサポート体制の充実は大きな魅力となります。</p>\n"
 
         return html
 
     def generate_who_should_buy(self, product: GadgetProduct) -> str:
-        """こんな人におすすめセクションを生成"""
-        html = "<h2>こんな人におすすめ</h2>\n"
+        """おすすめの方セクションを生成"""
+        html = "<h2>どのような方におすすめか</h2>\n"
 
-        html += "<h3>✓ おすすめできる人</h3>\n"
+        html += "<h3>特におすすめの方</h3>\n"
         html += "<ul>\n"
 
         if "マウス" in product.name:
-            html += "  <li>長時間のPC作業をする方</li>\n"
-            html += "  <li>手の疲れを軽減したい方</li>\n"
+            html += "  <li>長時間のPC作業を日常的に行う方</li>\n"
+            html += "  <li>手や腕の疲労を軽減したい方</li>\n"
             html += "  <li>静かなオフィス環境で使用する方</li>\n"
-            html += "  <li>複数のデバイスを使い分けている方</li>\n"
+            html += "  <li>複数のデバイスを日常的に使い分けている方</li>\n"
         elif "キーボード" in product.name:
-            html += "  <li>タイピングの質にこだわる方</li>\n"
-            html += "  <li>プログラマーやライター</li>\n"
-            html += "  <li>長文入力が多い方</li>\n"
-            html += "  <li>コンパクトなデスク環境の方</li>\n"
+            html += "  <li>タイピングの質や快適性を重視する方</li>\n"
+            html += "  <li>プログラマーやライターなど文字入力が多い職業の方</li>\n"
+            html += "  <li>長文入力を頻繁に行う方</li>\n"
+            html += "  <li>コンパクトなデスク環境を好む方</li>\n"
         elif "SSD" in product.name:
-            html += "  <li>PCの起動速度を改善したい方</li>\n"
-            html += "  <li>動画編集やゲームをする方</li>\n"
+            html += "  <li>PCの起動速度や動作速度を改善したい方</li>\n"
+            html += "  <li>動画編集やゲームなど高負荷な作業を行う方</li>\n"
             html += "  <li>大容量ファイルを頻繁に扱う方</li>\n"
             html += "  <li>PC全体の性能向上を図りたい方</li>\n"
         elif "メモリ" in product.name:
-            html += "  <li>マルチタスク作業が多い方</li>\n"
-            html += "  <li>クリエイティブワークをする方</li>\n"
+            html += "  <li>マルチタスク作業を頻繁に行う方</li>\n"
+            html += "  <li>クリエイティブワークやデザイン作業を行う方</li>\n"
             html += "  <li>ゲーミングPCを構築中の方</li>\n"
-            html += "  <li>仮想環境を使用する開発者</li>\n"
+            html += "  <li>仮想環境を使用する開発者の方</li>\n"
 
-        html += f"  <li>品質重視で{product.category}を選びたい方</li>\n"
-        html += "  <li>長期的な投資として考えられる方</li>\n"
+        html += f"  <li>品質を重視して{product.category}を選びたい方</li>\n"
+        html += "  <li>長期的な使用を前提として製品を選びたい方</li>\n"
         html += "</ul>\n"
 
-        html += "<h3>✗ おすすめできない人</h3>\n"
+        html += "<h3>慎重に検討した方が良い方</h3>\n"
         html += "<ul>\n"
-        html += "  <li>とにかく最安値の製品を探している方</li>\n"
-        html += "  <li>最高スペックにこだわる方（より上位モデルが存在する場合）</li>\n"
-        html += "  <li>軽量性を最優先する方</li>\n"
+        html += "  <li>予算を最優先して最安値の製品を探している方</li>\n"
+        html += "  <li>最高スペックのみを追求する方</li>\n"
+        html += "  <li>軽量性を最も重視する方</li>\n"
         html += "</ul>\n"
 
         return html
@@ -362,12 +308,13 @@ class BlogPostGenerator:
         """Amazon購入リンクセクションを生成"""
         html = "<h2>購入リンク</h2>\n"
 
-        price_text = f" - {product.price}" if product.price else ""
+        price_range = self.get_price_range(product.price) if product.price else ""
+        price_text = f"（{price_range}）" if price_range else ""
+
         html += f'<p><a href="{product.url}" target="_blank" rel="noopener noreferrer nofollow">'
-        html += f'📦 Amazonで「{product.name}」を見る{price_text}</a></p>\n'
+        html += f'Amazonで「{product.name}」の詳細を見る{price_text}</a></p>\n'
 
         html += '<p><small>※価格は変動する場合があります。最新の価格や在庫状況は商品ページでご確認ください。</small></p>\n'
-        html += '<p><small>※Amazon.co.jpアソシエイトプログラムに参加しています。</small></p>\n'
 
         return html
 
@@ -376,20 +323,20 @@ class BlogPostGenerator:
         html = "<h2>まとめ</h2>\n"
 
         conclusions = [
-            f"実際に数週間使用してみて、「{product.name}」は{product.category}として非常に完成度の高い製品だと感じました。",
-            f"総合的に評価すると、「{product.name}」は価格以上の価値を提供してくれる優秀な{product.category}です。",
-            f"様々な{product.category}を試してきましたが、「{product.name}」はその中でもトップクラスの満足度です。",
+            f"「{product.name}」は、{product.category}として非常に完成度の高い製品です。",
+            f"総合的に評価すると、「{product.name}」は価格に見合った価値を提供する優秀な{product.category}です。",
+            f"「{product.name}」は、{product.category}の中でも特に注目すべき製品の一つです。",
         ]
 
         html += f"<p>{random.choice(conclusions)}</p>\n"
 
-        html += f"<p>確かに価格は安くありませんが、その分品質やサポート体制がしっかりしており、長期的に見ればコストパフォーマンスに優れています。"
-        html += f"特に、{product.features[0] if product.features else '基本性能'}は期待以上で、日常的な使用において大きな満足感を得られるはずです。</p>\n"
+        html += f"<p>価格は決して安くありませんが、品質やサポート体制の充実を考慮すれば、長期的に見て十分な投資価値があります。"
+        html += f"特に、{product.features[0] if product.features else '基本性能'}は高く評価でき、日常的な使用において満足度の高い体験が期待できます。</p>\n"
 
-        html += f"<p>{product.category}の購入を検討している方で、品質と性能を重視するなら、「{product.name}」は間違いなく有力な選択肢の一つとなるでしょう。"
-        html += "ぜひ実際に試してみて、その良さを実感していただきたいと思います。</p>\n"
+        html += f"<p>{product.category}の購入を検討している方で、品質と性能を重視するなら、「{product.name}」は有力な選択肢となるでしょう。"
+        html += "製品の詳細については、公式ページや販売ページで最新の情報をご確認ください。</p>\n"
 
-        html += "<p><strong>最終評価: ★★★★☆ (4.5/5.0)</strong></p>\n"
+        html += "<p><strong>総合評価: 4.5 / 5.0</strong></p>\n"
 
         return html
 
@@ -397,34 +344,26 @@ class BlogPostGenerator:
         """完全な記事コンテンツを生成（2000-4000文字）"""
         content = ""
 
-        # 導入（400-600文字）
+        # 導入部分（400-600文字）
         content += f"<p>{self.generate_introduction(product)}</p>\n\n"
 
         # スペック表
         content += self.generate_spec_table(product)
         content += "\n"
 
-        # 開封・外観
-        content += self.generate_unboxing_section(product)
-        content += "\n"
-
         # 特徴（詳細説明付き）
         content += self.generate_features_section(product)
         content += "\n"
 
-        # 詳細な使用感
-        content += self.generate_detailed_usage_section(product)
-        content += "\n"
-
-        # 他製品との比較
-        content += self.generate_comparison_section(product)
+        # 使用シーンと活用方法
+        content += self.generate_usage_scenarios(product)
         content += "\n"
 
         # メリット・デメリット
         content += self.generate_pros_cons(product)
         content += "\n"
 
-        # こんな人におすすめ
+        # どのような方におすすめか
         content += self.generate_who_should_buy(product)
         content += "\n"
 
