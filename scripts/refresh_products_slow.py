@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 PA-APIレート制限を考慮した商品データ更新スクリプト
-10秒間隔でリクエストを送信し、安全に100個の商品を取得
-（PA-API 5.0の制限: 10秒に1リクエスト）
+12秒間隔でリクエストを送信し、安全に100個の商品を取得
+（PA-API 5.0の制限: 10秒に1リクエスト + 安全マージン2秒）
 """
 import os
 import sys
@@ -21,8 +21,8 @@ def main():
     """メイン処理"""
     print("=" * 70)
     print("PA-APIから現在販売中の商品を100個取得します")
-    print("レート制限を考慮し、10秒間隔でリクエストを送信します")
-    print("（PA-API 5.0の制限: 10秒に1リクエスト）")
+    print("レート制限を考慮し、12秒間隔でリクエストを送信します")
+    print("（PA-API 5.0の制限: 10秒に1リクエスト + 安全マージン2秒）")
     print("=" * 70)
 
     # 環境変数チェック
@@ -45,8 +45,8 @@ def main():
         print("✓ PA-APIクライアントの初期化に成功しました\n")
 
         # 商品を取得（レート制限を考慮）
-        print("商品検索を開始します（10秒間隔）...")
-        print("推定所要時間: 約17-20分\n")
+        print("商品検索を開始します（12秒間隔）...")
+        print("推定所要時間: 約20-25分\n")
 
         new_products = []
         categories = list(paapi_client.SEARCH_KEYWORDS.keys())
@@ -64,7 +64,7 @@ def main():
 
                 # リクエスト前に待機（最初のリクエストは待機不要）
                 if total_requests > 0:
-                    wait_time = 10.0  # PA-API 5.0の制限: 10秒に1リクエスト
+                    wait_time = 12.0  # PA-API 5.0の制限: 10秒 + 安全マージン2秒
                     elapsed = time.time() - start_time
                     expected_time = total_requests * wait_time
                     if elapsed < expected_time:

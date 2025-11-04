@@ -11,7 +11,7 @@ on:
 jobs:
   refresh-products:
     runs-on: ubuntu-latest
-    timeout-minutes: 30  # 最大30分でタイムアウト（10秒間隔で約20分必要）
+    timeout-minutes: 35  # 最大35分でタイムアウト（12秒間隔で約25分必要）
 
     steps:
       - name: チェックアウト
@@ -27,7 +27,7 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: 商品データを更新（10秒間隔）
+      - name: 商品データを更新（12秒間隔）
         env:
           AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
           AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
@@ -35,8 +35,8 @@ jobs:
           AMAZON_REGION: 'jp'
         run: |
           echo "開始時刻: $(date)"
-          echo "PA-API 5.0の制限: 10秒に1リクエスト"
-          echo "推定所要時間: 約17-20分"
+          echo "PA-API 5.0の制限: 10秒に1リクエスト + 安全マージン2秒"
+          echo "推定所要時間: 約20-25分"
           python scripts/refresh_products_slow.py
           echo "完了時刻: $(date)"
 
