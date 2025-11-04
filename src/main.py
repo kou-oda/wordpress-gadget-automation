@@ -52,6 +52,8 @@ def main():
                 use_paapi = False
         except Exception as e:
             print(f"警告: PA-APIの使用中にエラーが発生しました - {e}")
+            import traceback
+            traceback.print_exc()
             print("ローカルの商品データを使用します。")
             use_paapi = False
 

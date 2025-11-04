@@ -50,12 +50,7 @@ jobs:
         run: |
           python src/main.py
 
-      - name: 投稿結果の通知
-        if: always()
+      - name: 投稿結果の確認
+        if: success()
         run: |
-          if [ $? -eq 0 ]; then
-            echo "✓ 記事の投稿に成功しました"
-          else
-            echo "✗ 記事の投稿に失敗しました"
-            exit 1
-          fi
+          echo "✓ 記事の投稿に成功しました"

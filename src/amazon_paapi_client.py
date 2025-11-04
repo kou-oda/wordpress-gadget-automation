@@ -95,11 +95,18 @@ class AmazonPAAPIClient:
 
     def __init__(self):
         """初期化"""
+        print("PA-API クライアントを初期化中...")
+
         # 環境変数からPA-APIの認証情報を取得
         self.access_key = os.getenv('AMAZON_ACCESS_KEY')
         self.secret_key = os.getenv('AMAZON_SECRET_KEY')
         self.associate_tag = os.getenv('AMAZON_ASSOCIATE_TAG')
         self.region = os.getenv('AMAZON_REGION', 'jp')  # デフォルトは日本
+
+        print(f"リージョン: {self.region}")
+        print(f"Access Key設定: {'有' if self.access_key else '無'}")
+        print(f"Secret Key設定: {'有' if self.secret_key else '無'}")
+        print(f"Associate Tag設定: {'有' if self.associate_tag else '無'}")
 
         if not all([self.access_key, self.secret_key, self.associate_tag]):
             raise ValueError(
@@ -119,14 +126,23 @@ class AmazonPAAPIClient:
             'es': 'ES'
         }
         country = country_map.get(self.region.lower(), 'JP')
+        print(f"使用する国コード: {country}")
 
         # PA-API クライアント初期化
-        self.api = AmazonApi(
-            self.access_key,
-            self.secret_key,
-            self.associate_tag,
-            country
-        )
+        try:
+            print("AmazonApiクラスをインスタンス化中...")
+            self.api = AmazonApi(
+                self.access_key,
+                self.secret_key,
+                self.associate_tag,
+                country
+            )
+            print("✓ PA-API クライアントの初期化に成功しました")
+        except Exception as e:
+            print(f"✗ PA-API クライアントの初期化に失敗: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
 
     def is_major_brand(self, product_title: str, brand: Optional[str] = None) -> bool:
         """
