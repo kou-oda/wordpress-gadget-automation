@@ -81,6 +81,24 @@ def main():
         category_id = None
         tag_ids = []
 
+    # アイキャッチ画像のアップロード
+    featured_media_id = None
+    if product.image_url:
+        try:
+            print("アイキャッチ画像をアップロード中...")
+            # ファイル名を生成（商品名から安全なファイル名を作成）
+            import re
+            safe_name = re.sub(r'[^\w\s-]', '', product.name)
+            safe_name = re.sub(r'[-\s]+', '-', safe_name)
+            filename = f"{safe_name}.jpg"
+
+            media_data = wp_client.upload_media(product.image_url, filename)
+            featured_media_id = media_data.get('id')
+            print(f"✓ アイキャッチ画像をアップロードしました (ID: {featured_media_id})")
+        except Exception as e:
+            print(f"警告: アイキャッチ画像のアップロードに失敗しました - {e}")
+            # 画像アップロードに失敗しても記事投稿は続行
+
     # 記事を投稿
     try:
         post_data = wp_client.create_post(
@@ -88,7 +106,8 @@ def main():
             content=content,
             status=post_status,
             categories=[category_id] if category_id else None,
-            tags=tag_ids if tag_ids else None
+            tags=tag_ids if tag_ids else None,
+            featured_media=featured_media_id
         )
 
         post_url = post_data.get('link', '')
@@ -99,6 +118,8 @@ def main():
         print(f"投稿ID: {post_id}")
         print(f"URL: {post_url}")
         print(f"ステータス: {post_status}")
+        if featured_media_id:
+            print(f"アイキャッチ画像: 設定済み")
         print("=" * 50)
 
         return 0

@@ -111,6 +111,7 @@ def create_sample_products() -> List[GadgetProduct]:
             asin="B0B4DQPH5K",
             url="https://www.amazon.co.jp/dp/B0B4DQPH5K",
             price="¥14,800",
+            image_url="https://m.media-amazon.com/images/I/61ni3t1ryQL._AC_SL1500_.jpg",
             category="PC周辺機器",
             description="高精度センサーと快適なエルゴノミクスデザインを備えたプレミアムワイヤレスマウス",
             features=[
@@ -125,6 +126,7 @@ def create_sample_products() -> List[GadgetProduct]:
             asin="B082TSSZ3W",
             url="https://www.amazon.co.jp/dp/B082TSSZ3W",
             price="¥36,850",
+            image_url="https://m.media-amazon.com/images/I/61dQWC2rqrL._AC_SL1500_.jpg",
             category="PC周辺機器",
             description="プロフェッショナル向けコンパクトキーボード、静音モデル",
             features=[
@@ -139,6 +141,7 @@ def create_sample_products() -> List[GadgetProduct]:
             asin="B08GLX7TNT",
             url="https://www.amazon.co.jp/dp/B08GLX7TNT",
             price="¥12,980",
+            image_url="https://m.media-amazon.com/images/I/81i87RaT+bL._AC_SL1500_.jpg",
             category="PCパーツ",
             description="PCIe 4.0対応の超高速SSD",
             features=[
@@ -153,6 +156,7 @@ def create_sample_products() -> List[GadgetProduct]:
             asin="B09Q81KB2P",
             url="https://www.amazon.co.jp/dp/B09Q81KB2P",
             price="¥16,800",
+            image_url="https://m.media-amazon.com/images/I/61nMFVs9lDL._AC_SL1200_.jpg",
             category="PCパーツ",
             description="次世代DDR5メモリで高速処理を実現",
             features=[
@@ -167,6 +171,7 @@ def create_sample_products() -> List[GadgetProduct]:
             asin="B09SG31NPT",
             url="https://www.amazon.co.jp/dp/B09SG31NPT",
             price="¥7,990",
+            image_url="https://m.media-amazon.com/images/I/61lNhK8WDSL._AC_SL1500_.jpg",
             category="PC周辺機器",
             description="充電器とモバイルバッテリーの2in1",
             features=[
@@ -181,6 +186,7 @@ def create_sample_products() -> List[GadgetProduct]:
             asin="B07VWLCQ63",
             url="https://www.amazon.co.jp/dp/B07VWLCQ63",
             price="¥13,900",
+            image_url="https://m.media-amazon.com/images/I/61W7NVQfxkL._AC_SL1500_.jpg",
             category="PC周辺機器",
             description="デスク環境を快適にするモニター掛け式ライト",
             features=[

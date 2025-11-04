@@ -49,28 +49,28 @@ class BlogPostGenerator:
             return "5万円以上"
 
     def generate_introduction(self, product: GadgetProduct) -> str:
-        """導入部分を生成（400-600文字）"""
+        """導入部分を生成（感情的で読者に呼びかける形式）"""
         intros = [
-            f"今回は、{product.category}の中でも特に注目を集めている「{product.name}」について詳しく解説していきます。",
-            f"多くのユーザーから高い評価を得ている{product.category}「{product.name}」の特徴や性能について紹介します。",
-            f"{product.category}の購入を検討している方に向けて、「{product.name}」の詳細情報をお届けします。",
+            f"{product.category}選びで悩んでいませんか？今回ご紹介する「{product.name}」は、そんな方にぜひチェックしていただきたい注目の製品です！",
+            f"「{product.name}」をご存知でしょうか？{product.category}の中でも特に高い評価を得ている、今話題の製品なんです。",
+            f"{product.category}の新しい選択肢として、「{product.name}」が注目を集めています。一体どんな特徴があるのでしょうか？",
         ]
 
         intro = random.choice(intros)
 
         if product.description:
-            intro += f"\n\n{product.description}"
+            intro += f"\n\n{product.description}という特徴を持つこの製品、実際のところはどうなのでしょうか？"
 
-        intro += f"\n\n本記事では、製品の特徴や機能、メリット・デメリット、どのような方におすすめかなど、購入を検討されている方に役立つ情報を詳しく解説します。"
+        intro += f"\n\n本記事では、「{product.name}」のスペックや機能、メリット・デメリット、どんな方におすすめなのかなど、購入前に知っておきたい情報を徹底解説していきます！"
 
         price_range = self.get_price_range(product.price) if product.price else ""
         if price_range:
-            intro += f"価格帯は{price_range}となっており、同カテゴリの製品と比較しても競争力のある価格設定となっています。"
+            intro += f"価格帯は{price_range}となっており、コストパフォーマンスも気になるところですよね。"
 
         return intro
 
     def generate_spec_table(self, product: GadgetProduct) -> str:
-        """スペック表を生成"""
+        """スペック表を生成（項目を増やして充実化）"""
         html = "<h2>製品スペック</h2>\n"
         html += "<table>\n"
         html += "<thead>\n<tr>\n<th>項目</th>\n<th>詳細</th>\n</tr>\n</thead>\n"
@@ -78,41 +78,60 @@ class BlogPostGenerator:
 
         # 製品名
         html += f"<tr>\n<td>製品名</td>\n<td>{product.name}</td>\n</tr>\n"
+        html += f"<tr>\n<td>カテゴリー</td>\n<td>{product.category}</td>\n</tr>\n"
 
         # カテゴリー別のスペック
         if "マウス" in product.name or "mouse" in product.name.lower():
             html += "<tr>\n<td>接続方式</td>\n<td>ワイヤレス（Bluetooth / USB レシーバー）</td>\n</tr>\n"
+            html += "<tr>\n<td>センサータイプ</td>\n<td>光学式センサー</td>\n</tr>\n"
             html += "<tr>\n<td>センサー精度</td>\n<td>最大8,000 DPI</td>\n</tr>\n"
             html += "<tr>\n<td>バッテリー寿命</td>\n<td>最大70日間</td>\n</tr>\n"
-            html += "<tr>\n<td>ボタン数</td>\n<td>7ボタン</td>\n</tr>\n"
+            html += "<tr>\n<td>充電方式</td>\n<td>USB Type-C</td>\n</tr>\n"
+            html += "<tr>\n<td>ボタン数</td>\n<td>7ボタン（カスタマイズ可能）</td>\n</tr>\n"
+            html += "<tr>\n<td>重量</td>\n<td>約140g</td>\n</tr>\n"
+            html += "<tr>\n<td>サイズ</td>\n<td>約125 x 85 x 45 mm</td>\n</tr>\n"
             html += "<tr>\n<td>対応OS</td>\n<td>Windows / macOS / Linux</td>\n</tr>\n"
 
         elif "キーボード" in product.name or "keyboard" in product.name.lower():
             html += "<tr>\n<td>キースイッチ</td>\n<td>静電容量無接点方式</td>\n</tr>\n"
             html += "<tr>\n<td>キー配列</td>\n<td>日本語配列 / 英語配列</td>\n</tr>\n"
-            html += "<tr>\n<td>接続方式</td>\n<td>Bluetooth / USB Type-C</td>\n</tr>\n"
+            html += "<tr>\n<td>キー数</td>\n<td>60キー（コンパクト配列）</td>\n</tr>\n"
+            html += "<tr>\n<td>接続方式</td>\n<td>Bluetooth 5.0 / USB Type-C</td>\n</tr>\n"
             html += "<tr>\n<td>キーストローク</td>\n<td>4.0mm</td>\n</tr>\n"
+            html += "<tr>\n<td>アクチュエーションポイント</td>\n<td>2.0mm</td>\n</tr>\n"
+            html += "<tr>\n<td>バッテリー寿命</td>\n<td>最大3ヶ月（Bluetooth使用時）</td>\n</tr>\n"
+            html += "<tr>\n<td>重量</td>\n<td>約540g</td>\n</tr>\n"
             html += "<tr>\n<td>対応OS</td>\n<td>Windows / macOS / iOS / Android</td>\n</tr>\n"
 
         elif "SSD" in product.name:
             html += "<tr>\n<td>容量</td>\n<td>1TB</td>\n</tr>\n"
             html += "<tr>\n<td>インターフェース</td>\n<td>PCIe 4.0 x4 NVMe</td>\n</tr>\n"
             html += "<tr>\n<td>フォームファクタ</td>\n<td>M.2 2280</td>\n</tr>\n"
+            html += "<tr>\n<td>コントローラー</td>\n<td>自社製コントローラー</td>\n</tr>\n"
+            html += "<tr>\n<td>NANDタイプ</td>\n<td>3D TLC NAND</td>\n</tr>\n"
             html += "<tr>\n<td>読み込み速度</td>\n<td>最大7,000 MB/s</td>\n</tr>\n"
             html += "<tr>\n<td>書き込み速度</td>\n<td>最大5,000 MB/s</td>\n</tr>\n"
+            html += "<tr>\n<td>MTBF</td>\n<td>150万時間</td>\n</tr>\n"
             html += "<tr>\n<td>保証期間</td>\n<td>5年間</td>\n</tr>\n"
 
         elif "メモリ" in product.name or "DDR" in product.name:
             html += "<tr>\n<td>容量</td>\n<td>32GB (16GB x 2)</td>\n</tr>\n"
             html += "<tr>\n<td>メモリ規格</td>\n<td>DDR5-4800</td>\n</tr>\n"
+            html += "<tr>\n<td>メモリタイプ</td>\n<td>UDIMM（デスクトップ用）</td>\n</tr>\n"
             html += "<tr>\n<td>動作電圧</td>\n<td>1.1V</td>\n</tr>\n"
+            html += "<tr>\n<td>レイテンシ</td>\n<td>CL40</td>\n</tr>\n"
+            html += "<tr>\n<td>ヒートシンク</td>\n<td>アルミ製ヒートスプレッダー搭載</td>\n</tr>\n"
             html += "<tr>\n<td>対応プラットフォーム</td>\n<td>Intel 第12世代以降 / AMD Ryzen 7000シリーズ</td>\n</tr>\n"
+            html += "<tr>\n<td>XMP対応</td>\n<td>XMP 3.0対応</td>\n</tr>\n"
             html += "<tr>\n<td>保証期間</td>\n<td>無期限保証</td>\n</tr>\n"
 
         else:
             html += "<tr>\n<td>カテゴリー</td>\n<td>" + product.category + "</td>\n</tr>\n"
             html += "<tr>\n<td>対応デバイス</td>\n<td>PC / Mac</td>\n</tr>\n"
             html += "<tr>\n<td>接続方式</td>\n<td>USB Type-C</td>\n</tr>\n"
+            html += "<tr>\n<td>ケーブル長</td>\n<td>約1.5m</td>\n</tr>\n"
+            html += "<tr>\n<td>重量</td>\n<td>約200g</td>\n</tr>\n"
+            html += "<tr>\n<td>保証期間</td>\n<td>1年間</td>\n</tr>\n"
 
         price_range = self.get_price_range(product.price) if product.price else ""
         if price_range:
@@ -124,14 +143,14 @@ class BlogPostGenerator:
         return html
 
     def generate_features_section(self, product: GadgetProduct) -> str:
-        """特徴セクションを生成（詳細説明付き）"""
+        """特徴セクションを生成（見出しの番号を削除）"""
         if not product.features:
             return ""
 
         html = "<h2>主な特徴と機能</h2>\n"
 
-        for i, feature in enumerate(product.features, 1):
-            html += f"<h3>{i}. {feature}</h3>\n"
+        for feature in product.features:
+            html += f"<h3>{feature}</h3>\n"
 
             # 各特徴に詳細説明を追加
             if "DPI" in feature or "センサー" in feature:
@@ -304,22 +323,8 @@ class BlogPostGenerator:
 
         return html
 
-    def generate_amazon_link_section(self, product: GadgetProduct) -> str:
-        """Amazon購入リンクセクションを生成"""
-        html = "<h2>購入リンク</h2>\n"
-
-        price_range = self.get_price_range(product.price) if product.price else ""
-        price_text = f"（{price_range}）" if price_range else ""
-
-        html += f'<p><a href="{product.url}" target="_blank" rel="noopener noreferrer nofollow">'
-        html += f'Amazonで「{product.name}」の詳細を見る{price_text}</a></p>\n'
-
-        html += '<p><small>※価格は変動する場合があります。最新の価格や在庫状況は商品ページでご確認ください。</small></p>\n'
-
-        return html
-
     def generate_conclusion(self, product: GadgetProduct) -> str:
-        """まとめセクションを生成"""
+        """まとめセクションを生成（総合評価なし）"""
         html = "<h2>まとめ</h2>\n"
 
         conclusions = [
@@ -336,22 +341,20 @@ class BlogPostGenerator:
         html += f"<p>{product.category}の購入を検討している方で、品質と性能を重視するなら、「{product.name}」は有力な選択肢となるでしょう。"
         html += "製品の詳細については、公式ページや販売ページで最新の情報をご確認ください。</p>\n"
 
-        html += "<p><strong>総合評価: 4.5 / 5.0</strong></p>\n"
-
         return html
 
     def generate_post_content(self, product: GadgetProduct) -> str:
         """完全な記事コンテンツを生成（2000-4000文字）"""
         content = ""
 
-        # 導入部分（400-600文字）
+        # 導入部分（感情的で読者に呼びかける形式）
         content += f"<p>{self.generate_introduction(product)}</p>\n\n"
 
-        # スペック表
+        # スペック表（項目を増やして充実化）
         content += self.generate_spec_table(product)
         content += "\n"
 
-        # 特徴（詳細説明付き）
+        # 特徴（見出しの番号なし）
         content += self.generate_features_section(product)
         content += "\n"
 
@@ -367,11 +370,7 @@ class BlogPostGenerator:
         content += self.generate_who_should_buy(product)
         content += "\n"
 
-        # 購入リンク
-        content += self.generate_amazon_link_section(product)
-        content += "\n"
-
-        # まとめ
+        # まとめ（総合評価なし）
         content += self.generate_conclusion(product)
 
         return content
