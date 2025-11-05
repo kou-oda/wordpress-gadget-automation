@@ -1,4 +1,4 @@
-name: Scheduled Twitter Post
+name: scheduled twitter post
 
 on:
   # 1日3回実行（JST 10:00、15:00、20:00）
@@ -8,6 +8,11 @@ on:
     - cron: '0 11 * * *'  # UTC 11:00 = JST 20:00
   # 手動実行も可能
   workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'テストモード（任意）'
+        required: false
+        default: 'false'
 
 jobs:
   post-to-twitter:

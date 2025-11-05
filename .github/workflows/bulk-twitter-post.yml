@@ -1,4 +1,4 @@
-name: Bulk Twitter Post (Every 3 Days)
+name: bulk twitter post
 
 on:
   # 3日に1回実行（JST 9:00）
@@ -6,6 +6,11 @@ on:
     - cron: '0 0 */3 * *'   # UTC 0:00 = JST 9:00、3日ごと
   # 手動実行も可能
   workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'テストモード（任意）'
+        required: false
+        default: 'false'
 
 jobs:
   bulk-post-to-twitter:
