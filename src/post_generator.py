@@ -17,12 +17,12 @@ class BlogPostGenerator:
         ]
 
     def generate_title(self, product: GadgetProduct) -> str:
-        """SEO最適化された記事タイトルを生成（商品名は最大25文字）"""
+        """SEO最適化された記事タイトルを生成"""
         import datetime
         current_year = datetime.datetime.now().year
 
-        # 商品名を最大25文字に短縮
-        short_name = product.name[:25] + "..." if len(product.name) > 25 else product.name
+        # 商品名は既に短縮されているのでそのまま使用
+        product_name = product.name
 
         # ブランド名を抽出（商品名の最初の単語）
         brand = product.name.split()[0] if product.name else ""
@@ -30,13 +30,13 @@ class BlogPostGenerator:
         # SEO最適化されたテンプレート
         # 検索意図に合わせた構造: 「商品名 + 検索されやすいキーワード + 年」
         templates = [
-            f"【{current_year}年版】{short_name} レビュー｜{product.category}の実力を徹底検証",
-            f"{short_name} 口コミ・評判まとめ｜{current_year}年最新レビュー",
-            f"【{random.choice(self.review_templates)}】{short_name}｜{product.category}おすすめモデル",
-            f"{short_name} 使用レビュー｜メリット・デメリットを正直に評価【{current_year}】",
-            f"{brand} {short_name} レビュー｜{product.category}の選び方完全ガイド",
-            f"【実機レビュー】{short_name}は買い？{product.category}として徹底解説",
-            f"{short_name} 性能比較レビュー｜{current_year}年版{product.category}の決定版",
+            f"【{current_year}年版】{product_name} レビュー｜{product.category}の実力を徹底検証",
+            f"{product_name} 口コミ・評判まとめ｜{current_year}年最新レビュー",
+            f"【{random.choice(self.review_templates)}】{product_name}｜{product.category}おすすめモデル",
+            f"{product_name} 使用レビュー｜メリット・デメリットを正直に評価【{current_year}】",
+            f"{brand} {product_name} レビュー｜{product.category}の選び方完全ガイド",
+            f"【実機レビュー】{product_name}は買い？{product.category}として徹底解説",
+            f"{product_name} 性能比較レビュー｜{current_year}年版{product.category}の決定版",
         ]
         return random.choice(templates)
 

@@ -4,6 +4,86 @@ from typing import Dict, List, Optional
 from dataclasses import dataclass, asdict
 import os
 from datetime import datetime, timedelta
+import re
+
+
+def shorten_product_name(name: str, category: str) -> str:
+    """
+    商品名を短縮する
+
+    PCパーツ: 企業名+製品カテゴリー (例: Crucial SSD, Samsung メモリ)
+    PC周辺機器: 企業名+製品名 (例: Logicool マウス, HHKB キーボード)
+
+    Args:
+        name: 元の商品名
+        category: 商品カテゴリー
+
+    Returns:
+        短縮された商品名
+    """
+    # PCパーツのカテゴリー
+    pc_parts_categories = ["SSD", "メモリ", "グラフィックボード", "CPU", "マザーボード", "電源ユニット"]
+
+    # 主要ブランド名のリスト
+    major_brands = [
+        "Logitech", "Logicool", "Microsoft", "Samsung", "Crucial", "Anker", "BenQ",
+        "HHKB", "Corsair", "Razer", "ASUS", "Dell", "HP", "Lenovo", "Sony",
+        "Kingston", "Western Digital", "WD", "SanDisk", "Intel", "AMD", "NVIDIA",
+        "Seagate", "LG", "Acer", "MSI", "Gigabyte", "ASRock", "EVGA",
+        "HyperX", "G.Skill", "Thermaltake", "Cooler Master", "NZXT"
+    ]
+
+    # ブランド名を抽出（大文字小文字を無視）
+    brand = None
+    name_lower = name.lower()
+    for b in major_brands:
+        if b.lower() in name_lower:
+            # 元の商品名からブランド名の部分を抽出（大文字小文字を保持）
+            match = re.search(re.escape(b), name, re.IGNORECASE)
+            if match:
+                brand = match.group(0)
+                break
+
+    # ブランド名が見つからない場合は最初の単語を使用
+    if not brand:
+        brand = name.split()[0] if name.split() else name[:10]
+
+    # PCパーツの場合: 企業名+製品カテゴリー
+    is_pc_part = any(part in category or part in name for part in pc_parts_categories)
+
+    if is_pc_part:
+        # カテゴリー名を抽出
+        for part_category in pc_parts_categories:
+            if part_category in name or part_category in category:
+                return f"{brand} {part_category}"
+        # カテゴリーが見つからない場合はカテゴリー名を使用
+        return f"{brand} {category}"
+
+    # PC周辺機器の場合: 企業名+製品タイプ
+    # 製品タイプのキーワード
+    product_types = {
+        "マウス": ["マウス", "mouse"],
+        "キーボード": ["キーボード", "keyboard"],
+        "モニター": ["モニター", "ディスプレイ", "monitor", "display"],
+        "ヘッドセット": ["ヘッドセット", "headset"],
+        "ヘッドホン": ["ヘッドホン", "headphone"],
+        "イヤホン": ["イヤホン", "earphone"],
+        "スピーカー": ["スピーカー", "speaker"],
+        "Webカメラ": ["Webカメラ", "webcam", "カメラ"],
+        "マイク": ["マイク", "microphone"],
+        "充電器": ["充電器", "charger"],
+        "ケーブル": ["ケーブル", "cable"],
+        "ハブ": ["ハブ", "hub"],
+    }
+
+    # 製品タイプを検出
+    for product_type, keywords in product_types.items():
+        for keyword in keywords:
+            if keyword.lower() in name_lower or keyword.lower() in category.lower():
+                return f"{brand} {product_type}"
+
+    # 製品タイプが見つからない場合はカテゴリー名を使用
+    return f"{brand} {category}"
 
 
 @dataclass

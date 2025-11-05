@@ -256,9 +256,13 @@ class AmazonPAAPIClient:
                         # 説明文生成（ブランド名とキーワードから）
                         description = f"{brand or ''}の{keyword}として高い評価を得ている製品"
 
+                        # 商品名を短縮（記事全体で読みやすくするため）
+                        from amazon_scraper import shorten_product_name
+                        short_name = shorten_product_name(title, category)
+
                         # GadgetProductオブジェクト作成
                         product = GadgetProduct(
-                            name=title,
+                            name=short_name,  # 短縮された商品名を使用
                             asin=asin,
                             url=f"https://www.amazon.co.jp/dp/{asin}?tag={self.associate_tag}",
                             price=price,
