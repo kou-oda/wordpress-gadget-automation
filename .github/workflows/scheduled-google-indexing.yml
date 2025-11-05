@@ -1,0 +1,128 @@
+name: Scheduled Google Indexing
+
+on:
+  # 1日1回実行（JST 9:00）
+  schedule:
+    - cron: '0 0 * * *'   # UTC 0:00 = JST 9:00
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  submit-to-google:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 依存関係のインストール
+        run: |
+          pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client requests
+
+      - name: 公開済み記事をGoogle Indexing APIに送信
+        env:
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python3 << 'EOF'
+          import requests
+          import json
+          import os
+          import time
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+
+          # Google Indexing APIレート制限対策
+          # - 1日200リクエスト制限
+          # - 安全マージンとして1日10件に制限
+          MAX_REQUESTS_PER_DAY = 10
+          REQUEST_INTERVAL = 2  # リクエスト間隔（秒）
+
+          # WordPress REST APIから公開済み記事を取得（最新10件のみ）
+          wp_url = os.environ['WP_SITE_URL']
+          response = requests.get(f"{wp_url}/wp-json/wp/v2/posts?status=publish&per_page={MAX_REQUESTS_PER_DAY}&orderby=date")
+
+          if response.status_code != 200:
+              print(f"❌ WordPress記事の取得に失敗: {response.status_code}")
+              exit(1)
+
+          posts = response.json()
+
+          if not posts or len(posts) == 0:
+              print("❌ 公開済み記事が見つかりませんでした")
+              exit(1)
+
+          print(f"✓ {len(posts)}件の公開済み記事を取得しました（最新{MAX_REQUESTS_PER_DAY}件）")
+          print(f"レート制限対策: {REQUEST_INTERVAL}秒間隔で送信します")
+
+          # Google Indexing API認証
+          try:
+              credentials_json = os.environ['GOOGLE_SERVICE_ACCOUNT_JSON']
+              credentials_info = json.loads(credentials_json)
+
+              credentials = service_account.Credentials.from_service_account_info(
+                  credentials_info,
+                  scopes=['https://www.googleapis.com/auth/indexing']
+              )
+
+              service = build('indexing', 'v3', credentials=credentials)
+              print("✓ Google Indexing API認証成功")
+
+          except Exception as e:
+              print(f"❌ Google Indexing API認証に失敗: {e}")
+              exit(1)
+
+          # 各記事をGoogle Indexing APIに送信（レート制限対策）
+          success_count = 0
+          fail_count = 0
+
+          for i, post in enumerate(posts):
+              url = post['link']
+              title = post['title']['rendered']
+
+              try:
+                  # URL更新通知
+                  request_body = {
+                      'url': url,
+                      'type': 'URL_UPDATED'
+                  }
+
+                  response = service.urlNotifications().publish(body=request_body).execute()
+                  print(f"✓ [{i+1}/{len(posts)}] 送信成功: {title}")
+                  print(f"  URL: {url}")
+                  success_count += 1
+
+                  # レート制限対策: 次のリクエストまで待機
+                  if i < len(posts) - 1:
+                      time.sleep(REQUEST_INTERVAL)
+
+              except Exception as e:
+                  print(f"✗ [{i+1}/{len(posts)}] 送信失敗: {title}")
+                  print(f"  エラー: {e}")
+                  fail_count += 1
+
+                  # エラー時も待機
+                  if i < len(posts) - 1:
+                      time.sleep(REQUEST_INTERVAL)
+
+          # 結果サマリー
+          print("\n" + "=" * 50)
+          print("Google Indexing API 送信結果")
+          print("=" * 50)
+          print(f"✓ 成功: {success_count}件")
+          print(f"✗ 失敗: {fail_count}件")
+          print(f"レート制限: 1日{MAX_REQUESTS_PER_DAY}件まで（200/day制限の安全マージン）")
+
+          if success_count == 0:
+              exit(1)
+          EOF
+
+      - name: 送信結果
+        if: success()
+        run: |
+          echo "✓ Google Indexing API送信が完了しました"

@@ -1,0 +1,157 @@
+name: Scheduled Twitter Post
+
+on:
+  # 1日3回実行（JST 10:00、15:00、20:00）
+  schedule:
+    - cron: '0 1 * * *'   # UTC 1:00 = JST 10:00
+    - cron: '0 6 * * *'   # UTC 6:00 = JST 15:00
+    - cron: '0 11 * * *'  # UTC 11:00 = JST 20:00
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  post-to-twitter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 依存関係のインストール
+        run: |
+          pip install tweepy requests
+
+      - name: 公開済み記事を取得してTwitterに投稿
+        env:
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL }}
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+        run: |
+          python3 << 'EOF'
+          import tweepy
+          import requests
+          import os
+          import random
+          import json
+          from datetime import datetime, timedelta
+
+          # WordPress REST APIから公開済み記事を取得
+          wp_url = os.environ['WP_SITE_URL']
+          response = requests.get(f"{wp_url}/wp-json/wp/v2/posts?status=publish&per_page=50&orderby=date")
+
+          if response.status_code != 200:
+              print(f"❌ WordPress記事の取得に失敗: {response.status_code}")
+              exit(1)
+
+          all_posts = response.json()
+
+          if not all_posts or len(all_posts) == 0:
+              print("❌ 公開済み記事が見つかりませんでした")
+              exit(1)
+
+          print(f"✓ {len(all_posts)}件の公開済み記事を取得しました")
+
+          # 過去10投稿の履歴を取得（Twitter APIから）
+          try:
+              client = tweepy.Client(
+                  consumer_key=os.environ['TWITTER_API_KEY'],
+                  consumer_secret=os.environ['TWITTER_API_SECRET'],
+                  access_token=os.environ['TWITTER_ACCESS_TOKEN'],
+                  access_token_secret=os.environ['TWITTER_ACCESS_SECRET']
+              )
+
+              # 自分のユーザーIDを取得
+              me = client.get_me()
+              user_id = me.data.id
+
+              # 過去10ツイートを取得
+              recent_tweets = client.get_users_tweets(
+                  id=user_id,
+                  max_results=10,
+                  tweet_fields=['created_at', 'text']
+              )
+
+              # 過去10投稿に含まれるURLを抽出
+              posted_urls = set()
+              if recent_tweets.data:
+                  for tweet in recent_tweets.data:
+                      # ツイートからURLを抽出
+                      import re
+                      urls = re.findall(r'https?://[^\s]+', tweet.text)
+                      posted_urls.update(urls)
+
+              print(f"✓ 過去10投稿のURL: {len(posted_urls)}件")
+
+          except Exception as e:
+              print(f"⚠ 過去ツイートの取得に失敗: {e}")
+              posted_urls = set()
+
+          # 過去10投稿に含まれていない記事を選択
+          available_posts = []
+          for post in all_posts:
+              post_url = post['link']
+              if post_url not in posted_urls:
+                  available_posts.append(post)
+
+          if not available_posts:
+              print("⚠ 投稿可能な新しい記事がありません（過去10投稿と重複）")
+              # 全記事からランダム選択（重複を許容）
+              available_posts = all_posts
+
+          print(f"✓ 投稿可能な記事: {len(available_posts)}件")
+
+          # ランダムに1記事選択
+          selected_post = random.choice(available_posts)
+          title = selected_post['title']['rendered']
+          link = selected_post['link']
+
+          print(f"選択された記事: {title}")
+          print(f"URL: {link}")
+
+          # ツイート内容を生成
+          tweet_text = f"""🔥 おすすめガジェット！
+
+{title}
+
+詳細レビューはこちら👇
+{link}
+
+#ガジェット #レビュー #Amazon #テックレビュー
+"""
+
+          # 280文字制限を考慮
+          if len(tweet_text) > 280:
+              # タイトルを短縮
+              max_title_length = 280 - len(tweet_text) + len(title) - 10
+              short_title = title[:max_title_length] + "..."
+              tweet_text = f"""🔥 おすすめガジェット！
+
+{short_title}
+
+詳細はこちら👇
+{link}
+
+#ガジェット #レビュー #Amazon
+"""
+
+          # 投稿
+          try:
+              response = client.create_tweet(text=tweet_text)
+              print(f"✓ ツイート投稿成功: {response.data['id']}")
+              print(f"ツイートURL: https://twitter.com/user/status/{response.data['id']}")
+          except Exception as e:
+              print(f"❌ ツイート投稿に失敗: {e}")
+              exit(1)
+          EOF
+
+      - name: 投稿結果
+        if: success()
+        run: |
+          echo "✓ Twitter投稿が完了しました"
