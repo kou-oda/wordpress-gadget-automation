@@ -250,7 +250,8 @@ class AmazonPAAPIClient:
                         if hasattr(item, 'item_info') and item.item_info:
                             if hasattr(item.item_info, 'features') and item.item_info.features:
                                 if hasattr(item.item_info.features, 'display_values'):
-                                    features = [f.display_value for f in item.item_info.features.display_values[:5]]
+                                    # display_valuesは既に文字列のリストなので、そのまま使用
+                                    features = item.item_info.features.display_values[:5]
 
                         # 説明文生成（ブランド名とキーワードから）
                         description = f"{brand or ''}の{keyword}として高い評価を得ている製品"
