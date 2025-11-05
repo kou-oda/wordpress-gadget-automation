@@ -7,16 +7,22 @@ from datetime import datetime, timedelta
 import re
 
 
-def shorten_product_name(name: str, category: str) -> str:
+def shorten_product_name(name: str, category: str, for_title: bool = True) -> str:
     """
     商品名を短縮する
 
-    PCパーツ: 企業名+製品カテゴリー (例: Crucial SSD, Samsung メモリ)
-    PC周辺機器: 企業名+製品名 (例: Logicool マウス, HHKB キーボード)
+    タイトル用（for_title=True）:
+    - PCパーツ: 企業名+製品カテゴリー (例: Crucial SSD, Samsung メモリ)
+    - PC周辺機器: 企業名+製品カテゴリー (例: Logicool マウス, HHKB キーボード)
+
+    本文用（for_title=False）:
+    - PCパーツ: 企業名+製品名 (例: Crucial BX500, Samsung DDR4-3200)
+    - PC周辺機器: 企業名+製品名 (例: Logicool G304, HHKB Professional)
 
     Args:
         name: 元の商品名
         category: 商品カテゴリー
+        for_title: タイトル用かどうか（Trueでカテゴリー名、Falseで製品名）
 
     Returns:
         短縮された商品名
@@ -48,7 +54,27 @@ def shorten_product_name(name: str, category: str) -> str:
     if not brand:
         brand = name.split()[0] if name.split() else name[:10]
 
-    # PCパーツの場合: 企業名+製品カテゴリー
+    # 本文用の場合: 企業名+製品名（最大30文字）
+    if not for_title:
+        # ブランド名の後ろの部分を抽出
+        brand_pattern = re.escape(brand)
+        match = re.search(brand_pattern, name, re.IGNORECASE)
+        if match:
+            # ブランド名の後の部分を取得
+            after_brand = name[match.end():].strip()
+            # 不要な文字を削除（括弧、記号など）
+            after_brand = re.sub(r'[\(\[].*?[\)\]]', '', after_brand).strip()
+            # 単語を分割して最初の2-3語を取得
+            words = after_brand.split()[:3]
+            product_model = ' '.join(words)
+            # 最大30文字に制限
+            if len(product_model) > 30:
+                product_model = product_model[:30]
+            if product_model:
+                return f"{brand} {product_model}"
+
+    # タイトル用: 企業名+製品カテゴリー
+    # PCパーツの場合
     is_pc_part = any(part in category or part in name for part in pc_parts_categories)
 
     if is_pc_part:
@@ -89,7 +115,7 @@ def shorten_product_name(name: str, category: str) -> str:
 @dataclass
 class GadgetProduct:
     """ガジェット商品情報"""
-    name: str
+    name: str  # タイトル用の短い商品名（企業名+製品カテゴリー）
     asin: str  # Amazon Standard Identification Number
     url: str
     price: Optional[str] = None
@@ -98,6 +124,7 @@ class GadgetProduct:
     category: str = "PC周辺機器"
     features: Optional[List[str]] = None
     rating: Optional[float] = None
+    full_name: Optional[str] = None  # 本文用の詳細な商品名（企業名+製品名）
 
     def to_dict(self) -> Dict:
         return asdict(self)

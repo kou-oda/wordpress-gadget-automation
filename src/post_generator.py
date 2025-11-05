@@ -69,10 +69,13 @@ class BlogPostGenerator:
 
     def generate_introduction(self, product: GadgetProduct) -> str:
         """導入部分を生成（感情的で読者に呼びかける形式）"""
+        # 本文では詳細な商品名を使用
+        display_name = product.full_name if product.full_name else product.name
+
         intros = [
-            f"{product.category}選びで悩んでいませんか？今回ご紹介する「{product.name}」は、そんな方にぜひチェックしていただきたい注目の製品です！",
-            f"「{product.name}」をご存知でしょうか？{product.category}の中でも特に高い評価を得ている、今話題の製品なんです。",
-            f"{product.category}の新しい選択肢として、「{product.name}」が注目を集めています。一体どんな特徴があるのでしょうか？",
+            f"{product.category}選びで悩んでいませんか？今回ご紹介する「{display_name}」は、そんな方にぜひチェックしていただきたい注目の製品です！",
+            f"「{display_name}」をご存知でしょうか？{product.category}の中でも特に高い評価を得ている、今話題の製品なんです。",
+            f"{product.category}の新しい選択肢として、「{display_name}」が注目を集めています。一体どんな特徴があるのでしょうか？",
         ]
 
         intro = random.choice(intros)
@@ -80,7 +83,7 @@ class BlogPostGenerator:
         if product.description:
             intro += f"\n\n{product.description}という特徴を持つこの製品、実際のところはどうなのでしょうか？"
 
-        intro += f"\n\n本記事では、「{product.name}」のスペックや機能、メリット・デメリット、どんな方におすすめなのかなど、購入前に知っておきたい情報を徹底解説していきます！"
+        intro += f"\n\n本記事では、「{display_name}」のスペックや機能、メリット・デメリット、どんな方におすすめなのかなど、購入前に知っておきたい情報を徹底解説していきます！"
 
         price_range = self.get_price_range(product.price) if product.price else ""
         if price_range:
@@ -125,13 +128,16 @@ class BlogPostGenerator:
 
     def generate_spec_table(self, product: GadgetProduct) -> str:
         """スペック表を生成（PA-APIから取得した実際の商品情報を使用）"""
+        # 本文では詳細な商品名を使用
+        display_name = product.full_name if product.full_name else product.name
+
         html = "<h2>製品スペック</h2>\n"
         html += "<table>\n"
         html += "<thead>\n<tr>\n<th>項目</th>\n<th>詳細</th>\n</tr>\n</thead>\n"
         html += "<tbody>\n"
 
         # 製品名
-        html += f"<tr>\n<td>製品名</td>\n<td>{product.name}</td>\n</tr>\n"
+        html += f"<tr>\n<td>製品名</td>\n<td>{display_name}</td>\n</tr>\n"
 
         # 価格（価格帯は削除）
         if product.price:
@@ -443,6 +449,9 @@ class BlogPostGenerator:
 
     def generate_product_link(self, product: GadgetProduct) -> str:
         """商品購入リンクセクションを生成（Gutenbergブロック形式・シンプル2カラム）"""
+        # 本文では詳細な商品名を使用
+        display_name = product.full_name if product.full_name else product.name
+
         # 見出しブロック
         blocks = "<!-- wp:heading -->\n"
         blocks += "<h2 class=\"wp-block-heading\">商品情報</h2>\n"
@@ -457,7 +466,7 @@ class BlogPostGenerator:
         blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
         if product.image_url:
             blocks += "<!-- wp:image -->\n"
-            blocks += f"<figure class=\"wp-block-image\"><img src=\"{product.image_url}\" alt=\"{product.name}\"/></figure>\n"
+            blocks += f"<figure class=\"wp-block-image\"><img src=\"{product.image_url}\" alt=\"{display_name}\"/></figure>\n"
             blocks += "<!-- /wp:image -->\n"
         else:
             blocks += "<!-- wp:paragraph -->\n"
