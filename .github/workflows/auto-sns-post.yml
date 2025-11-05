@@ -6,15 +6,8 @@ on:
     workflows: ["WordPress Auto Post"]
     types:
       - completed
-  # 手動実行も可能
+  # 手動実行も可能（必須パラメータなしに変更）
   workflow_dispatch:
-    inputs:
-      post_url:
-        description: '投稿するWordPress記事のURL'
-        required: true
-      post_title:
-        description: '記事タイトル'
-        required: true
 
 jobs:
   post-to-twitter:
