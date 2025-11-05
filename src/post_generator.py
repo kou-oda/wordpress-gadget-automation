@@ -86,7 +86,7 @@ class BlogPostGenerator:
         return intro
 
     def generate_spec_table(self, product: GadgetProduct) -> str:
-        """スペック表を生成（項目を増やして充実化）"""
+        """スペック表を生成（PA-APIから取得した実際の商品情報を使用）"""
         html = "<h2>製品スペック</h2>\n"
         html += "<table>\n"
         html += "<thead>\n<tr>\n<th>項目</th>\n<th>詳細</th>\n</tr>\n</thead>\n"
@@ -96,66 +96,27 @@ class BlogPostGenerator:
         html += f"<tr>\n<td>製品名</td>\n<td>{product.name}</td>\n</tr>\n"
         html += f"<tr>\n<td>カテゴリー</td>\n<td>{product.category}</td>\n</tr>\n"
 
-        # カテゴリー別のスペック
-        if "マウス" in product.name or "mouse" in product.name.lower():
-            html += "<tr>\n<td>接続方式</td>\n<td>ワイヤレス（Bluetooth / USB レシーバー）</td>\n</tr>\n"
-            html += "<tr>\n<td>センサータイプ</td>\n<td>光学式センサー</td>\n</tr>\n"
-            html += "<tr>\n<td>センサー精度</td>\n<td>最大8,000 DPI</td>\n</tr>\n"
-            html += "<tr>\n<td>バッテリー寿命</td>\n<td>最大70日間</td>\n</tr>\n"
-            html += "<tr>\n<td>充電方式</td>\n<td>USB Type-C</td>\n</tr>\n"
-            html += "<tr>\n<td>ボタン数</td>\n<td>7ボタン（カスタマイズ可能）</td>\n</tr>\n"
-            html += "<tr>\n<td>重量</td>\n<td>約140g</td>\n</tr>\n"
-            html += "<tr>\n<td>サイズ</td>\n<td>約125 x 85 x 45 mm</td>\n</tr>\n"
-            html += "<tr>\n<td>対応OS</td>\n<td>Windows / macOS / Linux</td>\n</tr>\n"
+        # ASIN
+        html += f"<tr>\n<td>ASIN</td>\n<td>{product.asin}</td>\n</tr>\n"
 
-        elif "キーボード" in product.name or "keyboard" in product.name.lower():
-            html += "<tr>\n<td>キースイッチ</td>\n<td>静電容量無接点方式</td>\n</tr>\n"
-            html += "<tr>\n<td>キー配列</td>\n<td>日本語配列 / 英語配列</td>\n</tr>\n"
-            html += "<tr>\n<td>キー数</td>\n<td>60キー（コンパクト配列）</td>\n</tr>\n"
-            html += "<tr>\n<td>接続方式</td>\n<td>Bluetooth 5.0 / USB Type-C</td>\n</tr>\n"
-            html += "<tr>\n<td>キーストローク</td>\n<td>4.0mm</td>\n</tr>\n"
-            html += "<tr>\n<td>アクチュエーションポイント</td>\n<td>2.0mm</td>\n</tr>\n"
-            html += "<tr>\n<td>バッテリー寿命</td>\n<td>最大3ヶ月（Bluetooth使用時）</td>\n</tr>\n"
-            html += "<tr>\n<td>重量</td>\n<td>約540g</td>\n</tr>\n"
-            html += "<tr>\n<td>対応OS</td>\n<td>Windows / macOS / iOS / Android</td>\n</tr>\n"
+        # 価格
+        if product.price:
+            html += f"<tr>\n<td>価格</td>\n<td>{product.price}</td>\n</tr>\n"
+            price_range = self.get_price_range(product.price)
+            if price_range:
+                html += f"<tr>\n<td>価格帯</td>\n<td>{price_range}</td>\n</tr>\n"
 
-        elif "SSD" in product.name:
-            html += "<tr>\n<td>容量</td>\n<td>1TB</td>\n</tr>\n"
-            html += "<tr>\n<td>インターフェース</td>\n<td>PCIe 4.0 x4 NVMe</td>\n</tr>\n"
-            html += "<tr>\n<td>フォームファクタ</td>\n<td>M.2 2280</td>\n</tr>\n"
-            html += "<tr>\n<td>コントローラー</td>\n<td>自社製コントローラー</td>\n</tr>\n"
-            html += "<tr>\n<td>NANDタイプ</td>\n<td>3D TLC NAND</td>\n</tr>\n"
-            html += "<tr>\n<td>読み込み速度</td>\n<td>最大7,000 MB/s</td>\n</tr>\n"
-            html += "<tr>\n<td>書き込み速度</td>\n<td>最大5,000 MB/s</td>\n</tr>\n"
-            html += "<tr>\n<td>MTBF</td>\n<td>150万時間</td>\n</tr>\n"
-            html += "<tr>\n<td>保証期間</td>\n<td>5年間</td>\n</tr>\n"
+        # PA-APIから取得した特徴をスペック表に追加
+        if product.features and len(product.features) > 0:
+            for i, feature in enumerate(product.features, 1):
+                html += f"<tr>\n<td>特徴 {i}</td>\n<td>{feature}</td>\n</tr>\n"
 
-        elif "メモリ" in product.name or "DDR" in product.name:
-            html += "<tr>\n<td>容量</td>\n<td>32GB (16GB x 2)</td>\n</tr>\n"
-            html += "<tr>\n<td>メモリ規格</td>\n<td>DDR5-4800</td>\n</tr>\n"
-            html += "<tr>\n<td>メモリタイプ</td>\n<td>UDIMM（デスクトップ用）</td>\n</tr>\n"
-            html += "<tr>\n<td>動作電圧</td>\n<td>1.1V</td>\n</tr>\n"
-            html += "<tr>\n<td>レイテンシ</td>\n<td>CL40</td>\n</tr>\n"
-            html += "<tr>\n<td>ヒートシンク</td>\n<td>アルミ製ヒートスプレッダー搭載</td>\n</tr>\n"
-            html += "<tr>\n<td>対応プラットフォーム</td>\n<td>Intel 第12世代以降 / AMD Ryzen 7000シリーズ</td>\n</tr>\n"
-            html += "<tr>\n<td>XMP対応</td>\n<td>XMP 3.0対応</td>\n</tr>\n"
-            html += "<tr>\n<td>保証期間</td>\n<td>無期限保証</td>\n</tr>\n"
-
-        else:
-            html += "<tr>\n<td>対応デバイス</td>\n<td>PC / Mac</td>\n</tr>\n"
-            html += "<tr>\n<td>接続方式</td>\n<td>USB Type-C</td>\n</tr>\n"
-            html += "<tr>\n<td>ケーブル長</td>\n<td>約1.5m</td>\n</tr>\n"
-            html += "<tr>\n<td>電源</td>\n<td>USBバスパワー</td>\n</tr>\n"
-            html += "<tr>\n<td>重量</td>\n<td>約200g</td>\n</tr>\n"
-            html += "<tr>\n<td>サイズ</td>\n<td>約100 x 50 x 20 mm</td>\n</tr>\n"
-            html += "<tr>\n<td>保証期間</td>\n<td>1年間</td>\n</tr>\n"
-
-        price_range = self.get_price_range(product.price) if product.price else ""
-        if price_range:
-            html += f"<tr>\n<td>価格帯</td>\n<td>{price_range}</td>\n</tr>\n"
+        # 商品説明
+        if product.description:
+            html += f"<tr>\n<td>製品説明</td>\n<td>{product.description}</td>\n</tr>\n"
 
         html += "</tbody>\n</table>\n"
-        html += "<p><small>※スペックは一部参考値を含みます。正確な情報は製品ページでご確認ください。</small></p>\n"
+        html += "<p><small>※スペック情報はAmazon PA-APIから取得した商品情報に基づいています。最新の正確な情報は製品ページでご確認ください。</small></p>\n"
 
         return html
 
@@ -448,7 +409,7 @@ class BlogPostGenerator:
         return html
 
     def generate_product_link(self, product: GadgetProduct) -> str:
-        """商品購入リンクセクションを生成（Gutenbergブロック形式）"""
+        """商品購入リンクセクションを生成（Gutenbergブロック形式・2カラム）"""
         # 見出しブロック
         blocks = "<!-- wp:heading -->\n"
         blocks += "<h2 class=\"wp-block-heading\">商品情報</h2>\n"
@@ -459,9 +420,31 @@ class BlogPostGenerator:
         blocks += "<p>この記事で紹介した商品の詳細情報や最新の価格は、以下のリンクからご確認いただけます。</p>\n"
         blocks += "<!-- /wp:paragraph -->\n\n"
 
-        # グループブロック（商品情報ボックス）
+        # カラムブロック（2列: 50% / 50%）- 枠線付き
         blocks += "<!-- wp:group {\"style\":{\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|50\",\"bottom\":\"var:preset|spacing|50\",\"left\":\"var:preset|spacing|50\",\"right\":\"var:preset|spacing|50\"}},\"border\":{\"radius\":\"8px\",\"width\":\"1px\"}},\"borderColor\":\"contrast\",\"backgroundColor\":\"base\",\"layout\":{\"type\":\"constrained\"}} -->\n"
         blocks += "<div class=\"wp-block-group has-border-color has-contrast-border-color has-base-background-color has-background\" style=\"border-width:1px;border-radius:8px;padding-top:var(--wp--preset--spacing--50);padding-right:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50);padding-left:var(--wp--preset--spacing--50)\">\n"
+
+        # カラムブロック開始
+        blocks += "<!-- wp:columns -->\n"
+        blocks += "<div class=\"wp-block-columns\">\n"
+
+        # 左カラム: 商品画像 (50%)
+        blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
+        blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
+        if product.image_url:
+            blocks += "<!-- wp:image -->\n"
+            blocks += f"<figure class=\"wp-block-image\"><img src=\"{product.image_url}\" alt=\"{product.name}\"/></figure>\n"
+            blocks += "<!-- /wp:image -->\n"
+        else:
+            blocks += "<!-- wp:paragraph -->\n"
+            blocks += "<p>画像なし</p>\n"
+            blocks += "<!-- /wp:paragraph -->\n"
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:column -->\n\n"
+
+        # 右カラム: 商品情報 + ボタン (50%)
+        blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
+        blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
 
         # 商品名（見出し）
         blocks += "<!-- wp:heading {\"level\":3} -->\n"
@@ -479,8 +462,8 @@ class BlogPostGenerator:
         blocks += f"<p><strong>ASIN:</strong> {product.asin}</p>\n"
         blocks += "<!-- /wp:paragraph -->\n\n"
 
-        # Amazonリンクボタン
-        blocks += "<!-- wp:buttons -->\n"
+        # Amazonリンクボタン（右寄せ）
+        blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
         blocks += "<div class=\"wp-block-buttons\">\n"
         blocks += "<!-- wp:button {\"backgroundColor\":\"vivid-orange\",\"style\":{\"border\":{\"radius\":\"5px\"}}} -->\n"
         blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link has-vivid-orange-background-color has-background wp-element-button\" href=\"{product.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px\">Amazonで詳細を見る</a></div>\n"
@@ -492,6 +475,12 @@ class BlogPostGenerator:
         blocks += "<!-- wp:paragraph {\"style\":{\"typography\":{\"fontSize\":\"0.9rem\"}},\"textColor\":\"contrast-2\"} -->\n"
         blocks += "<p class=\"has-contrast-2-color has-text-color\" style=\"font-size:0.9rem\">※商品の価格や在庫状況は変動する可能性があります。最新情報はリンク先でご確認ください。</p>\n"
         blocks += "<!-- /wp:paragraph -->\n"
+
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:column -->\n"
+
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:columns -->\n"
 
         blocks += "</div>\n"
         blocks += "<!-- /wp:group -->\n"
