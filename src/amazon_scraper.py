@@ -70,8 +70,28 @@ def shorten_product_name(name: str, category: str, for_title: bool = True) -> st
             # 最大30文字に制限
             if len(product_model) > 30:
                 product_model = product_model[:30]
+
             if product_model:
-                return f"{brand} {product_model}"
+                # 一般的な製品名のリスト（スペースなしで結合）
+                generic_product_names = [
+                    "USB", "コンセント", "充電器", "ケーブル", "アダプター", "アダプタ",
+                    "ハブ", "スタンド", "マウスパッド", "リストレスト", "カバー",
+                    "フィルム", "保護フィルム", "バッテリー", "モバイルバッテリー",
+                    "スピーカー", "イヤホン", "ヘッドホン", "マイク", "Webカメラ",
+                    "キーボード", "マウス", "モニター", "ディスプレイ"
+                ]
+
+                # 製品名の最初の単語を取得
+                first_word = words[0] if words else ""
+
+                # 一般的な製品名かどうかチェック
+                is_generic = any(generic in first_word for generic in generic_product_names)
+
+                # 一般的な製品名の場合はスペースなし、固有名詞の場合はスペースあり
+                if is_generic:
+                    return f"{brand}{product_model}"
+                else:
+                    return f"{brand} {product_model}"
 
     # タイトル用: 企業名+製品カテゴリー
     # PCパーツの場合
