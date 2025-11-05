@@ -17,9 +17,12 @@ class BlogPostGenerator:
         ]
 
     def generate_title(self, product: GadgetProduct) -> str:
-        """SEO最適化された記事タイトルを生成"""
+        """SEO最適化された記事タイトルを生成（商品名は最大25文字）"""
         import datetime
         current_year = datetime.datetime.now().year
+
+        # 商品名を最大25文字に短縮
+        short_name = product.name[:25] + "..." if len(product.name) > 25 else product.name
 
         # ブランド名を抽出（商品名の最初の単語）
         brand = product.name.split()[0] if product.name else ""
@@ -27,13 +30,13 @@ class BlogPostGenerator:
         # SEO最適化されたテンプレート
         # 検索意図に合わせた構造: 「商品名 + 検索されやすいキーワード + 年」
         templates = [
-            f"【{current_year}年版】{product.name} レビュー｜{product.category}の実力を徹底検証",
-            f"{product.name} 口コミ・評判まとめ｜{current_year}年最新レビュー",
-            f"【{random.choice(self.review_templates)}】{product.name}｜{product.category}おすすめモデル",
-            f"{product.name} 使用レビュー｜メリット・デメリットを正直に評価【{current_year}】",
-            f"{brand} {product.name} レビュー｜{product.category}の選び方完全ガイド",
-            f"【実機レビュー】{product.name}は買い？{product.category}として徹底解説",
-            f"{product.name} 性能比較レビュー｜{current_year}年版{product.category}の決定版",
+            f"【{current_year}年版】{short_name} レビュー｜{product.category}の実力を徹底検証",
+            f"{short_name} 口コミ・評判まとめ｜{current_year}年最新レビュー",
+            f"【{random.choice(self.review_templates)}】{short_name}｜{product.category}おすすめモデル",
+            f"{short_name} 使用レビュー｜メリット・デメリットを正直に評価【{current_year}】",
+            f"{brand} {short_name} レビュー｜{product.category}の選び方完全ガイド",
+            f"【実機レビュー】{short_name}は買い？{product.category}として徹底解説",
+            f"{short_name} 性能比較レビュー｜{current_year}年版{product.category}の決定版",
         ]
         return random.choice(templates)
 
@@ -85,6 +88,41 @@ class BlogPostGenerator:
 
         return intro
 
+    def _shorten_feature_heading(self, feature: str) -> str:
+        """特徴の見出しを5-25文字に短縮"""
+        # 数字や記号、単位を含む重要な情報を優先的に抽出
+        import re
+
+        # 既に短い場合はそのまま返す
+        if len(feature) <= 25:
+            return feature
+
+        # パターンマッチングでキーワードを抽出
+        # 例: "8000 DPI", "32GB", "500MB/s", "Bluetooth 5.0" などを優先
+        patterns = [
+            r'\d+[\s]*(?:DPI|dpi)',  # DPI情報
+            r'\d+[\s]*(?:GB|TB|MB)',  # 容量情報
+            r'\d+[\s]*(?:MB/s|GB/s)',  # 速度情報
+            r'\d+[\s]*(?:MHz|GHz)',  # 周波数情報
+            r'Bluetooth[\s]*\d+\.\d+',  # Bluetooth バージョン
+            r'\d+[\s]*(?:時間|日|ヶ月|年)',  # 期間情報
+        ]
+
+        for pattern in patterns:
+            match = re.search(pattern, feature)
+            if match:
+                keyword = match.group(0)
+                # キーワードの前後から文脈を追加（最大25文字）
+                start_pos = max(0, match.start() - 10)
+                end_pos = min(len(feature), match.end() + 10)
+                short = feature[start_pos:end_pos].strip()
+                if len(short) > 25:
+                    short = short[:25]
+                return short
+
+        # パターンマッチしない場合は、先頭25文字を使用
+        return feature[:25]
+
     def generate_spec_table(self, product: GadgetProduct) -> str:
         """スペック表を生成（PA-APIから取得した実際の商品情報を使用）"""
         html = "<h2>製品スペック</h2>\n"
@@ -92,19 +130,12 @@ class BlogPostGenerator:
         html += "<thead>\n<tr>\n<th>項目</th>\n<th>詳細</th>\n</tr>\n</thead>\n"
         html += "<tbody>\n"
 
-        # 製品名とカテゴリー
+        # 製品名
         html += f"<tr>\n<td>製品名</td>\n<td>{product.name}</td>\n</tr>\n"
-        html += f"<tr>\n<td>カテゴリー</td>\n<td>{product.category}</td>\n</tr>\n"
 
-        # ASIN
-        html += f"<tr>\n<td>ASIN</td>\n<td>{product.asin}</td>\n</tr>\n"
-
-        # 価格
+        # 価格（価格帯は削除）
         if product.price:
             html += f"<tr>\n<td>価格</td>\n<td>{product.price}</td>\n</tr>\n"
-            price_range = self.get_price_range(product.price)
-            if price_range:
-                html += f"<tr>\n<td>価格帯</td>\n<td>{price_range}</td>\n</tr>\n"
 
         # PA-APIから取得した特徴をスペック表に追加
         if product.features and len(product.features) > 0:
@@ -121,14 +152,16 @@ class BlogPostGenerator:
         return html
 
     def generate_features_section(self, product: GadgetProduct) -> str:
-        """特徴セクションを生成（見出しの番号を削除）"""
+        """特徴セクションを生成（見出しを5-25文字に短縮）"""
         if not product.features:
             return ""
 
         html = "<h2>主な特徴と機能</h2>\n"
 
         for feature in product.features:
-            html += f"<h3>{feature}</h3>\n"
+            # 見出しを5-25文字に短縮
+            short_heading = self._shorten_feature_heading(feature)
+            html += f"<h3>{short_heading}</h3>\n"
 
             # 各特徴に詳細説明を追加
             if "DPI" in feature or "センサー" in feature:
@@ -409,22 +442,13 @@ class BlogPostGenerator:
         return html
 
     def generate_product_link(self, product: GadgetProduct) -> str:
-        """商品購入リンクセクションを生成（Gutenbergブロック形式・2カラム）"""
+        """商品購入リンクセクションを生成（Gutenbergブロック形式・シンプル2カラム）"""
         # 見出しブロック
         blocks = "<!-- wp:heading -->\n"
         blocks += "<h2 class=\"wp-block-heading\">商品情報</h2>\n"
         blocks += "<!-- /wp:heading -->\n\n"
 
-        # 段落ブロック（説明文）
-        blocks += "<!-- wp:paragraph -->\n"
-        blocks += "<p>この記事で紹介した商品の詳細情報や最新の価格は、以下のリンクからご確認いただけます。</p>\n"
-        blocks += "<!-- /wp:paragraph -->\n\n"
-
-        # カラムブロック（2列: 50% / 50%）- 枠線付き
-        blocks += "<!-- wp:group {\"style\":{\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|50\",\"bottom\":\"var:preset|spacing|50\",\"left\":\"var:preset|spacing|50\",\"right\":\"var:preset|spacing|50\"}},\"border\":{\"radius\":\"8px\",\"width\":\"1px\"}},\"borderColor\":\"contrast\",\"backgroundColor\":\"base\",\"layout\":{\"type\":\"constrained\"}} -->\n"
-        blocks += "<div class=\"wp-block-group has-border-color has-contrast-border-color has-base-background-color has-background\" style=\"border-width:1px;border-radius:8px;padding-top:var(--wp--preset--spacing--50);padding-right:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50);padding-left:var(--wp--preset--spacing--50)\">\n"
-
-        # カラムブロック開始
+        # カラムブロック（2列: 50% / 50%）
         blocks += "<!-- wp:columns -->\n"
         blocks += "<div class=\"wp-block-columns\">\n"
 
@@ -442,24 +466,13 @@ class BlogPostGenerator:
         blocks += "</div>\n"
         blocks += "<!-- /wp:column -->\n\n"
 
-        # 右カラム: 商品情報 + ボタン (50%)
+        # 右カラム: 段落 + ボタン (50%)
         blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
         blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
 
-        # 商品名（見出し）
-        blocks += "<!-- wp:heading {\"level\":3} -->\n"
-        blocks += f"<h3 class=\"wp-block-heading\">{product.name}</h3>\n"
-        blocks += "<!-- /wp:heading -->\n\n"
-
-        # 価格情報
-        if product.price:
-            blocks += "<!-- wp:paragraph -->\n"
-            blocks += f"<p><strong>価格:</strong> {product.price}</p>\n"
-            blocks += "<!-- /wp:paragraph -->\n\n"
-
-        # ASIN情報
+        # 段落（商品説明）
         blocks += "<!-- wp:paragraph -->\n"
-        blocks += f"<p><strong>ASIN:</strong> {product.asin}</p>\n"
+        blocks += f"<p>この記事で紹介した商品の詳細情報や最新の価格は、以下のリンクからご確認いただけます。</p>\n"
         blocks += "<!-- /wp:paragraph -->\n\n"
 
         # Amazonリンクボタン（右寄せ）
@@ -469,21 +482,13 @@ class BlogPostGenerator:
         blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link has-vivid-orange-background-color has-background wp-element-button\" href=\"{product.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px\">Amazonで詳細を見る</a></div>\n"
         blocks += "<!-- /wp:button -->\n"
         blocks += "</div>\n"
-        blocks += "<!-- /wp:buttons -->\n\n"
-
-        # 注意書き
-        blocks += "<!-- wp:paragraph {\"style\":{\"typography\":{\"fontSize\":\"0.9rem\"}},\"textColor\":\"contrast-2\"} -->\n"
-        blocks += "<p class=\"has-contrast-2-color has-text-color\" style=\"font-size:0.9rem\">※商品の価格や在庫状況は変動する可能性があります。最新情報はリンク先でご確認ください。</p>\n"
-        blocks += "<!-- /wp:paragraph -->\n"
+        blocks += "<!-- /wp:buttons -->\n"
 
         blocks += "</div>\n"
         blocks += "<!-- /wp:column -->\n"
 
         blocks += "</div>\n"
         blocks += "<!-- /wp:columns -->\n"
-
-        blocks += "</div>\n"
-        blocks += "<!-- /wp:group -->\n"
 
         return blocks
 
