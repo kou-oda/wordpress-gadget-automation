@@ -3,9 +3,10 @@ name: WordPress Auto Post
 on:
   # スケジュール実行（毎日午前10時と午後8時に実行）
   # GitHub Actionsスケジュール実行: 有効
+  # 注意: GitHub Actionsは5-15分の遅延が発生する可能性があります
   schedule:
-    - cron: '0 1 * * *'   # UTC 1:00 = JST 10:00
-    - cron: '0 11 * * *'  # UTC 11:00 = JST 20:00
+    - cron: '0 1 * * *'   # UTC 1:00 = JST 10:00（やや遅延あり）
+    - cron: '0 11 * * *'  # UTC 11:00 = JST 20:00（やや遅延あり）
   # 手動実行も可能
   workflow_dispatch:
     inputs:

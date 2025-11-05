@@ -3,11 +3,12 @@ name: scheduled twitter post
 on:
   # 1日4回実行（JST 6:00、11:30、21:00、23:00）
   # GitHub Actionsスケジュール実行: 有効
+  # 注意: GitHub Actionsは5-15分の遅延が発生する可能性があります
   schedule:
-    - cron: '0 21 * * *'  # UTC 21:00 = JST 6:00
-    - cron: '30 2 * * *'  # UTC 2:30 = JST 11:30
-    - cron: '0 12 * * *'  # UTC 12:00 = JST 21:00
-    - cron: '0 14 * * *'  # UTC 14:00 = JST 23:00
+    - cron: '0 21 * * *'  # UTC 21:00 = JST 6:00（遅延少ない）
+    - cron: '30 2 * * *'  # UTC 2:30 = JST 11:30（やや遅延あり）
+    - cron: '0 12 * * *'  # UTC 12:00 = JST 21:00（やや遅延あり）
+    - cron: '0 14 * * *'  # UTC 14:00 = JST 23:00（やや遅延あり）
   # 手動実行も可能
   workflow_dispatch:
     inputs:
