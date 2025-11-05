@@ -17,13 +17,23 @@ class BlogPostGenerator:
         ]
 
     def generate_title(self, product: GadgetProduct) -> str:
-        """記事タイトルを生成（感情的な表現）"""
+        """SEO最適化された記事タイトルを生成"""
+        import datetime
+        current_year = datetime.datetime.now().year
+
+        # ブランド名を抽出（商品名の最初の単語）
+        brand = product.name.split()[0] if product.name else ""
+
+        # SEO最適化されたテンプレート
+        # 検索意図に合わせた構造: 「商品名 + 検索されやすいキーワード + 年」
         templates = [
-            f"【{random.choice(self.review_templates)}】{product.name} - {product.category}の注目モデル",
-            f"{product.name}は買い？{product.category}として徹底解説！",
-            f"【{product.category}】{product.name}のスペックと実力を検証！",
-            f"{product.name}をレビュー！本当におすすめできる？",
-            f"話題の{product.name}！{product.category}選びの決定版？"
+            f"【{current_year}年版】{product.name} レビュー｜{product.category}の実力を徹底検証",
+            f"{product.name} 口コミ・評判まとめ｜{current_year}年最新レビュー",
+            f"【{random.choice(self.review_templates)}】{product.name}｜{product.category}おすすめモデル",
+            f"{product.name} 使用レビュー｜メリット・デメリットを正直に評価【{current_year}】",
+            f"{brand} {product.name} レビュー｜{product.category}の選び方完全ガイド",
+            f"【実機レビュー】{product.name}は買い？{product.category}として徹底解説",
+            f"{product.name} 性能比較レビュー｜{current_year}年版{product.category}の決定版",
         ]
         return random.choice(templates)
 
@@ -461,6 +471,30 @@ class BlogPostGenerator:
         html += "</div>\n"
 
         return html
+
+    def generate_meta_description(self, product: GadgetProduct) -> str:
+        """SEO用メタディスクリプションを生成（160文字以内）"""
+        import datetime
+        current_year = datetime.datetime.now().year
+
+        # 特徴を簡潔に
+        feature_text = ""
+        if product.features and len(product.features) > 0:
+            feature_text = f"{product.features[0]}など、"
+
+        descriptions = [
+            f"{product.name}の詳細レビュー。{feature_text}実際の使用感やメリット・デメリットを徹底解説。{product.category}選びの参考に。",
+            f"{current_year}年版{product.name}のレビュー記事。{feature_text}口コミ・評判、性能を詳しく紹介。{product.category}のおすすめモデル。",
+            f"{product.name}を実機レビュー。{feature_text}購入前に知っておきたい情報を網羅。{product.category}の比較検討に最適。",
+        ]
+
+        description = random.choice(descriptions)
+
+        # 160文字制限
+        if len(description) > 160:
+            description = description[:157] + "..."
+
+        return description
 
     def generate_post_content(self, product: GadgetProduct) -> str:
         """完全な記事コンテンツを生成（2000-4000文字）"""

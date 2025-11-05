@@ -104,8 +104,10 @@ def main():
     generator = BlogPostGenerator()
     title = generator.generate_title(product)
     content = generator.generate_post_content(product)
+    meta_description = generator.generate_meta_description(product)
 
     print(f"記事タイトル: {title}")
+    print(f"メタディスクリプション: {meta_description}")
     print("-" * 50)
 
     # カテゴリーの準備
@@ -125,7 +127,8 @@ def main():
             content=content,
             status=post_status,
             categories=[category_id] if category_id else None,
-            tags=None
+            tags=None,
+            excerpt=meta_description
         )
 
         post_url = post_data.get('link', '')

@@ -36,7 +36,8 @@ class WordPressClient:
         content: str,
         status: str = 'draft',
         categories: Optional[List[int]] = None,
-        tags: Optional[List[int]] = None
+        tags: Optional[List[int]] = None,
+        excerpt: Optional[str] = None
     ) -> Dict:
         """
         新しい投稿を作成
@@ -47,6 +48,7 @@ class WordPressClient:
             status: 投稿ステータス（draft, publish, private）
             categories: カテゴリーIDのリスト
             tags: タグIDのリスト
+            excerpt: 抜粋（メタディスクリプション用）
 
         Returns:
             作成された投稿の情報
@@ -63,6 +65,8 @@ class WordPressClient:
             data['categories'] = categories
         if tags:
             data['tags'] = tags
+        if excerpt:
+            data['excerpt'] = excerpt
 
         response = requests.post(
             endpoint,
