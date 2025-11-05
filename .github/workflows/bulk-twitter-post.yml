@@ -1,0 +1,181 @@
+name: Bulk Twitter Post (Every 3 Days)
+
+on:
+  # 3日に1回実行（JST 9:00）
+  schedule:
+    - cron: '0 0 */3 * *'   # UTC 0:00 = JST 9:00、3日ごと
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  bulk-post-to-twitter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 依存関係のインストール
+        run: |
+          pip install tweepy requests
+
+      - name: 全記事から完全ランダムに50件取得してTwitterに投稿
+        env:
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL }}
+          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          TWITTER_ACCESS_SECRET: ${{ secrets.TWITTER_ACCESS_SECRET }}
+        run: |
+          python3 << 'EOF'
+          import tweepy
+          import requests
+          import os
+          import random
+
+          wp_url = os.environ['WP_SITE_URL']
+
+          # Step 1: 総記事数を取得
+          response = requests.get(f"{wp_url}/wp-json/wp/v2/posts?status=publish&per_page=1")
+          if response.status_code != 200:
+              print(f"❌ WordPress記事の取得に失敗: {response.status_code}")
+              exit(1)
+
+          total_posts = int(response.headers.get('X-WP-Total', 0))
+          print(f"✓ WordPress上の公開済み記事総数: {total_posts}件")
+
+          if total_posts == 0:
+              print("❌ 公開済み記事が見つかりませんでした")
+              exit(1)
+
+          # Step 2: 全記事を取得（WordPress REST APIの制限: 100件/ページ）
+          all_posts = []
+          per_page = 100
+          pages = (total_posts + per_page - 1) // per_page  # 切り上げ
+
+          print(f"全記事を取得中... ({pages}ページ)")
+
+          for page in range(1, pages + 1):
+              response = requests.get(f"{wp_url}/wp-json/wp/v2/posts?status=publish&per_page={per_page}&page={page}")
+              if response.status_code == 200:
+                  posts = response.json()
+                  all_posts.extend(posts)
+                  print(f"  ページ {page}/{pages}: {len(posts)}件取得")
+              else:
+                  print(f"⚠ ページ {page} の取得に失敗")
+
+          print(f"✓ 全{len(all_posts)}件の記事を取得しました")
+
+          # Step 3: ランダムに50件を選択（総数が50件未満の場合は全件）
+          sample_size = min(50, len(all_posts))
+          sampled_posts = random.sample(all_posts, sample_size)
+          print(f"✓ ランダムに{sample_size}件を選択しました")
+
+          # Step 4: Twitter認証
+          client = tweepy.Client(
+              consumer_key=os.environ['TWITTER_API_KEY'],
+              consumer_secret=os.environ['TWITTER_API_SECRET'],
+              access_token=os.environ['TWITTER_ACCESS_TOKEN'],
+              access_token_secret=os.environ['TWITTER_ACCESS_SECRET']
+          )
+
+          # Step 5: 過去10投稿の履歴を取得（重複チェック）
+          try:
+              me = client.get_me()
+              user_id = me.data.id
+
+              recent_tweets = client.get_users_tweets(
+                  id=user_id,
+                  max_results=10,
+                  tweet_fields=['created_at', 'text']
+              )
+
+              posted_urls = set()
+              if recent_tweets.data:
+                  for tweet in recent_tweets.data:
+                      import re
+                      urls = re.findall(r'https?://[^\s]+', tweet.text)
+                      posted_urls.update(urls)
+
+              print(f"✓ 過去10投稿のURL: {len(posted_urls)}件")
+
+          except Exception as e:
+              print(f"⚠ 過去ツイートの取得に失敗: {e}")
+              posted_urls = set()
+
+          # Step 6: 過去10投稿に含まれていない記事を選択
+          available_posts = []
+          for post in sampled_posts:
+              post_url = post['link']
+              if post_url not in posted_urls:
+                  available_posts.append(post)
+
+          if not available_posts:
+              print("⚠ 投稿可能な新しい記事がありません（過去10投稿と重複）")
+              # 全サンプルからランダム選択（重複を許容）
+              available_posts = sampled_posts
+
+          print(f"✓ 投稿可能な記事: {len(available_posts)}件")
+
+          # Step 7: ランダムに1記事選択
+          selected_post = random.choice(available_posts)
+          title = selected_post['title']['rendered']
+          link = selected_post['link']
+
+          print(f"選択された記事: {title}")
+          print(f"URL: {link}")
+
+          # Step 8: ツイート内容を生成
+          tweet_text = f"""🔥 おすすめガジェット！
+
+{title}
+
+詳細レビューはこちら👇
+{link}
+
+#ガジェット #レビュー #Amazon #テックレビュー
+"""
+
+          # 280文字制限を考慮
+          if len(tweet_text) > 280:
+              # タイトルを短縮
+              max_title_length = 280 - len(tweet_text) + len(title) - 10
+              short_title = title[:max_title_length] + "..."
+              tweet_text = f"""🔥 おすすめガジェット！
+
+{short_title}
+
+詳細はこちら👇
+{link}
+
+#ガジェット #レビュー #Amazon
+"""
+
+          # Step 9: 投稿
+          try:
+              response = client.create_tweet(text=tweet_text)
+              print(f"✓ ツイート投稿成功: {response.data['id']}")
+              print(f"ツイートURL: https://twitter.com/user/status/{response.data['id']}")
+          except Exception as e:
+              print(f"❌ ツイート投稿に失敗: {e}")
+              exit(1)
+
+          # 結果サマリー
+          print("\n" + "=" * 50)
+          print(f"3日に1回のバルクTwitter投稿完了")
+          print(f"総記事数: {total_posts}件")
+          print(f"ランダムサンプル: {sample_size}件")
+          print(f"投稿可能記事数: {len(available_posts)}件")
+          print("=" * 50)
+          EOF
+
+      - name: 投稿結果
+        if: success()
+        run: |
+          echo "✓ Bulk Twitter投稿が完了しました"
+          echo "次回実行: 3日後"
