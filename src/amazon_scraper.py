@@ -54,12 +54,11 @@ def shorten_product_name(name: str, category: str, for_title: bool = True) -> st
     if not brand:
         brand = name.split()[0] if name.split() else name[:10]
 
-    # 商品名から不要な文字列を削除（Amazon限定表記など）
-    # 【...】や[...]で囲まれた不要な表記を削除
-    cleaned_name = re.sub(r'【[^】]*限定[^】]*】', '', name)
-    cleaned_name = re.sub(r'\[[^\]]*限定[^\]]*\]', '', cleaned_name)
-    cleaned_name = re.sub(r'【[^】]*セット[^】]*】', '', cleaned_name)
-    cleaned_name = re.sub(r'\[[^\]]*セット[^\]]*\]', '', cleaned_name)
+    # 商品名から不要な文字列を削除
+    # 【...】内のすべての文字を削除
+    cleaned_name = re.sub(r'【[^】]*】', '', name)
+    # [...]内のすべての文字を削除
+    cleaned_name = re.sub(r'\[[^\]]*\]', '', cleaned_name)
     cleaned_name = cleaned_name.strip()
 
     # 本文用の場合: 企業名+製品名（最大30文字）
