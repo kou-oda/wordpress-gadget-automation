@@ -8,6 +8,10 @@ on:
   # schedule:
   #   - cron: '0 17 1,15 * *'  # UTC 17:00 = JST 2:00（翌日）
 
+# GitHub Actionsに書き込み権限を付与
+permissions:
+  contents: write
+
 jobs:
   refresh-products:
     runs-on: ubuntu-latest
