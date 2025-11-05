@@ -198,17 +198,69 @@ jobs:
           intro = pattern["intro"]
           cta = pattern["cta"]
 
-          # シンプルなハッシュタグ（押し付けがましくない）
-          hashtag = "#ブログ"
+          # カテゴリーに基づいた最適化されたハッシュタグ
+          # タイトルから自動的にカテゴリーを推測
+          title_lower = title.lower()
 
-          tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}\n\n{hashtag}"
+          # ハッシュタグのバリエーション（リーチ拡大のため）
+          if 'ゲーム' in title or 'game' in title_lower or 'gaming' in title_lower:
+              hashtags = random.choice([
+                  "#ガジェット #ゲーミング #Amazon",
+                  "#ゲーム好き #ガジェット #レビュー",
+                  "#ゲーマー #テック #おすすめ"
+              ])
+          elif 'キーボード' in title or 'keyboard' in title_lower or 'hhkb' in title_lower:
+              hashtags = random.choice([
+                  "#ガジェット #キーボード #PC",
+                  "#メカニカルキーボード #ガジェット好き #Amazon",
+                  "#テックレビュー #PCガジェット #おすすめ"
+              ])
+          elif 'マウス' in title or 'mouse' in title_lower:
+              hashtags = random.choice([
+                  "#ガジェット #マウス #PC",
+                  "#ゲーミングマウス #ガジェット好き #Amazon",
+                  "#PCガジェット #テックレビュー #おすすめ"
+              ])
+          elif 'モニター' in title or 'ディスプレイ' in title or 'monitor' in title_lower:
+              hashtags = random.choice([
+                  "#ガジェット #モニター #PC",
+                  "#ゲーミングモニター #ガジェット好き #Amazon",
+                  "#PCガジェット #テックレビュー #おすすめ"
+              ])
+          elif 'ヘッドホン' in title or 'イヤホン' in title or 'headphone' in title_lower:
+              hashtags = random.choice([
+                  "#ガジェット #オーディオ #音楽",
+                  "#ヘッドホン #ガジェット好き #Amazon",
+                  "#音質 #テックレビュー #おすすめ"
+              ])
+          elif 'スマホ' in title or 'スマートフォン' in title or 'iphone' in title_lower or 'android' in title_lower:
+              hashtags = random.choice([
+                  "#ガジェット #スマホ #モバイル",
+                  "#スマートフォン #ガジェット好き #Amazon",
+                  "#スマホアクセサリー #テックレビュー #おすすめ"
+              ])
+          elif 'pc' in title_lower or 'パソコン' in title or 'コンピュータ' in title:
+              hashtags = random.choice([
+                  "#ガジェット #PC #テック",
+                  "#PCガジェット #ガジェット好き #Amazon",
+                  "#テックレビュー #パソコン #おすすめ"
+              ])
+          else:
+              # デフォルト（ガジェット全般）
+              hashtags = random.choice([
+                  "#ガジェット #テック #Amazon",
+                  "#ガジェット好き #テックレビュー #おすすめ",
+                  "#Amazon #レビュー #便利グッズ"
+              ])
+
+          tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}\n\n{hashtags}"
 
           # 280文字制限を考慮
           if len(tweet_text) > 280:
               # タイトルを短縮
               max_title_length = 280 - len(tweet_text) + len(title) - 10
               short_title = title[:max_title_length] + "..."
-              tweet_text = f"{emoji} {intro}\n\n{short_title}\n\n{cta}\n{link}\n\n{hashtag}"
+              tweet_text = f"{emoji} {intro}\n\n{short_title}\n\n{cta}\n{link}\n\n{hashtags}"
 
           # Step 9: 投稿
           try:
