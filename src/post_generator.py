@@ -73,9 +73,9 @@ class BlogPostGenerator:
         display_name = product.full_name if product.full_name else product.name
 
         intros = [
-            f"{product.category}選びで悩んでいませんか？今回ご紹介する「{display_name}」は、そんな方にぜひチェックしていただきたい注目の製品です！",
-            f"「{display_name}」をご存知でしょうか？{product.category}の中でも特に高い評価を得ている、今話題の製品なんです。",
-            f"{product.category}の新しい選択肢として、「{display_name}」が注目を集めています。一体どんな特徴があるのでしょうか？",
+            f"{product.category}選びで悩んでいませんか？今回ご紹介する{display_name}は、そんな方にぜひチェックしていただきたい注目の製品です！",
+            f"{display_name}をご存知でしょうか？{product.category}の中でも特に高い評価を得ている、今話題の製品なんです。",
+            f"{product.category}の新しい選択肢として、{display_name}が注目を集めています。一体どんな特徴があるのでしょうか？",
         ]
 
         intro = random.choice(intros)
@@ -83,7 +83,7 @@ class BlogPostGenerator:
         if product.description:
             intro += f"\n\n{product.description}という特徴を持つこの製品、実際のところはどうなのでしょうか？"
 
-        intro += f"\n\n本記事では、「{display_name}」のスペックや機能、メリット・デメリット、どんな方におすすめなのかなど、購入前に知っておきたい情報を徹底解説していきます！"
+        intro += f"\n\n本記事では、{display_name}のスペックや機能、メリット・デメリット、どんな方におすすめなのかなど、購入前に知っておきたい情報を徹底解説していきます！"
 
         price_range = self.get_price_range(product.price) if product.price else ""
         if price_range:
@@ -426,12 +426,15 @@ class BlogPostGenerator:
 
     def generate_conclusion(self, product: GadgetProduct) -> str:
         """まとめセクションを生成（総合評価なし）"""
+        # 本文では詳細な商品名を使用
+        display_name = product.full_name if product.full_name else product.name
+
         html = "<h2>まとめ</h2>\n"
 
         conclusions = [
-            f"「{product.name}」は、{product.category}として非常に完成度の高い製品です。",
-            f"総合的に評価すると、「{product.name}」は価格に見合った価値を提供する優秀な{product.category}です。",
-            f"「{product.name}」は、{product.category}の中でも特に注目すべき製品の一つです。",
+            f"{display_name}は、{product.category}として非常に完成度の高い製品です。",
+            f"総合的に評価すると、{display_name}は価格に見合った価値を提供する優秀な{product.category}です。",
+            f"{display_name}は、{product.category}の中でも特に注目すべき製品の一つです。",
         ]
 
         html += f"<p>{random.choice(conclusions)}</p>\n"
@@ -439,7 +442,7 @@ class BlogPostGenerator:
         html += f"<p>価格は決して安くありませんが、品質やサポート体制の充実を考慮すれば、長期的に見て十分な投資価値があります。"
         html += f"特に、{product.features[0] if product.features else '基本性能'}は高く評価でき、日常的な使用において満足度の高い体験が期待できます。</p>\n"
 
-        html += f"<p>{product.category}の購入を検討している方で、品質と性能を重視するなら、「{product.name}」は有力な選択肢となるでしょう。"
+        html += f"<p>{product.category}の購入を検討している方で、品質と性能を重視するなら、{display_name}は有力な選択肢となるでしょう。"
         html += "製品の詳細については、公式ページや販売ページで最新の情報をご確認ください。</p>\n"
 
         html += f"<p>この製品は、日常的な使用からプロフェッショナルな用途まで、幅広いシーンで活躍します。"

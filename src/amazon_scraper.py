@@ -54,14 +54,22 @@ def shorten_product_name(name: str, category: str, for_title: bool = True) -> st
     if not brand:
         brand = name.split()[0] if name.split() else name[:10]
 
+    # 商品名から不要な文字列を削除（Amazon限定表記など）
+    # 【...】や[...]で囲まれた不要な表記を削除
+    cleaned_name = re.sub(r'【[^】]*限定[^】]*】', '', name)
+    cleaned_name = re.sub(r'\[[^\]]*限定[^\]]*\]', '', cleaned_name)
+    cleaned_name = re.sub(r'【[^】]*セット[^】]*】', '', cleaned_name)
+    cleaned_name = re.sub(r'\[[^\]]*セット[^\]]*\]', '', cleaned_name)
+    cleaned_name = cleaned_name.strip()
+
     # 本文用の場合: 企業名+製品名（最大30文字）
     if not for_title:
         # ブランド名の後ろの部分を抽出
         brand_pattern = re.escape(brand)
-        match = re.search(brand_pattern, name, re.IGNORECASE)
+        match = re.search(brand_pattern, cleaned_name, re.IGNORECASE)
         if match:
             # ブランド名の後の部分を取得
-            after_brand = name[match.end():].strip()
+            after_brand = cleaned_name[match.end():].strip()
             # 不要な文字を削除（括弧、記号など）
             after_brand = re.sub(r'[\(\[].*?[\)\]]', '', after_brand).strip()
             # 単語を分割して最初の2-3語を取得
