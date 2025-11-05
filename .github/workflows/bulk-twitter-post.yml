@@ -1,10 +1,12 @@
 name: bulk twitter post
 
 on:
-  # 3日に1回実行（JST 9:00）
+  # 毎月3の倍数の日に実行（JST 9:00）
   # GitHub Actionsスケジュール実行: 有効
+  # 注意: cron構文では厳密な「3日ごと」を表現できません
+  # 現在の設定: 毎月3, 6, 9, 12, 15, 18, 21, 24, 27, 30日に実行（約10回/月）
   schedule:
-    - cron: '0 0 */3 * *'   # UTC 0:00 = JST 9:00、3日ごと
+    - cron: '0 0 */3 * *'   # UTC 0:00 = JST 9:00、毎月3の倍数の日
   # 手動実行も可能
   workflow_dispatch:
     inputs:
