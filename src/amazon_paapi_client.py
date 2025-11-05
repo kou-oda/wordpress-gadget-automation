@@ -171,7 +171,7 @@ class AmazonPAAPIClient:
 
     def search_products(self, keyword: str, category: str, max_results: int = 10) -> List[GadgetProduct]:
         """
-        キーワードで商品を検索
+        キーワードで商品を検索（429エラー時はリトライ）
 
         Args:
             keyword: 検索キーワード
@@ -181,97 +181,125 @@ class AmazonPAAPIClient:
         Returns:
             商品リスト
         """
-        try:
-            # PA-APIで商品検索
-            search_result = self.api.search_items(keywords=keyword, item_count=max_results)
+        # 429エラー時のリトライ設定
+        max_retries = 3
+        base_wait_time = 15.0  # 初回待機時間（秒）
 
-            gadget_products = []
+        for retry in range(max_retries):
+            try:
+                # リトライ時は待機（exponential backoff）
+                if retry > 0:
+                    wait_time = base_wait_time * (2 ** (retry - 1))  # 15秒、30秒、60秒
+                    print(f"⏳ PA-APIレート制限のため{wait_time}秒待機中... (リトライ {retry}/{max_retries})")
+                    time.sleep(wait_time)
 
-            # 検索結果が存在するか確認
-            if not search_result or not hasattr(search_result, 'items'):
-                return []
+                # PA-APIで商品検索
+                search_result = self.api.search_items(keywords=keyword, item_count=max_results)
 
-            # 各商品を処理
-            for item in search_result.items:
-                try:
-                    # ブランド取得
-                    brand = None
-                    if hasattr(item, 'item_info') and item.item_info:
-                        if hasattr(item.item_info, 'by_line_info') and item.item_info.by_line_info:
-                            if hasattr(item.item_info.by_line_info, 'brand') and item.item_info.by_line_info.brand:
-                                brand = item.item_info.by_line_info.brand.display_value
+                gadget_products = []
 
-                    # タイトル取得
-                    title = ""
-                    if hasattr(item, 'item_info') and item.item_info:
-                        if hasattr(item.item_info, 'title') and item.item_info.title:
-                            title = item.item_info.title.display_value
+                # 検索結果が存在するか確認
+                if not search_result or not hasattr(search_result, 'items'):
+                    return []
 
-                    # 大手メーカーの商品のみを選定
-                    if not self.is_major_brand(title, brand):
+                # 各商品を処理
+                for item in search_result.items:
+                    try:
+                        # ブランド取得
+                        brand = None
+                        if hasattr(item, 'item_info') and item.item_info:
+                            if hasattr(item.item_info, 'by_line_info') and item.item_info.by_line_info:
+                                if hasattr(item.item_info.by_line_info, 'brand') and item.item_info.by_line_info.brand:
+                                    brand = item.item_info.by_line_info.brand.display_value
+
+                        # タイトル取得
+                        title = ""
+                        if hasattr(item, 'item_info') and item.item_info:
+                            if hasattr(item.item_info, 'title') and item.item_info.title:
+                                title = item.item_info.title.display_value
+
+                        # 大手メーカーの商品のみを選定
+                        if not self.is_major_brand(title, brand):
+                            continue
+
+                        # ASIN取得
+                        asin = item.asin if hasattr(item, 'asin') else None
+                        if not asin:
+                            continue
+
+                        # 価格取得
+                        price = None
+                        if hasattr(item, 'offers') and item.offers:
+                            if hasattr(item.offers, 'listings') and item.offers.listings:
+                                if len(item.offers.listings) > 0:
+                                    listing = item.offers.listings[0]
+                                    if hasattr(listing, 'price') and listing.price:
+                                        if hasattr(listing.price, 'display_amount'):
+                                            price = listing.price.display_amount
+
+                        # 画像URL取得
+                        image_url = None
+                        if hasattr(item, 'images') and item.images:
+                            if hasattr(item.images, 'primary') and item.images.primary:
+                                if hasattr(item.images.primary, 'large') and item.images.primary.large:
+                                    if hasattr(item.images.primary.large, 'url'):
+                                        image_url = item.images.primary.large.url
+
+                        # 特徴取得
+                        features = []
+                        if hasattr(item, 'item_info') and item.item_info:
+                            if hasattr(item.item_info, 'features') and item.item_info.features:
+                                if hasattr(item.item_info.features, 'display_values'):
+                                    features = [f.display_value for f in item.item_info.features.display_values[:5]]
+
+                        # 説明文生成（ブランド名とキーワードから）
+                        description = f"{brand or ''}の{keyword}として高い評価を得ている製品"
+
+                        # GadgetProductオブジェクト作成
+                        product = GadgetProduct(
+                            name=title,
+                            asin=asin,
+                            url=f"https://www.amazon.co.jp/dp/{asin}?tag={self.associate_tag}",
+                            price=price,
+                            image_url=image_url,
+                            description=description,
+                            category=category,
+                            features=features if features else None,
+                            rating=None
+                        )
+
+                        gadget_products.append(product)
+
+                    except Exception as e:
+                        print(f"商品データの処理中にエラー: {e}")
+                        import traceback
+                        traceback.print_exc()
                         continue
 
-                    # ASIN取得
-                    asin = item.asin if hasattr(item, 'asin') else None
-                    if not asin:
+                # 成功したらリストを返す
+                return gadget_products
+
+            except Exception as e:
+                # 429エラーの場合はリトライ
+                error_message = str(e)
+                if '429' in error_message or 'Too Many Requests' in error_message:
+                    print(f"⚠ PA-API レート制限エラー (429): {e}")
+                    if retry < max_retries - 1:
+                        print(f"リトライします... ({retry + 1}/{max_retries})")
                         continue
-
-                    # 価格取得
-                    price = None
-                    if hasattr(item, 'offers') and item.offers:
-                        if hasattr(item.offers, 'listings') and item.offers.listings:
-                            if len(item.offers.listings) > 0:
-                                listing = item.offers.listings[0]
-                                if hasattr(listing, 'price') and listing.price:
-                                    if hasattr(listing.price, 'display_amount'):
-                                        price = listing.price.display_amount
-
-                    # 画像URL取得
-                    image_url = None
-                    if hasattr(item, 'images') and item.images:
-                        if hasattr(item.images, 'primary') and item.images.primary:
-                            if hasattr(item.images.primary, 'large') and item.images.primary.large:
-                                if hasattr(item.images.primary.large, 'url'):
-                                    image_url = item.images.primary.large.url
-
-                    # 特徴取得
-                    features = []
-                    if hasattr(item, 'item_info') and item.item_info:
-                        if hasattr(item.item_info, 'features') and item.item_info.features:
-                            if hasattr(item.item_info.features, 'display_values'):
-                                features = [f.display_value for f in item.item_info.features.display_values[:5]]
-
-                    # 説明文生成（ブランド名とキーワードから）
-                    description = f"{brand or ''}の{keyword}として高い評価を得ている製品"
-
-                    # GadgetProductオブジェクト作成
-                    product = GadgetProduct(
-                        name=title,
-                        asin=asin,
-                        url=f"https://www.amazon.co.jp/dp/{asin}?tag={self.associate_tag}",
-                        price=price,
-                        image_url=image_url,
-                        description=description,
-                        category=category,
-                        features=features if features else None,
-                        rating=None
-                    )
-
-                    gadget_products.append(product)
-
-                except Exception as e:
-                    print(f"商品データの処理中にエラー: {e}")
+                    else:
+                        print("最大リトライ回数に達しました。")
+                        return []
+                else:
+                    # 429以外のエラーは即座に返す
+                    print(f"商品検索中にエラー: {e}")
                     import traceback
                     traceback.print_exc()
-                    continue
+                    return []
 
-            return gadget_products
-
-        except Exception as e:
-            print(f"商品検索中にエラー: {e}")
-            import traceback
-            traceback.print_exc()
-            return []
+        # すべてのリトライが失敗した場合
+        print("PA-APIのレート制限により商品を取得できませんでした。")
+        return []
 
     def get_random_product(self) -> Optional[GadgetProduct]:
         """
