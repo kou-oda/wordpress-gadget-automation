@@ -1,0 +1,41 @@
+name: Ping Submit
+
+on:
+  # WordPress投稿後に実行
+  workflow_run:
+    workflows: ["WordPress Auto Post"]
+    types:
+      - completed
+  # 手動実行も可能
+  workflow_dispatch:
+
+jobs:
+  ping-submit:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+
+    steps:
+      - name: チェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python環境のセットアップ
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 依存関係のインストール
+        run: |
+          pip install requests
+
+      - name: Ping送信
+        env:
+          BLOG_NAME: 'ガジェットレビューブログ'
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL }}
+        run: |
+          python scripts/ping_submit.py
+
+      - name: 送信結果
+        if: success()
+        run: |
+          echo "✓ Ping送信が完了しました"
+          echo "ブログ検索エンジンに新着記事が通知されました"
