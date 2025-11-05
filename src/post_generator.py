@@ -472,6 +472,29 @@ class BlogPostGenerator:
 
         return html
 
+    def generate_related_articles_section(self) -> str:
+        """関連記事セクションを生成（2カラムレイアウト）"""
+        html = "<h2>関連記事</h2>\n"
+
+        html += "<div style='display: flex; gap: 20px; margin-top: 40px;'>\n"
+
+        # 左カラム: 画像 (50%)
+        html += "  <div style='flex: 1;'>\n"
+        html += "    <img src='PLACEHOLDER_IMAGE_URL' alt='関連記事' style='width: 100%; height: auto;'>\n"
+        html += "  </div>\n"
+
+        # 右カラム: 段落 + ボタン (50%)
+        html += "  <div style='flex: 1; display: flex; flex-direction: column; justify-content: space-between;'>\n"
+        html += "    <p>PLACEHOLDER_TEXT</p>\n"
+        html += "    <div style='text-align: right;'>\n"
+        html += "      <a href='PLACEHOLDER_LINK' style='display: inline-block; padding: 10px 20px; background-color: #0073aa; color: white; text-decoration: none; border-radius: 5px;'>詳しく見る</a>\n"
+        html += "    </div>\n"
+        html += "  </div>\n"
+
+        html += "</div>\n"
+
+        return html
+
     def generate_meta_description(self, product: GadgetProduct) -> str:
         """SEO用メタディスクリプションを生成（160文字以内）"""
         import datetime
@@ -537,6 +560,10 @@ class BlogPostGenerator:
 
         # 商品購入リンク（PA-APIリクエスト上限増加のため）
         content += self.generate_product_link(product)
+        content += "\n"
+
+        # 関連記事セクション（2カラムレイアウト）
+        content += self.generate_related_articles_section()
 
         return content
 
