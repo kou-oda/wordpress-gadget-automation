@@ -2,6 +2,7 @@ name: scheduled twitter post
 
 on:
   # 1日3回実行（JST 10:00、15:00、20:00）
+  # GitHub Actionsスケジュール実行: 有効
   schedule:
     - cron: '0 1 * * *'   # UTC 1:00 = JST 10:00
     - cron: '0 6 * * *'   # UTC 6:00 = JST 15:00

@@ -2,6 +2,7 @@ name: Scheduled Google Indexing
 
 on:
   # 1日1回実行（JST 9:00）
+  # GitHub Actionsスケジュール実行: 有効
   schedule:
     - cron: '0 0 * * *'   # UTC 0:00 = JST 9:00
   # 手動実行も可能

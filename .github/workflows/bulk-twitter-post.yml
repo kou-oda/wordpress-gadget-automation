@@ -2,6 +2,7 @@ name: bulk twitter post
 
 on:
   # 3日に1回実行（JST 9:00）
+  # GitHub Actionsスケジュール実行: 有効
   schedule:
     - cron: '0 0 */3 * *'   # UTC 0:00 = JST 9:00、3日ごと
   # 手動実行も可能
