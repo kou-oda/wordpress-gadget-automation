@@ -120,12 +120,47 @@ jobs:
           print(f"選択された記事: {title}")
           print(f"URL: {link}")
 
-          # ツイート内容を生成
-          emoji = "🔥"
-          intro = "おすすめガジェット！"
-          cta = "詳細レビューはこちら👇"
-          hashtags = "#ガジェット #レビュー #Amazon #テックレビュー"
+          # カテゴリーを取得
+          category_ids = selected_post.get('categories', [])
+          category_name = "ガジェット"  # デフォルト
 
+          if category_ids:
+              # カテゴリー情報を取得
+              try:
+                  cat_response = requests.get(f"{wp_url}/wp-json/wp/v2/categories/{category_ids[0]}")
+                  if cat_response.status_code == 200:
+                      category_name = cat_response.json()['name']
+                      print(f"カテゴリー: {category_name}")
+              except:
+                  pass
+
+          # カテゴリー名から適切な紹介文を生成
+          category_lower = category_name.lower()
+
+          # カテゴリー別の設定
+          if 'ゲーム' in category_name or 'game' in category_lower:
+              emoji = "🎮"
+              intro = f"おすすめ{category_name}！"
+              hashtags = f"#{category_name} #レビュー #ゲーム"
+              hashtags_short = f"#{category_name} #レビュー"
+          elif 'pc' in category_lower or 'パソコン' in category_name or 'コンピュータ' in category_name:
+              emoji = "💻"
+              intro = f"おすすめ{category_name}！"
+              hashtags = f"#{category_name} #レビュー #PC"
+              hashtags_short = f"#{category_name} #レビュー"
+          elif 'スマホ' in category_name or 'スマートフォン' in category_name or 'mobile' in category_lower:
+              emoji = "📱"
+              intro = f"おすすめ{category_name}！"
+              hashtags = f"#{category_name} #レビュー #スマホ"
+              hashtags_short = f"#{category_name} #レビュー"
+          else:
+              # デフォルト（ガジェット等）
+              emoji = "🔥"
+              intro = f"おすすめ{category_name}！"
+              hashtags = f"#{category_name} #レビュー #Amazon"
+              hashtags_short = f"#{category_name} #レビュー"
+
+          cta = "詳細レビューはこちら👇"
           tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}\n\n{hashtags}"
 
           # 280文字制限を考慮
@@ -133,7 +168,6 @@ jobs:
               # タイトルを短縮
               max_title_length = 280 - len(tweet_text) + len(title) - 10
               short_title = title[:max_title_length] + "..."
-              hashtags_short = "#ガジェット #レビュー #Amazon"
               tweet_text = f"{emoji} {intro}\n\n{short_title}\n\n{cta}\n{link}\n\n{hashtags_short}"
 
           # 投稿
