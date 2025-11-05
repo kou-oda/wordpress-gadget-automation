@@ -135,55 +135,77 @@ jobs:
           print(f"選択された記事: {title}")
           print(f"URL: {link}")
 
-          # Step 8: カテゴリーを取得
-          category_ids = selected_post.get('categories', [])
-          category_name = "ガジェット"  # デフォルト
+          # 多様な投稿パターンをランダムに選択（自然な投稿に見せる）
+          patterns = [
+              {
+                  "emoji": "💡",
+                  "intro": "有益情報をお届け",
+                  "cta": "続きはこちら"
+              },
+              {
+                  "emoji": "📝",
+                  "intro": "気になる情報をシェア",
+                  "cta": "詳しく見る"
+              },
+              {
+                  "emoji": "✨",
+                  "intro": "最近見つけたいい記事",
+                  "cta": "記事を読む"
+              },
+              {
+                  "emoji": "🔍",
+                  "intro": "調べてみました",
+                  "cta": "全文はこちら"
+              },
+              {
+                  "emoji": "📌",
+                  "intro": "参考になる情報",
+                  "cta": "チェックしてみて"
+              },
+              {
+                  "emoji": "👀",
+                  "intro": "これ知ってた？",
+                  "cta": "詳細を確認"
+              },
+              {
+                  "emoji": "💬",
+                  "intro": "共有したい情報",
+                  "cta": "読んでみる"
+              },
+              {
+                  "emoji": "🌟",
+                  "intro": "役立ちそうな情報",
+                  "cta": "もっと見る"
+              },
+              {
+                  "emoji": "📱",
+                  "intro": "興味深い内容",
+                  "cta": "記事をチェック"
+              },
+              {
+                  "emoji": "🎯",
+                  "intro": "まとめてみた",
+                  "cta": "続きを読む"
+              }
+          ]
 
-          if category_ids:
-              # カテゴリー情報を取得
-              try:
-                  cat_response = requests.get(f"{wp_url}/wp-json/wp/v2/categories/{category_ids[0]}")
-                  if cat_response.status_code == 200:
-                      category_name = cat_response.json()['name']
-                      print(f"カテゴリー: {category_name}")
-              except:
-                  pass
+          # ランダムにパターンを選択
+          pattern = random.choice(patterns)
+          emoji = pattern["emoji"]
+          intro = pattern["intro"]
+          cta = pattern["cta"]
 
-          # カテゴリー名から適切な紹介文を生成
-          category_lower = category_name.lower()
+          # シンプルなハッシュタグ（押し付けがましくない）
+          hashtag = "#ブログ"
 
-          # カテゴリー別の設定
-          if 'ゲーム' in category_name or 'game' in category_lower:
-              emoji = "🎮"
-              intro = f"おすすめ{category_name}！"
-              hashtags = f"#{category_name} #レビュー #ゲーム"
-              hashtags_short = f"#{category_name} #レビュー"
-          elif 'pc' in category_lower or 'パソコン' in category_name or 'コンピュータ' in category_name:
-              emoji = "💻"
-              intro = f"おすすめ{category_name}！"
-              hashtags = f"#{category_name} #レビュー #PC"
-              hashtags_short = f"#{category_name} #レビュー"
-          elif 'スマホ' in category_name or 'スマートフォン' in category_name or 'mobile' in category_lower:
-              emoji = "📱"
-              intro = f"おすすめ{category_name}！"
-              hashtags = f"#{category_name} #レビュー #スマホ"
-              hashtags_short = f"#{category_name} #レビュー"
-          else:
-              # デフォルト（ガジェット等）
-              emoji = "🔥"
-              intro = f"おすすめ{category_name}！"
-              hashtags = f"#{category_name} #レビュー #Amazon"
-              hashtags_short = f"#{category_name} #レビュー"
-
-          cta = "詳細レビューはこちら👇"
-          tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}\n\n{hashtags}"
+          tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}\n\n{hashtag}"
 
           # 280文字制限を考慮
           if len(tweet_text) > 280:
               # タイトルを短縮
               max_title_length = 280 - len(tweet_text) + len(title) - 10
               short_title = title[:max_title_length] + "..."
-              tweet_text = f"{emoji} {intro}\n\n{short_title}\n\n{cta}\n{link}\n\n{hashtags_short}"
+              tweet_text = f"{emoji} {intro}\n\n{short_title}\n\n{cta}\n{link}\n\n{hashtag}"
 
           # Step 9: 投稿
           try:
