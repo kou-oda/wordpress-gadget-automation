@@ -473,27 +473,55 @@ class BlogPostGenerator:
         return html
 
     def generate_related_articles_section(self) -> str:
-        """関連記事セクションを生成（2カラムレイアウト）"""
-        html = "<h2>関連記事</h2>\n"
+        """関連記事セクションを生成（Gutenbergブロック形式）"""
+        # 見出しブロック
+        blocks = "<!-- wp:heading -->\n"
+        blocks += "<h2 class=\"wp-block-heading\">関連記事</h2>\n"
+        blocks += "<!-- /wp:heading -->\n\n"
 
-        html += "<div style='display: flex; gap: 20px; margin-top: 40px;'>\n"
+        # カラムブロック（2列: 50% / 50%）
+        blocks += "<!-- wp:columns -->\n"
+        blocks += "<div class=\"wp-block-columns\">\n"
 
-        # 左カラム: 画像 (50%)
-        html += "  <div style='flex: 1;'>\n"
-        html += "    <img src='PLACEHOLDER_IMAGE_URL' alt='関連記事' style='width: 100%; height: auto;'>\n"
-        html += "  </div>\n"
+        # 左カラム: 画像
+        blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
+        blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
+        blocks += "<!-- wp:image -->\n"
+        blocks += "<figure class=\"wp-block-image\"><img src=\"PLACEHOLDER_IMAGE_URL\" alt=\"関連記事\"/></figure>\n"
+        blocks += "<!-- /wp:image -->\n"
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:column -->\n\n"
 
-        # 右カラム: 段落 + ボタン (50%)
-        html += "  <div style='flex: 1; display: flex; flex-direction: column; justify-content: space-between;'>\n"
-        html += "    <p>PLACEHOLDER_TEXT</p>\n"
-        html += "    <div style='text-align: right;'>\n"
-        html += "      <a href='PLACEHOLDER_LINK' style='display: inline-block; padding: 10px 20px; background-color: #0073aa; color: white; text-decoration: none; border-radius: 5px;'>詳しく見る</a>\n"
-        html += "    </div>\n"
-        html += "  </div>\n"
+        # 右カラム: 段落 + ボタン
+        blocks += "<!-- wp:column {\"width\":\"50%\",\"verticalAlignment\":\"space-between\"} -->\n"
+        blocks += "<div class=\"wp-block-column is-vertically-aligned-space-between\" style=\"flex-basis:50%\">\n"
 
-        html += "</div>\n"
+        # 段落ブロック
+        blocks += "<!-- wp:paragraph -->\n"
+        blocks += "<p>PLACEHOLDER_TEXT</p>\n"
+        blocks += "<!-- /wp:paragraph -->\n\n"
 
-        return html
+        # スペーサー（ボタンを下に配置するため）
+        blocks += "<!-- wp:spacer {\"height\":\"20px\"} -->\n"
+        blocks += "<div style=\"height:20px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n"
+        blocks += "<!-- /wp:spacer -->\n\n"
+
+        # ボタンブロック（右寄せ）
+        blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
+        blocks += "<div class=\"wp-block-buttons\">\n"
+        blocks += "<!-- wp:button -->\n"
+        blocks += "<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"PLACEHOLDER_LINK\">詳しく見る</a></div>\n"
+        blocks += "<!-- /wp:button -->\n"
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:buttons -->\n"
+
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:column -->\n"
+
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:columns -->\n"
+
+        return blocks
 
     def generate_meta_description(self, product: GadgetProduct) -> str:
         """SEO用メタディスクリプションを生成（160文字以内）"""
