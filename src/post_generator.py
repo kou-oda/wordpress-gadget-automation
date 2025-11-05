@@ -448,29 +448,55 @@ class BlogPostGenerator:
         return html
 
     def generate_product_link(self, product: GadgetProduct) -> str:
-        """商品購入リンクセクションを生成"""
-        html = "<h2>商品情報</h2>\n"
+        """商品購入リンクセクションを生成（Gutenbergブロック形式）"""
+        # 見出しブロック
+        blocks = "<!-- wp:heading -->\n"
+        blocks += "<h2 class=\"wp-block-heading\">商品情報</h2>\n"
+        blocks += "<!-- /wp:heading -->\n\n"
 
-        html += f"<p>この記事で紹介した商品の詳細情報や最新の価格は、以下のリンクからご確認いただけます。</p>\n"
+        # 段落ブロック（説明文）
+        blocks += "<!-- wp:paragraph -->\n"
+        blocks += "<p>この記事で紹介した商品の詳細情報や最新の価格は、以下のリンクからご確認いただけます。</p>\n"
+        blocks += "<!-- /wp:paragraph -->\n\n"
 
-        html += "<div style='background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px; padding: 20px; margin: 20px 0;'>\n"
-        html += f"<h3 style='margin-top: 0;'>{product.name}</h3>\n"
+        # グループブロック（商品情報ボックス）
+        blocks += "<!-- wp:group {\"style\":{\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|50\",\"bottom\":\"var:preset|spacing|50\",\"left\":\"var:preset|spacing|50\",\"right\":\"var:preset|spacing|50\"}},\"border\":{\"radius\":\"8px\",\"width\":\"1px\"}},\"borderColor\":\"contrast\",\"backgroundColor\":\"base\",\"layout\":{\"type\":\"constrained\"}} -->\n"
+        blocks += "<div class=\"wp-block-group has-border-color has-contrast-border-color has-base-background-color has-background\" style=\"border-width:1px;border-radius:8px;padding-top:var(--wp--preset--spacing--50);padding-right:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50);padding-left:var(--wp--preset--spacing--50)\">\n"
 
+        # 商品名（見出し）
+        blocks += "<!-- wp:heading {\"level\":3} -->\n"
+        blocks += f"<h3 class=\"wp-block-heading\">{product.name}</h3>\n"
+        blocks += "<!-- /wp:heading -->\n\n"
+
+        # 価格情報
         if product.price:
-            html += f"<p><strong>価格:</strong> {product.price}</p>\n"
+            blocks += "<!-- wp:paragraph -->\n"
+            blocks += f"<p><strong>価格:</strong> {product.price}</p>\n"
+            blocks += "<!-- /wp:paragraph -->\n\n"
 
-        html += f"<p><strong>ASIN:</strong> {product.asin}</p>\n"
+        # ASIN情報
+        blocks += "<!-- wp:paragraph -->\n"
+        blocks += f"<p><strong>ASIN:</strong> {product.asin}</p>\n"
+        blocks += "<!-- /wp:paragraph -->\n\n"
 
-        html += f"<p style='margin-bottom: 15px;'><a href='{product.url}' target='_blank' rel='noopener noreferrer' "
-        html += "style='display: inline-block; background-color: #ff9900; color: white; padding: 12px 24px; "
-        html += "text-decoration: none; border-radius: 5px; font-weight: bold;'>"
-        html += "Amazonで詳細を見る</a></p>\n"
+        # Amazonリンクボタン
+        blocks += "<!-- wp:buttons -->\n"
+        blocks += "<div class=\"wp-block-buttons\">\n"
+        blocks += "<!-- wp:button {\"backgroundColor\":\"vivid-orange\",\"style\":{\"border\":{\"radius\":\"5px\"}}} -->\n"
+        blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link has-vivid-orange-background-color has-background wp-element-button\" href=\"{product.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px\">Amazonで詳細を見る</a></div>\n"
+        blocks += "<!-- /wp:button -->\n"
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:buttons -->\n\n"
 
-        html += "<p style='font-size: 0.9em; color: #6c757d; margin-bottom: 0;'>"
-        html += "※商品の価格や在庫状況は変動する可能性があります。最新情報はリンク先でご確認ください。</p>\n"
-        html += "</div>\n"
+        # 注意書き
+        blocks += "<!-- wp:paragraph {\"style\":{\"typography\":{\"fontSize\":\"0.9rem\"}},\"textColor\":\"contrast-2\"} -->\n"
+        blocks += "<p class=\"has-contrast-2-color has-text-color\" style=\"font-size:0.9rem\">※商品の価格や在庫状況は変動する可能性があります。最新情報はリンク先でご確認ください。</p>\n"
+        blocks += "<!-- /wp:paragraph -->\n"
 
-        return html
+        blocks += "</div>\n"
+        blocks += "<!-- /wp:group -->\n"
+
+        return blocks
 
     def generate_related_articles_section(self) -> str:
         """関連記事セクションを生成（Gutenbergブロック形式）"""
@@ -554,6 +580,10 @@ class BlogPostGenerator:
         # 導入部分（感情的で読者に呼びかける形式）
         content += f"<p>{self.generate_introduction(product)}</p>\n\n"
 
+        # 商品購入リンク（1回目：導入の後）
+        content += self.generate_product_link(product)
+        content += "\n"
+
         # スペック表（項目を増やして充実化）
         content += self.generate_spec_table(product)
         content += "\n"
@@ -582,12 +612,12 @@ class BlogPostGenerator:
         content += self.generate_who_should_buy(product)
         content += "\n"
 
-        # まとめ（総合評価なし）
-        content += self.generate_conclusion(product)
+        # 商品購入リンク（2回目：まとめの前）
+        content += self.generate_product_link(product)
         content += "\n"
 
-        # 商品購入リンク（PA-APIリクエスト上限増加のため）
-        content += self.generate_product_link(product)
+        # まとめ（総合評価なし）
+        content += self.generate_conclusion(product)
         content += "\n"
 
         # 関連記事セクション（2カラムレイアウト）
