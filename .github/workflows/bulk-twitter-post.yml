@@ -136,30 +136,20 @@ jobs:
           print(f"URL: {link}")
 
           # Step 8: ツイート内容を生成
-          tweet_text = f"""🔥 おすすめガジェット！
+          emoji = "🔥"
+          intro = "おすすめガジェット！"
+          cta = "詳細レビューはこちら👇"
+          hashtags = "#ガジェット #レビュー #Amazon #テックレビュー"
 
-{title}
-
-詳細レビューはこちら👇
-{link}
-
-#ガジェット #レビュー #Amazon #テックレビュー
-"""
+          tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}\n\n{hashtags}"
 
           # 280文字制限を考慮
           if len(tweet_text) > 280:
               # タイトルを短縮
               max_title_length = 280 - len(tweet_text) + len(title) - 10
               short_title = title[:max_title_length] + "..."
-              tweet_text = f"""🔥 おすすめガジェット！
-
-{short_title}
-
-詳細はこちら👇
-{link}
-
-#ガジェット #レビュー #Amazon
-"""
+              hashtags_short = "#ガジェット #レビュー #Amazon"
+              tweet_text = f"{emoji} {intro}\n\n{short_title}\n\n{cta}\n{link}\n\n{hashtags_short}"
 
           # Step 9: 投稿
           try:
