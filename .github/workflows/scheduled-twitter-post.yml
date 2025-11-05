@@ -238,14 +238,17 @@ jobs:
                   "#Amazon #レビュー #便利グッズ"
               ])
 
+          # タイトルは必ず完全に表示する（切らない）
+          # 280文字を超える場合は、intro/cta/ハッシュタグを削除して調整
           tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}\n\n{hashtags}"
 
-          # 280文字制限を考慮
+          # 280文字制限を考慮（タイトルは切らない）
           if len(tweet_text) > 280:
-              # タイトルを短縮
-              max_title_length = 280 - len(tweet_text) + len(title) - 10
-              short_title = title[:max_title_length] + "..."
-              tweet_text = f"{emoji} {intro}\n\n{short_title}\n\n{cta}\n{link}\n\n{hashtags}"
+              # まず、ハッシュタグなしで試す
+              tweet_text = f"{emoji} {intro}\n\n{title}\n\n{cta}\n{link}"
+              if len(tweet_text) > 280:
+                  # intro/ctaなしで最小構成（タイトル+リンクのみ）
+                  tweet_text = f"{title}\n\n{link}"
 
           # 投稿
           try:
