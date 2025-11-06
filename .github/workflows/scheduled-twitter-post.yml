@@ -17,6 +17,10 @@ on:
         required: false
         default: 'false'
 
+# GitHub Actionsに書き込み権限を付与
+permissions:
+  contents: write
+
 jobs:
   post-to-twitter:
     runs-on: ubuntu-latest
@@ -33,6 +37,13 @@ jobs:
       - name: 依存関係のインストール
         run: |
           pip install tweepy requests
+
+      - name: 投稿履歴ファイルの準備
+        run: |
+          # 投稿履歴ファイルが存在しない場合は作成
+          if [ ! -f data/twitter_history.json ]; then
+            echo "[]" > data/twitter_history.json
+          fi
 
       - name: 公開済み記事を取得してTwitterに投稿
         env:
@@ -66,42 +77,26 @@ jobs:
 
           print(f"✓ {len(all_posts)}件の公開済み記事を取得しました")
 
-          # 過去10投稿の履歴を取得（Twitter APIから）
+          # 投稿履歴をファイルから読み込み（確実な重複チェック）
           try:
-              client = tweepy.Client(
-                  consumer_key=os.environ['TWITTER_API_KEY'],
-                  consumer_secret=os.environ['TWITTER_API_SECRET'],
-                  access_token=os.environ['TWITTER_ACCESS_TOKEN'],
-                  access_token_secret=os.environ['TWITTER_ACCESS_SECRET']
-              )
+              with open('data/twitter_history.json', 'r', encoding='utf-8') as f:
+                  history = json.load(f)
 
-              # 自分のユーザーIDを取得
-              me = client.get_me()
-              user_id = me.data.id
-
-              # 過去10ツイートを取得
-              recent_tweets = client.get_users_tweets(
-                  id=user_id,
-                  max_results=10,
-                  tweet_fields=['created_at', 'text']
-              )
-
-              # 過去10投稿に含まれるURLを抽出
+              # 過去30日以内の投稿URLを取得
+              cutoff_date = datetime.now() - timedelta(days=30)
               posted_urls = set()
-              if recent_tweets.data:
-                  for tweet in recent_tweets.data:
-                      # ツイートからURLを抽出
-                      import re
-                      urls = re.findall(r'https?://[^\s]+', tweet.text)
-                      posted_urls.update(urls)
+              for entry in history:
+                  posted_date = datetime.fromisoformat(entry['posted_at'])
+                  if posted_date > cutoff_date:
+                      posted_urls.add(entry['url'])
 
-              print(f"✓ 過去10投稿のURL: {len(posted_urls)}件")
+              print(f"✓ 過去30日の投稿履歴: {len(posted_urls)}件")
 
           except Exception as e:
-              print(f"⚠ 過去ツイートの取得に失敗: {e}")
+              print(f"⚠ 投稿履歴の読み込みに失敗: {e}")
               posted_urls = set()
 
-          # 過去10投稿に含まれていない記事を選択
+          # 投稿履歴に含まれていない記事を選択
           available_posts = []
           for post in all_posts:
               post_url = post['link']
@@ -109,8 +104,8 @@ jobs:
                   available_posts.append(post)
 
           if not available_posts:
-              print("⚠ 投稿可能な新しい記事がありません（過去10投稿と重複）")
-              # 全記事からランダム選択（重複を許容）
+              print("⚠ 投稿可能な新しい記事がありません（過去30日の投稿と重複）")
+              # 最も古い投稿から選択（30日以上経過した記事を再投稿）
               available_posts = all_posts
 
           print(f"✓ 投稿可能な記事: {len(available_posts)}件")
@@ -250,15 +245,64 @@ jobs:
                   # intro/ctaなしで最小構成（タイトル+リンクのみ）
                   tweet_text = f"{title}\n\n{link}"
 
+          # Twitter認証クライアントを作成
+          client = tweepy.Client(
+              consumer_key=os.environ['TWITTER_API_KEY'],
+              consumer_secret=os.environ['TWITTER_API_SECRET'],
+              access_token=os.environ['TWITTER_ACCESS_TOKEN'],
+              access_token_secret=os.environ['TWITTER_ACCESS_SECRET']
+          )
+
           # 投稿
           try:
               response = client.create_tweet(text=tweet_text)
-              print(f"✓ ツイート投稿成功: {response.data['id']}")
-              print(f"ツイートURL: https://twitter.com/user/status/{response.data['id']}")
+              tweet_id = response.data['id']
+              print(f"✓ ツイート投稿成功: {tweet_id}")
+              print(f"ツイートURL: https://twitter.com/user/status/{tweet_id}")
+
+              # 投稿履歴に追加
+              with open('data/twitter_history.json', 'r', encoding='utf-8') as f:
+                  history = json.load(f)
+
+              history.append({
+                  'url': link,
+                  'title': title,
+                  'posted_at': datetime.now().isoformat(),
+                  'tweet_id': tweet_id
+              })
+
+              # 履歴を保存（最新100件のみ保持）
+              history = history[-100:]
+              with open('data/twitter_history.json', 'w', encoding='utf-8') as f:
+                  json.dump(history, f, ensure_ascii=False, indent=2)
+
+              print(f"✓ 投稿履歴を更新しました（総件数: {len(history)}件）")
+
           except Exception as e:
               print(f"❌ ツイート投稿に失敗: {e}")
               exit(1)
           EOF
+
+      - name: 投稿履歴をコミット
+        if: success()
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # 変更されたファイルを確認
+          if git diff --quiet data/twitter_history.json; then
+            echo "履歴に変更なし"
+            exit 0
+          fi
+
+          # 履歴をコミット
+          git add data/twitter_history.json
+          git commit -m "Twitter投稿履歴を更新
+
+          🤖 Generated with GitHub Actions
+          $(date '+%Y-%m-%d %H:%M:%S')"
+
+          git push origin main
 
       - name: 投稿結果
         if: success()
