@@ -128,7 +128,7 @@ def main():
     title = generator.generate_title(product)
     content = generator.generate_post_content(product, variants=product_variants, previous_post=previous_post)
     meta_description = generator.generate_meta_description(product)
-    seo_title = generator.generate_seo_title(product)
+    seo_title = generator.generate_seo_title(product, post_title=title)  # 投稿タイトルをSEOタイトルとして使用
     seo_keywords = generator.generate_seo_keywords(product)
 
     print(f"記事タイトル: {title}")

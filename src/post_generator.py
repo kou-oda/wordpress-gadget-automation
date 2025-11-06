@@ -658,28 +658,46 @@ class BlogPostGenerator:
         return blocks
 
     def generate_meta_description(self, product: GadgetProduct) -> str:
-        """SEO用メタディスクリプションを生成（160文字以内）"""
-        import datetime
-        current_year = datetime.datetime.now().year
+        """SEO用メタディスクリプションを生成（導入文章から100-150文字を抽出）"""
+        # 導入文章を生成
+        intro = self.generate_introduction(product)
 
-        # 特徴を簡潔に
-        feature_text = ""
-        if product.features and len(product.features) > 0:
-            feature_text = f"{product.features[0]}など、"
+        # HTMLタグを除去してプレーンテキストに変換
+        import re
+        plain_text = re.sub(r'<[^>]+>', '', intro)
+        plain_text = re.sub(r'\n+', ' ', plain_text)  # 改行をスペースに変換
+        plain_text = plain_text.strip()
 
-        descriptions = [
-            f"{product.name}の詳細レビュー。{feature_text}実際の使用感やメリット・デメリットを徹底解説。{product.category}選びの参考に。",
-            f"{current_year}年版{product.name}のレビュー記事。{feature_text}口コミ・評判、性能を詳しく紹介。{product.category}のおすすめモデル。",
-            f"{product.name}を実機レビュー。{feature_text}購入前に知っておきたい情報を網羅。{product.category}の比較検討に最適。",
-        ]
+        # 100-150文字の範囲でキリの良いところ（句点「。」）まで抽出
+        if len(plain_text) <= 150:
+            return plain_text
 
-        description = random.choice(descriptions)
+        # 100文字以降で最初の句点を探す
+        min_length = 100
+        max_length = 150
 
-        # 160文字制限
-        if len(description) > 160:
-            description = description[:157] + "..."
+        # 100-150文字の範囲内で句点を探す
+        search_text = plain_text[min_length:max_length]
+        period_pos = search_text.find('。')
 
-        return description
+        if period_pos != -1:
+            # 句点が見つかった場合、その直後まで抽出
+            end_pos = min_length + period_pos + 1
+            return plain_text[:end_pos]
+
+        # 句点が見つからない場合は、100文字以降で最初の句点を探す
+        search_text_after = plain_text[min_length:]
+        period_pos_after = search_text_after.find('。')
+
+        if period_pos_after != -1:
+            end_pos = min_length + period_pos_after + 1
+            # ただし200文字を超える場合は150文字で切る
+            if end_pos > 200:
+                return plain_text[:150]
+            return plain_text[:end_pos]
+
+        # 句点が全く見つからない場合は150文字で切る
+        return plain_text[:150]
 
     def generate_post_content(self, product: GadgetProduct, variants: List[GadgetProduct] = None, previous_post: dict = None) -> str:
         """完全な記事コンテンツを生成（2000-4000文字）
@@ -767,27 +785,18 @@ class BlogPostGenerator:
         # 重複を削除
         return list(set(tags))
 
-    def generate_seo_title(self, product: GadgetProduct) -> str:
-        """SEOタイトルを生成（60文字以内、検索エンジン最適化）"""
-        import datetime
-        current_year = datetime.datetime.now().year
+    def generate_seo_title(self, product: GadgetProduct, post_title: str = None) -> str:
+        """SEOタイトルを生成（投稿タイトルをそのまま使用）
 
-        # SEOに効果的なタイトルパターン
-        seo_titles = [
-            f"{product.name} レビュー | {current_year}年版{product.category}",
-            f"{product.name} 口コミ・評判 | {current_year}",
-            f"{product.name} | {product.category}おすすめレビュー",
-            f"{product.name} 徹底レビュー | メリット・デメリット",
-            f"{product.name} 評価 | {product.category}の選び方",
-        ]
+        Args:
+            product: 商品情報
+            post_title: 投稿のタイトル（指定された場合はそのまま使用）
+        """
+        if post_title:
+            return post_title
 
-        seo_title = random.choice(seo_titles)
-
-        # 60文字以内に収める
-        if len(seo_title) > 60:
-            seo_title = seo_title[:57] + "..."
-
-        return seo_title
+        # post_titleが指定されていない場合は通常のタイトル生成
+        return self.generate_title(product)
 
     def generate_seo_keywords(self, product: GadgetProduct) -> str:
         """SEOキーワードを生成（カンマ区切り）"""
