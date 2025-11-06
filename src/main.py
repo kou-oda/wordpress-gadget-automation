@@ -37,6 +37,17 @@ def main():
         print(f"エラー: WordPress接続に失敗しました - {e}")
         sys.exit(1)
 
+    # 前回の投稿を取得（関連記事セクション用）
+    previous_post = None
+    try:
+        previous_post = wp_client.get_latest_post()
+        if previous_post:
+            print(f"✓ 前回の投稿を取得しました: {previous_post['title']}")
+        else:
+            print("⚠ 前回の投稿が見つかりませんでした（初回投稿の可能性）")
+    except Exception as e:
+        print(f"⚠ 前回の投稿取得に失敗: {e}")
+
     # 商品マネージャーを初期化（50日経過チェックと自動リフレッシュを含む）
     products_file = os.path.join(os.path.dirname(__file__), '..', 'data', 'products.json')
     product_manager = AmazonProductManager(products_file)
@@ -112,10 +123,10 @@ def main():
         print(f"バリエーション: {len(product_variants)}個の仕様違いを1記事にまとめます")
     print("-" * 50)
 
-    # ブログ記事生成（バリエーション対応）
+    # ブログ記事生成（バリエーション対応、関連記事付き）
     generator = BlogPostGenerator()
     title = generator.generate_title(product)
-    content = generator.generate_post_content(product, variants=product_variants)
+    content = generator.generate_post_content(product, variants=product_variants, previous_post=previous_post)
     meta_description = generator.generate_meta_description(product)
 
     print(f"記事タイトル: {title}")

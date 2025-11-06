@@ -196,3 +196,50 @@ class WordPressClient:
                 tag_ids.append(new_tag['id'])
 
         return tag_ids
+
+    def get_latest_post(self) -> Optional[Dict]:
+        """
+        最新の投稿を1件取得
+
+        Returns:
+            最新投稿の情報（title, link, featured_media）、取得できない場合はNone
+        """
+        try:
+            url = f"{self.api_url}/posts"
+            params = {
+                'per_page': 1,
+                'orderby': 'date',
+                'order': 'desc',
+                'status': 'publish'
+            }
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+
+            posts = response.json()
+            if posts and len(posts) > 0:
+                post = posts[0]
+                result = {
+                    'title': post.get('title', {}).get('rendered', ''),
+                    'link': post.get('link', ''),
+                    'featured_media': post.get('featured_media', 0)
+                }
+
+                # アイキャッチ画像のURLを取得
+                if result['featured_media'] > 0:
+                    media_url = f"{self.api_url}/media/{result['featured_media']}"
+                    media_response = requests.get(media_url)
+                    if media_response.status_code == 200:
+                        media_data = media_response.json()
+                        result['featured_image_url'] = media_data.get('source_url', '')
+                    else:
+                        result['featured_image_url'] = ''
+                else:
+                    result['featured_image_url'] = ''
+
+                return result
+
+            return None
+
+        except Exception as e:
+            print(f"最新投稿の取得に失敗: {e}")
+            return None

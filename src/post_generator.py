@@ -553,28 +553,42 @@ class BlogPostGenerator:
 
         return blocks
 
-    def generate_related_articles_section(self) -> str:
-        """関連記事セクションを生成（Gutenbergブロック形式）※見出しなし"""
+    def generate_related_articles_section(self, previous_post: dict = None) -> str:
+        """関連記事セクションを生成（Gutenbergブロック形式）※見出しなし
+
+        Args:
+            previous_post: 前回の投稿情報（title, link, featured_image_url）
+        """
         # カラムブロック（2列: 50% / 50%）※見出しなし
         blocks = "<!-- wp:columns -->\n"
         blocks += "<div class=\"wp-block-columns\">\n"
 
-        # 左カラム: 画像
+        # 左カラム: 画像（アイキャッチ画像またはプレースホルダー）
         blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
         blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
         blocks += "<!-- wp:image -->\n"
-        blocks += "<figure class=\"wp-block-image\"><img src=\"PLACEHOLDER_IMAGE_URL\" alt=\"関連記事\"/></figure>\n"
+
+        if previous_post and previous_post.get('featured_image_url'):
+            image_url = previous_post['featured_image_url']
+            alt_text = previous_post.get('title', '関連記事')
+            blocks += f"<figure class=\"wp-block-image\"><img src=\"{image_url}\" alt=\"{alt_text}\"/></figure>\n"
+        else:
+            blocks += "<figure class=\"wp-block-image\"><img src=\"PLACEHOLDER_IMAGE_URL\" alt=\"関連記事\"/></figure>\n"
+
         blocks += "<!-- /wp:image -->\n"
         blocks += "</div>\n"
         blocks += "<!-- /wp:column -->\n\n"
 
-        # 右カラム: 段落 + ボタン
+        # 右カラム: 段落（タイトル） + ボタン
         blocks += "<!-- wp:column {\"width\":\"50%\",\"verticalAlignment\":\"space-between\"} -->\n"
         blocks += "<div class=\"wp-block-column is-vertically-aligned-space-between\" style=\"flex-basis:50%\">\n"
 
-        # 段落ブロック
+        # 段落ブロック（前記事のタイトル）
         blocks += "<!-- wp:paragraph -->\n"
-        blocks += "<p>PLACEHOLDER_TEXT</p>\n"
+        if previous_post and previous_post.get('title'):
+            blocks += f"<p>{previous_post['title']}</p>\n"
+        else:
+            blocks += "<p>PLACEHOLDER_TEXT</p>\n"
         blocks += "<!-- /wp:paragraph -->\n\n"
 
         # スペーサー（ボタンを下に配置するため）
@@ -582,11 +596,17 @@ class BlogPostGenerator:
         blocks += "<div style=\"height:20px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n"
         blocks += "<!-- /wp:spacer -->\n\n"
 
-        # ボタンブロック（右寄せ）
+        # ボタンブロック（右寄せ、黄色背景）
         blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
         blocks += "<div class=\"wp-block-buttons\">\n"
         blocks += "<!-- wp:button -->\n"
-        blocks += "<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"PLACEHOLDER_LINK\">詳しく見る</a></div>\n"
+
+        if previous_post and previous_post.get('link'):
+            link = previous_post['link']
+            blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{link}\" style=\"background-color:#f39800\">見に行く⇒</a></div>\n"
+        else:
+            blocks += "<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"PLACEHOLDER_LINK\" style=\"background-color:#f39800\">見に行く⇒</a></div>\n"
+
         blocks += "<!-- /wp:button -->\n"
         blocks += "</div>\n"
         blocks += "<!-- /wp:buttons -->\n"
@@ -623,12 +643,13 @@ class BlogPostGenerator:
 
         return description
 
-    def generate_post_content(self, product: GadgetProduct, variants: List[GadgetProduct] = None) -> str:
+    def generate_post_content(self, product: GadgetProduct, variants: List[GadgetProduct] = None, previous_post: dict = None) -> str:
         """完全な記事コンテンツを生成（2000-4000文字）
 
         Args:
             product: メイン商品
             variants: 同一製品のバリエーション（仕様違い）リスト
+            previous_post: 前回の投稿情報（title, link, featured_image_url）
         """
         content = ""
 
@@ -685,7 +706,7 @@ class BlogPostGenerator:
         content += "\n"
 
         # 関連記事セクション（2カラムレイアウト）
-        content += self.generate_related_articles_section()
+        content += self.generate_related_articles_section(previous_post)
 
         return content
 
