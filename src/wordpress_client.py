@@ -112,7 +112,68 @@ class WordPressClient:
         )
         response.raise_for_status()
 
-        return response.json()
+        post_data = response.json()
+
+        # SEO情報を別途更新（メタフィールドとして保存）
+        if seo_title or seo_description or seo_keywords:
+            post_id = post_data.get('id')
+            if post_id:
+                self._update_seo_meta(post_id, seo_title, seo_description, seo_keywords)
+
+        return post_data
+
+    def _update_seo_meta(self, post_id: int, seo_title: str = None, seo_description: str = None, seo_keywords: str = None):
+        """投稿のSEOメタデータを更新（Yoast SEO, Rank Math, AIOSEO対応）"""
+        try:
+            # Yoast SEO用のメタデータ更新
+            if seo_title:
+                self._update_post_meta(post_id, '_yoast_wpseo_title', seo_title)
+            if seo_description:
+                self._update_post_meta(post_id, '_yoast_wpseo_metadesc', seo_description)
+            if seo_keywords:
+                self._update_post_meta(post_id, '_yoast_wpseo_focuskw', seo_keywords)
+
+            # Rank Math用のメタデータ更新
+            if seo_title:
+                self._update_post_meta(post_id, 'rank_math_title', seo_title)
+            if seo_description:
+                self._update_post_meta(post_id, 'rank_math_description', seo_description)
+            if seo_keywords:
+                self._update_post_meta(post_id, 'rank_math_focus_keyword', seo_keywords)
+
+            # AIOSEO用のメタデータ更新
+            if seo_title:
+                self._update_post_meta(post_id, '_aioseo_title', seo_title)
+            if seo_description:
+                self._update_post_meta(post_id, '_aioseo_description', seo_description)
+            if seo_keywords:
+                self._update_post_meta(post_id, '_aioseo_keywords', seo_keywords)
+
+        except Exception as e:
+            print(f"警告: SEOメタデータの更新に失敗しました - {e}")
+
+    def _update_post_meta(self, post_id: int, meta_key: str, meta_value: str):
+        """投稿メタデータを更新（直接データベース操作が必要な場合の代替手段）"""
+        # WordPress REST APIのメタエンドポイントを使用
+        # 注意: メタフィールドがREST APIに公開されている必要があります
+        endpoint = f"{self.api_url}/posts/{post_id}"
+        data = {
+            'meta': {
+                meta_key: meta_value
+            }
+        }
+
+        try:
+            response = requests.post(
+                endpoint,
+                headers=self.headers,
+                json=data
+            )
+            # エラーがあっても続行（メタフィールドが登録されていない可能性）
+            if response.status_code not in [200, 201]:
+                print(f"  メタフィールド {meta_key} の更新をスキップ（REST APIに公開されていない可能性）")
+        except Exception as e:
+            print(f"  メタフィールド {meta_key} の更新エラー: {e}")
 
     def upload_media(self, image_url: str, filename: str) -> Dict:
         """
