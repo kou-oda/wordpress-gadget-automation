@@ -2,7 +2,6 @@ from typing import Dict, List
 from amazon_scraper import GadgetProduct
 import random
 import re
-import html
 
 
 class BlogPostGenerator:
@@ -522,12 +521,10 @@ class BlogPostGenerator:
         blocks += "<!-- /wp:paragraph -->\n\n"
 
         # Amazonリンクボタン（右寄せ、紺色背景）
-        # URLをHTMLエスケープして保存（WordPressが自動変換しないように）
-        escaped_url = html.escape(product.url, quote=False)
         blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
         blocks += "<div class=\"wp-block-buttons\">\n"
-        blocks += "<!-- wp:button -->\n"
-        blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{escaped_url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
+        blocks += "<!-- wp:button {\"backgroundColor\":\"custom\",\"style\":{\"color\":{\"background\":\"#1e50a2\"},\"border\":{\"radius\":\"5px\"}}} -->\n"
+        blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{product.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
         blocks += "<!-- /wp:button -->\n"
         blocks += "</div>\n"
         blocks += "<!-- /wp:buttons -->\n"
@@ -578,12 +575,10 @@ class BlogPostGenerator:
             blocks += "<!-- /wp:paragraph -->\n\n"
 
             # Amazonリンクボタン（右寄せ、紺色背景）
-            # URLをHTMLエスケープして保存（WordPressが自動変換しないように）
-            escaped_variant_url = html.escape(variant.url, quote=False)
             blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
             blocks += "<div class=\"wp-block-buttons\">\n"
-            blocks += "<!-- wp:button -->\n"
-            blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{escaped_variant_url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
+            blocks += "<!-- wp:button {\"backgroundColor\":\"custom\",\"style\":{\"color\":{\"background\":\"#1e50a2\"},\"border\":{\"radius\":\"5px\"}}} -->\n"
+            blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{variant.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
             blocks += "<!-- /wp:button -->\n"
             blocks += "</div>\n"
             blocks += "<!-- /wp:buttons -->\n"
@@ -642,16 +637,17 @@ class BlogPostGenerator:
         # ボタンブロック（右寄せ、黄色背景）
         blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
         blocks += "<div class=\"wp-block-buttons\">\n"
-        blocks += "<!-- wp:button -->\n"
 
         if previous_post and previous_post.get('link'):
-            # URLをHTMLエスケープして保存（WordPressが自動変換しないように）
-            link = html.escape(previous_post['link'], quote=False)
+            link = previous_post['link']
+            blocks += "<!-- wp:button {\"backgroundColor\":\"custom\",\"style\":{\"color\":{\"background\":\"#f39800\"}}} -->\n"
             blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{link}\" style=\"background-color:#f39800\">見に行く⇒</a></div>\n"
+            blocks += "<!-- /wp:button -->\n"
         else:
+            blocks += "<!-- wp:button {\"backgroundColor\":\"custom\",\"style\":{\"color\":{\"background\":\"#f39800\"}}} -->\n"
             blocks += "<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"PLACEHOLDER_LINK\" style=\"background-color:#f39800\">見に行く⇒</a></div>\n"
+            blocks += "<!-- /wp:button -->\n"
 
-        blocks += "<!-- /wp:button -->\n"
         blocks += "</div>\n"
         blocks += "<!-- /wp:buttons -->\n"
 

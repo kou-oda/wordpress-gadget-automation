@@ -153,9 +153,8 @@ class WordPressClient:
             print(f"警告: SEOメタデータの更新に失敗しました - {e}")
 
     def _update_post_meta(self, post_id: int, meta_key: str, meta_value: str):
-        """投稿メタデータを更新（直接データベース操作が必要な場合の代替手段）"""
-        # WordPress REST APIのメタエンドポイントを使用
-        # 注意: メタフィールドがREST APIに公開されている必要があります
+        """投稿メタデータを更新"""
+        # WordPress REST APIのPUTメソッドを使用して投稿を更新
         endpoint = f"{self.api_url}/posts/{post_id}"
         data = {
             'meta': {
@@ -164,16 +163,25 @@ class WordPressClient:
         }
 
         try:
-            response = requests.post(
+            # PUTメソッドを使用
+            response = requests.put(
                 endpoint,
                 headers=self.headers,
                 json=data
             )
-            # エラーがあっても続行（メタフィールドが登録されていない可能性）
-            if response.status_code not in [200, 201]:
-                print(f"  メタフィールド {meta_key} の更新をスキップ（REST APIに公開されていない可能性）")
+            # 成功した場合のみログ出力
+            if response.status_code in [200, 201]:
+                print(f"  ✓ SEOメタフィールド {meta_key} を更新しました")
+            else:
+                # エラーレスポンスの詳細を表示
+                print(f"  ⚠ メタフィールド {meta_key} の更新に失敗: HTTP {response.status_code}")
+                try:
+                    error_detail = response.json()
+                    print(f"    詳細: {error_detail.get('message', 'Unknown error')}")
+                except:
+                    pass
         except Exception as e:
-            print(f"  メタフィールド {meta_key} の更新エラー: {e}")
+            print(f"  ✗ メタフィールド {meta_key} の更新エラー: {e}")
 
     def upload_media(self, image_url: str, filename: str) -> Dict:
         """
