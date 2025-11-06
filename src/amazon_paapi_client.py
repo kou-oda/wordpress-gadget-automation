@@ -274,7 +274,8 @@ class AmazonPAAPIClient:
                             category=category,
                             features=features if features else None,
                             rating=None,
-                            full_name=full_name  # 本文用の詳細な商品名
+                            full_name=full_name,  # 本文用の詳細な商品名
+                            original_title=title  # PA-APIから取得した元のタイトル（原文）
                         )
 
                         gadget_products.append(product)

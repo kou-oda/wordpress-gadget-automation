@@ -452,16 +452,11 @@ class BlogPostGenerator:
 
     def generate_product_link(self, product: GadgetProduct) -> str:
         """商品購入リンクセクションを生成（Gutenbergブロック形式・シンプル2カラム）"""
-        # 本文では詳細な商品名を使用
-        display_name = product.full_name if product.full_name else product.name
+        # PA-APIから取得した元のタイトル（原文）を使用
+        display_title = product.original_title if product.original_title else (product.full_name if product.full_name else product.name)
 
-        # 見出しブロック
-        blocks = "<!-- wp:heading -->\n"
-        blocks += "<h2 class=\"wp-block-heading\">商品情報</h2>\n"
-        blocks += "<!-- /wp:heading -->\n\n"
-
-        # カラムブロック（2列: 50% / 50%）
-        blocks += "<!-- wp:columns -->\n"
+        # カラムブロック（2列: 50% / 50%）※見出しなし
+        blocks = "<!-- wp:columns -->\n"
         blocks += "<div class=\"wp-block-columns\">\n"
 
         # 左カラム: 商品画像 (50%)
@@ -469,7 +464,7 @@ class BlogPostGenerator:
         blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
         if product.image_url:
             blocks += "<!-- wp:image -->\n"
-            blocks += f"<figure class=\"wp-block-image\"><img src=\"{product.image_url}\" alt=\"{display_name}\"/></figure>\n"
+            blocks += f"<figure class=\"wp-block-image\"><img src=\"{product.image_url}\" alt=\"{display_title}\"/></figure>\n"
             blocks += "<!-- /wp:image -->\n"
         else:
             blocks += "<!-- wp:paragraph -->\n"
@@ -478,20 +473,20 @@ class BlogPostGenerator:
         blocks += "</div>\n"
         blocks += "<!-- /wp:column -->\n\n"
 
-        # 右カラム: 段落 + ボタン (50%)
+        # 右カラム: 商品タイトル（原文） + ボタン (50%)
         blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
         blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
 
-        # 段落（商品説明）
+        # 段落（PA-APIから取得した商品タイトル原文）
         blocks += "<!-- wp:paragraph -->\n"
-        blocks += f"<p>この記事で紹介した商品の詳細情報や最新の価格は、以下のリンクからご確認いただけます。</p>\n"
+        blocks += f"<p>{display_title}</p>\n"
         blocks += "<!-- /wp:paragraph -->\n\n"
 
-        # Amazonリンクボタン（右寄せ）
+        # Amazonリンクボタン（右寄せ、紺色背景）
         blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
         blocks += "<div class=\"wp-block-buttons\">\n"
-        blocks += "<!-- wp:button {\"backgroundColor\":\"vivid-orange\",\"style\":{\"border\":{\"radius\":\"5px\"}}} -->\n"
-        blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link has-vivid-orange-background-color has-background wp-element-button\" href=\"{product.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px\">Amazonで詳細を見る</a></div>\n"
+        blocks += "<!-- wp:button {\"style\":{\"border\":{\"radius\":\"5px\"},\"color\":{\"background\":\"#1e50a2\"}}} -->\n"
+        blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{product.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
         blocks += "<!-- /wp:button -->\n"
         blocks += "</div>\n"
         blocks += "<!-- /wp:buttons -->\n"
@@ -506,23 +501,17 @@ class BlogPostGenerator:
 
     def generate_variants_section(self, variants: List[GadgetProduct]) -> str:
         """複数バリエーション（仕様違い）の商品リンクセクションを生成"""
-        # 見出しブロック
-        blocks = "<!-- wp:heading -->\n"
-        blocks += "<h2 class=\"wp-block-heading\">商品バリエーション</h2>\n"
-        blocks += "<!-- /wp:heading -->\n\n"
+        blocks = ""
 
-        # 説明文
+        # 説明文（見出しなし）
         blocks += "<!-- wp:paragraph -->\n"
         blocks += f"<p>この製品には{len(variants)}つの仕様バリエーションがあります。用途や予算に合わせてお選びください。</p>\n"
         blocks += "<!-- /wp:paragraph -->\n\n"
 
-        # 各バリエーションをカラムで表示
+        # 各バリエーションをカラムで表示（見出しなし）
         for i, variant in enumerate(variants, 1):
-            display_name = variant.full_name if variant.full_name else variant.name
-
-            blocks += f"<!-- wp:heading {{\"level\":3}} -->\n"
-            blocks += f"<h3 class=\"wp-block-heading\">バリエーション {i}: {display_name}</h3>\n"
-            blocks += f"<!-- /wp:heading -->\n\n"
+            # PA-APIから取得した元のタイトル（原文）を使用
+            display_title = variant.original_title if variant.original_title else (variant.full_name if variant.full_name else variant.name)
 
             # カラムブロック（2列: 50% / 50%）
             blocks += "<!-- wp:columns -->\n"
@@ -533,32 +522,25 @@ class BlogPostGenerator:
             blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
             if variant.image_url:
                 blocks += "<!-- wp:image -->\n"
-                blocks += f"<figure class=\"wp-block-image\"><img src=\"{variant.image_url}\" alt=\"{display_name}\"/></figure>\n"
+                blocks += f"<figure class=\"wp-block-image\"><img src=\"{variant.image_url}\" alt=\"{display_title}\"/></figure>\n"
                 blocks += "<!-- /wp:image -->\n"
             blocks += "</div>\n"
             blocks += "<!-- /wp:column -->\n\n"
 
-            # 右カラム: 商品情報 + ボタン (50%)
+            # 右カラム: 商品タイトル（原文） + ボタン (50%)
             blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
             blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
 
-            # 価格表示
-            if variant.price:
-                blocks += "<!-- wp:paragraph -->\n"
-                blocks += f"<p><strong>価格:</strong> {variant.price}</p>\n"
-                blocks += "<!-- /wp:paragraph -->\n\n"
+            # 段落（PA-APIから取得した商品タイトル原文）
+            blocks += "<!-- wp:paragraph -->\n"
+            blocks += f"<p>{display_title}</p>\n"
+            blocks += "<!-- /wp:paragraph -->\n\n"
 
-            # 主な特徴
-            if variant.features and len(variant.features) > 0:
-                blocks += "<!-- wp:paragraph -->\n"
-                blocks += f"<p><strong>主な特徴:</strong><br>{variant.features[0]}</p>\n"
-                blocks += "<!-- /wp:paragraph -->\n\n"
-
-            # Amazonリンクボタン（右寄せ）
+            # Amazonリンクボタン（右寄せ、紺色背景）
             blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
             blocks += "<div class=\"wp-block-buttons\">\n"
-            blocks += "<!-- wp:button {\"backgroundColor\":\"vivid-orange\",\"style\":{\"border\":{\"radius\":\"5px\"}}} -->\n"
-            blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link has-vivid-orange-background-color has-background wp-element-button\" href=\"{variant.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px\">Amazonで詳細を見る</a></div>\n"
+            blocks += "<!-- wp:button {\"style\":{\"border\":{\"radius\":\"5px\"},\"color\":{\"background\":\"#1e50a2\"}}} -->\n"
+            blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{variant.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
             blocks += "<!-- /wp:button -->\n"
             blocks += "</div>\n"
             blocks += "<!-- /wp:buttons -->\n"
@@ -572,14 +554,9 @@ class BlogPostGenerator:
         return blocks
 
     def generate_related_articles_section(self) -> str:
-        """関連記事セクションを生成（Gutenbergブロック形式）"""
-        # 見出しブロック
-        blocks = "<!-- wp:heading -->\n"
-        blocks += "<h2 class=\"wp-block-heading\">関連記事</h2>\n"
-        blocks += "<!-- /wp:heading -->\n\n"
-
-        # カラムブロック（2列: 50% / 50%）
-        blocks += "<!-- wp:columns -->\n"
+        """関連記事セクションを生成（Gutenbergブロック形式）※見出しなし"""
+        # カラムブロック（2列: 50% / 50%）※見出しなし
+        blocks = "<!-- wp:columns -->\n"
         blocks += "<div class=\"wp-block-columns\">\n"
 
         # 左カラム: 画像

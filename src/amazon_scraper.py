@@ -152,6 +152,7 @@ class GadgetProduct:
     features: Optional[List[str]] = None
     rating: Optional[float] = None
     full_name: Optional[str] = None  # 本文用の詳細な商品名（企業名+製品名）
+    original_title: Optional[str] = None  # PA-APIから取得した元のタイトル（原文）
 
     def to_dict(self) -> Dict:
         return asdict(self)
