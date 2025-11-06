@@ -128,9 +128,13 @@ def main():
     title = generator.generate_title(product)
     content = generator.generate_post_content(product, variants=product_variants, previous_post=previous_post)
     meta_description = generator.generate_meta_description(product)
+    seo_title = generator.generate_seo_title(product)
+    seo_keywords = generator.generate_seo_keywords(product)
 
     print(f"記事タイトル: {title}")
     print(f"メタディスクリプション: {meta_description}")
+    print(f"SEOタイトル: {seo_title}")
+    print(f"SEOキーワード: {seo_keywords}")
     print("-" * 50)
 
     # カテゴリーの準備
@@ -151,7 +155,10 @@ def main():
             status=post_status,
             categories=[category_id] if category_id else None,
             tags=None,
-            excerpt=meta_description
+            excerpt=meta_description,
+            seo_title=seo_title,
+            seo_description=meta_description,
+            seo_keywords=seo_keywords
         )
 
         post_url = post_data.get('link', '')
