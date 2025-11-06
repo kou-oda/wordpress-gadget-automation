@@ -485,7 +485,7 @@ class BlogPostGenerator:
         # Amazonリンクボタン（右寄せ、紺色背景）
         blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
         blocks += "<div class=\"wp-block-buttons\">\n"
-        blocks += "<!-- wp:button {\"style\":{\"border\":{\"radius\":\"5px\"},\"color\":{\"background\":\"#1e50a2\"}}} -->\n"
+        blocks += "<!-- wp:button -->\n"
         blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{product.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
         blocks += "<!-- /wp:button -->\n"
         blocks += "</div>\n"
@@ -539,7 +539,7 @@ class BlogPostGenerator:
             # Amazonリンクボタン（右寄せ、紺色背景）
             blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
             blocks += "<div class=\"wp-block-buttons\">\n"
-            blocks += "<!-- wp:button {\"style\":{\"border\":{\"radius\":\"5px\"},\"color\":{\"background\":\"#1e50a2\"}}} -->\n"
+            blocks += "<!-- wp:button -->\n"
             blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" href=\"{variant.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px;background-color:#1e50a2\">AMAZONで見る⇒</a></div>\n"
             blocks += "<!-- /wp:button -->\n"
             blocks += "</div>\n"
