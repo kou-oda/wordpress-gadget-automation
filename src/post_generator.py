@@ -766,3 +766,55 @@ class BlogPostGenerator:
 
         # 重複を削除
         return list(set(tags))
+
+    def generate_seo_title(self, product: GadgetProduct) -> str:
+        """SEOタイトルを生成（60文字以内、検索エンジン最適化）"""
+        import datetime
+        current_year = datetime.datetime.now().year
+
+        # SEOに効果的なタイトルパターン
+        seo_titles = [
+            f"{product.name} レビュー | {current_year}年版{product.category}",
+            f"{product.name} 口コミ・評判 | {current_year}",
+            f"{product.name} | {product.category}おすすめレビュー",
+            f"{product.name} 徹底レビュー | メリット・デメリット",
+            f"{product.name} 評価 | {product.category}の選び方",
+        ]
+
+        seo_title = random.choice(seo_titles)
+
+        # 60文字以内に収める
+        if len(seo_title) > 60:
+            seo_title = seo_title[:57] + "..."
+
+        return seo_title
+
+    def generate_seo_keywords(self, product: GadgetProduct) -> str:
+        """SEOキーワードを生成（カンマ区切り）"""
+        keywords = [product.name, product.category, "レビュー"]
+
+        # ブランド名を追加
+        brand = product.name.split()[0] if product.name else ""
+        if brand:
+            keywords.append(brand)
+
+        # 製品タイプ別キーワード
+        if "マウス" in product.name:
+            keywords.extend(["ワイヤレスマウス", "PC周辺機器", "マウスレビュー"])
+        elif "キーボード" in product.name:
+            keywords.extend(["キーボード", "PC周辺機器", "タイピング"])
+        elif "SSD" in product.name:
+            keywords.extend(["SSD", "ストレージ", "PCパーツ", "高速化"])
+        elif "メモリ" in product.name:
+            keywords.extend(["メモリ", "RAM", "DDR5", "PCパーツ"])
+        elif "モニター" in product.name or "ディスプレイ" in product.name:
+            keywords.extend(["モニター", "ディスプレイ", "PC周辺機器"])
+        elif "ヘッドセット" in product.name or "イヤホン" in product.name:
+            keywords.extend(["オーディオ", "音質", "ゲーミング"])
+
+        # 一般的なキーワード追加
+        keywords.extend(["おすすめ", "比較", "Amazon"])
+
+        # 重複を削除してカンマ区切りで返す
+        unique_keywords = list(dict.fromkeys(keywords))  # 順序を保持して重複削除
+        return ", ".join(unique_keywords[:10])  # 最大10個

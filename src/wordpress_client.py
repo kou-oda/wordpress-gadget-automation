@@ -37,7 +37,10 @@ class WordPressClient:
         status: str = 'draft',
         categories: Optional[List[int]] = None,
         tags: Optional[List[int]] = None,
-        excerpt: Optional[str] = None
+        excerpt: Optional[str] = None,
+        seo_title: Optional[str] = None,
+        seo_description: Optional[str] = None,
+        seo_keywords: Optional[str] = None
     ) -> Dict:
         """
         新しい投稿を作成
@@ -49,6 +52,9 @@ class WordPressClient:
             categories: カテゴリーIDのリスト
             tags: タグIDのリスト
             excerpt: 抜粋（メタディスクリプション用）
+            seo_title: SEOタイトル（Yoast/Rank Math/AIOSEO対応）
+            seo_description: SEOメタディスクリプション
+            seo_keywords: SEOメタキーワード
 
         Returns:
             作成された投稿の情報
@@ -67,6 +73,37 @@ class WordPressClient:
             data['tags'] = tags
         if excerpt:
             data['excerpt'] = excerpt
+
+        # SEO情報の設定（meta フィールドに追加）
+        # Yoast SEO, Rank Math, All in One SEO に対応
+        if seo_title or seo_description or seo_keywords:
+            meta = {}
+
+            # Yoast SEO
+            if seo_title:
+                meta['_yoast_wpseo_title'] = seo_title
+            if seo_description:
+                meta['_yoast_wpseo_metadesc'] = seo_description
+            if seo_keywords:
+                meta['_yoast_wpseo_focuskw'] = seo_keywords
+
+            # Rank Math
+            if seo_title:
+                meta['rank_math_title'] = seo_title
+            if seo_description:
+                meta['rank_math_description'] = seo_description
+            if seo_keywords:
+                meta['rank_math_focus_keyword'] = seo_keywords
+
+            # All in One SEO (AIOSEO)
+            if seo_title:
+                meta['_aioseo_title'] = seo_title
+            if seo_description:
+                meta['_aioseo_description'] = seo_description
+            if seo_keywords:
+                meta['_aioseo_keywords'] = seo_keywords
+
+            data['meta'] = meta
 
         response = requests.post(
             endpoint,
