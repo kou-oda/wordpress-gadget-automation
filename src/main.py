@@ -81,6 +81,9 @@ def main():
             print("ローカルの商品データを使用します。")
             use_paapi = False
 
+    # 商品バリエーションを取得（同じ製品の仕様違いをまとめる）
+    product_variants = []
+
     if not use_paapi:
         # ローカルの商品データを使用（フォールバック）
         if not product_manager.get_all_products():
@@ -90,20 +93,29 @@ def main():
 
         print(f"✓ {len(product_manager.get_all_products())}件のローカル商品データを読み込みました。")
 
-        # 投稿済みでない商品をランダムに選択
-        product = product_manager.get_random_product()
-        if not product:
+        # 同一製品のバリエーションをすべて取得
+        product_variants = product_manager.get_product_variants()
+        if not product_variants:
             print("エラー: 投稿する商品が見つかりません。")
             sys.exit(1)
+    else:
+        # PA-APIから取得した場合は単一商品
+        if product:
+            product_variants = [product]
+
+    # メイン商品（最初のバリエーション）
+    product = product_variants[0]
 
     print(f"選択された商品: {product.name}")
     print(f"商品ASIN: {product.asin}")
+    if len(product_variants) > 1:
+        print(f"バリエーション: {len(product_variants)}個の仕様違いを1記事にまとめます")
     print("-" * 50)
 
-    # ブログ記事生成
+    # ブログ記事生成（バリエーション対応）
     generator = BlogPostGenerator()
     title = generator.generate_title(product)
-    content = generator.generate_post_content(product)
+    content = generator.generate_post_content(product, variants=product_variants)
     meta_description = generator.generate_meta_description(product)
 
     print(f"記事タイトル: {title}")
@@ -141,8 +153,9 @@ def main():
         print(f"ステータス: {post_status}")
         print("=" * 50)
 
-        # 投稿成功後、商品を投稿済みとしてマーク
-        product_manager.mark_as_posted(product.asin)
+        # 投稿成功後、すべてのバリエーションを投稿済みとしてマーク
+        for variant in product_variants:
+            product_manager.mark_as_posted(variant.asin)
 
         # 投稿済み商品の統計を表示
         total_products = len(product_manager.get_all_products())

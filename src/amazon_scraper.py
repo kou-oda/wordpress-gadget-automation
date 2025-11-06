@@ -362,6 +362,55 @@ class AmazonProductManager:
 
         return random.choice(available_products)
 
+    def get_product_variants(self, category: Optional[str] = None) -> List[GadgetProduct]:
+        """
+        同一製品のバリエーション（仕様違い）をすべて取得
+        同じ name を持つ商品を1つのグループとして返す
+
+        Args:
+            category: カテゴリーでフィルター（省略可）
+
+        Returns:
+            同一製品のバリエーションリスト（最低1つ、複数ある場合は全て）
+        """
+        if not self.products:
+            return []
+
+        # 投稿済みでない商品をフィルター
+        available_products = [p for p in self.products if p.asin not in self.posted_asins]
+
+        if not available_products:
+            print("警告: 全ての商品が投稿済みです。投稿履歴をリセットします。")
+            self.posted_asins = []
+            self.save_posted_asins()
+            available_products = self.products
+
+        # カテゴリーフィルター
+        if category:
+            available_products = [p for p in available_products if p.category == category]
+
+        if not available_products:
+            return []
+
+        # 商品をnameでグループ化
+        from collections import defaultdict
+        product_groups = defaultdict(list)
+        for product in available_products:
+            product_groups[product.name].append(product)
+
+        # ランダムに1つの製品グループを選択
+        group_name = random.choice(list(product_groups.keys()))
+        variants = product_groups[group_name]
+
+        print(f"✓ 選択された製品: {group_name}")
+        print(f"✓ バリエーション数: {len(variants)}個")
+        if len(variants) > 1:
+            print(f"  仕様違いの商品を1記事にまとめます")
+            for v in variants:
+                print(f"    - {v.full_name or v.name} (ASIN: {v.asin})")
+
+        return variants
+
     def get_product_by_asin(self, asin: str) -> Optional[GadgetProduct]:
         """ASINで商品を取得"""
         for product in self.products:

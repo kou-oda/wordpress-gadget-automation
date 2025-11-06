@@ -504,6 +504,73 @@ class BlogPostGenerator:
 
         return blocks
 
+    def generate_variants_section(self, variants: List[GadgetProduct]) -> str:
+        """複数バリエーション（仕様違い）の商品リンクセクションを生成"""
+        # 見出しブロック
+        blocks = "<!-- wp:heading -->\n"
+        blocks += "<h2 class=\"wp-block-heading\">商品バリエーション</h2>\n"
+        blocks += "<!-- /wp:heading -->\n\n"
+
+        # 説明文
+        blocks += "<!-- wp:paragraph -->\n"
+        blocks += f"<p>この製品には{len(variants)}つの仕様バリエーションがあります。用途や予算に合わせてお選びください。</p>\n"
+        blocks += "<!-- /wp:paragraph -->\n\n"
+
+        # 各バリエーションをカラムで表示
+        for i, variant in enumerate(variants, 1):
+            display_name = variant.full_name if variant.full_name else variant.name
+
+            blocks += f"<!-- wp:heading {{\"level\":3}} -->\n"
+            blocks += f"<h3 class=\"wp-block-heading\">バリエーション {i}: {display_name}</h3>\n"
+            blocks += f"<!-- /wp:heading -->\n\n"
+
+            # カラムブロック（2列: 50% / 50%）
+            blocks += "<!-- wp:columns -->\n"
+            blocks += "<div class=\"wp-block-columns\">\n"
+
+            # 左カラム: 商品画像 (50%)
+            blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
+            blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
+            if variant.image_url:
+                blocks += "<!-- wp:image -->\n"
+                blocks += f"<figure class=\"wp-block-image\"><img src=\"{variant.image_url}\" alt=\"{display_name}\"/></figure>\n"
+                blocks += "<!-- /wp:image -->\n"
+            blocks += "</div>\n"
+            blocks += "<!-- /wp:column -->\n\n"
+
+            # 右カラム: 商品情報 + ボタン (50%)
+            blocks += "<!-- wp:column {\"width\":\"50%\"} -->\n"
+            blocks += "<div class=\"wp-block-column\" style=\"flex-basis:50%\">\n"
+
+            # 価格表示
+            if variant.price:
+                blocks += "<!-- wp:paragraph -->\n"
+                blocks += f"<p><strong>価格:</strong> {variant.price}</p>\n"
+                blocks += "<!-- /wp:paragraph -->\n\n"
+
+            # 主な特徴
+            if variant.features and len(variant.features) > 0:
+                blocks += "<!-- wp:paragraph -->\n"
+                blocks += f"<p><strong>主な特徴:</strong><br>{variant.features[0]}</p>\n"
+                blocks += "<!-- /wp:paragraph -->\n\n"
+
+            # Amazonリンクボタン（右寄せ）
+            blocks += "<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"right\"}} -->\n"
+            blocks += "<div class=\"wp-block-buttons\">\n"
+            blocks += "<!-- wp:button {\"backgroundColor\":\"vivid-orange\",\"style\":{\"border\":{\"radius\":\"5px\"}}} -->\n"
+            blocks += f"<div class=\"wp-block-button\"><a class=\"wp-block-button__link has-vivid-orange-background-color has-background wp-element-button\" href=\"{variant.url}\" target=\"_blank\" rel=\"noopener noreferrer\" style=\"border-radius:5px\">Amazonで詳細を見る</a></div>\n"
+            blocks += "<!-- /wp:button -->\n"
+            blocks += "</div>\n"
+            blocks += "<!-- /wp:buttons -->\n"
+
+            blocks += "</div>\n"
+            blocks += "<!-- /wp:column -->\n"
+
+            blocks += "</div>\n"
+            blocks += "<!-- /wp:columns -->\n\n"
+
+        return blocks
+
     def generate_related_articles_section(self) -> str:
         """関連記事セクションを生成（Gutenbergブロック形式）"""
         # 見出しブロック
@@ -579,16 +646,30 @@ class BlogPostGenerator:
 
         return description
 
-    def generate_post_content(self, product: GadgetProduct) -> str:
-        """完全な記事コンテンツを生成（2000-4000文字）"""
+    def generate_post_content(self, product: GadgetProduct, variants: List[GadgetProduct] = None) -> str:
+        """完全な記事コンテンツを生成（2000-4000文字）
+
+        Args:
+            product: メイン商品
+            variants: 同一製品のバリエーション（仕様違い）リスト
+        """
         content = ""
+
+        # バリエーションが指定されていない場合はメイン商品のみ
+        if variants is None:
+            variants = [product]
 
         # 導入部分（感情的で読者に呼びかける形式）
         content += f"<p>{self.generate_introduction(product)}</p>\n\n"
 
-        # 商品購入リンク（1回目：導入の後）
-        content += self.generate_product_link(product)
-        content += "\n"
+        # バリエーション表示（複数ある場合）
+        if len(variants) > 1:
+            content += self.generate_variants_section(variants)
+            content += "\n"
+        else:
+            # 単一商品の場合は従来通り
+            content += self.generate_product_link(product)
+            content += "\n"
 
         # スペック表（項目を増やして充実化）
         content += self.generate_spec_table(product)
