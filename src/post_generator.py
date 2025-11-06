@@ -17,7 +17,7 @@ class BlogPostGenerator:
         ]
 
     def generate_title(self, product: GadgetProduct) -> str:
-        """SEO最適化された記事タイトルを生成"""
+        """SEO最適化された魅力的な記事タイトルを生成"""
         import datetime
         current_year = datetime.datetime.now().year
 
@@ -27,16 +27,54 @@ class BlogPostGenerator:
         # ブランド名を抽出（商品名の最初の単語）
         brand = product.name.split()[0] if product.name else ""
 
-        # SEO最適化されたテンプレート
-        # 検索意図に合わせた構造: 「商品名 + 検索されやすいキーワード + 年」
+        # 魅力的で興味をそそるタイトルテンプレート
+        # 「！」「？」などの記号を効果的に使用
         templates = [
-            f"【{current_year}年版】{product_name} レビュー｜{product.category}の実力を徹底検証",
-            f"{product_name} 口コミ・評判まとめ｜{current_year}年最新レビュー",
-            f"【{random.choice(self.review_templates)}】{product_name}｜{product.category}おすすめモデル",
-            f"{product_name} 使用レビュー｜メリット・デメリットを正直に評価【{current_year}】",
-            f"{brand} {product_name} レビュー｜{product.category}の選び方完全ガイド",
-            f"【実機レビュー】{product_name}は買い？{product.category}として徹底解説",
-            f"{product_name} 性能比較レビュー｜{current_year}年版{product.category}の決定版",
+            # 疑問形（興味喚起）
+            f"【{current_year}年版】{product_name}は買うべき？実力を徹底レビュー！",
+            f"{product_name}は本当におすすめ？口コミ・評判を正直にレビュー",
+            f"{product_name}の評価は？{product.category}として実際どうなのか検証！",
+            f"【必見】{product_name}って実際どう？使ってわかった本音レビュー",
+            f"{product_name}を選ぶべき理由とは？{current_year}年最新レビュー！",
+
+            # 驚き・発見（感嘆符）
+            f"【驚愕】{product_name}がすごい！{product.category}の新定番を徹底解説",
+            f"これは買い！{product_name}レビュー｜{current_year}年版{product.category}の決定版",
+            f"【神コスパ！】{product_name}を本音レビュー｜メリット・デメリット完全解説",
+            f"想像以上だった！{product_name}の実力を徹底検証【{current_year}】",
+            f"買って正解！{product_name}レビュー｜{product.category}選びの新常識",
+
+            # 比較・対決
+            f"{product_name} vs 他製品｜どっちを選ぶべき？徹底比較レビュー！",
+            f"【比較検証】{product_name}の実力は？{product.category}おすすめNo.1の理由",
+            f"{brand}の本気！{product_name}レビュー｜他社製品と何が違う？",
+
+            # 体験・実機レビュー
+            f"【実機レビュー】{product_name}を使って分かった5つのこと",
+            f"{product_name}を1ヶ月使った本音｜良い点・悪い点を徹底レビュー！",
+            f"【ガチレビュー】{product_name}の実力を検証！買って後悔しない？",
+            f"使って納得！{product_name}レビュー｜{current_year}年版{product.category}の正解",
+
+            # 問題解決型
+            f"{product.category}選びで迷ったら！{product_name}が解決策になる理由",
+            f"【完全ガイド】{product_name}レビュー｜失敗しない{product.category}の選び方",
+            f"{product_name}で快適に！{product.category}の悩みを解決する方法",
+
+            # 限定・希少性
+            f"【{current_year}年最新】{product_name}レビュー｜今すぐチェックすべき理由！",
+            f"見逃し厳禁！{product_name}の実力｜{product.category}の新スタンダード",
+            f"【話題沸騰】{product_name}は何がすごい？徹底レビューで解説！",
+
+            # 数字・具体性
+            f"{product_name}レビュー｜使って分かった7つのメリット【{current_year}】",
+            f"【3分で分かる】{product_name}の評価｜買うべき5つの理由",
+            f"{product_name}の実力を5段階評価！{product.category}として徹底検証",
+
+            # 断定・強調
+            f"これが答え！{product_name}レビュー｜{product.category}の最適解を発見",
+            f"間違いなし！{product_name}が選ばれる理由｜{current_year}年版レビュー",
+            f"【結論】{product_name}は買い！実際に使った本音レビュー",
+            f"迷わず買える！{product_name}レビュー｜{product.category}の新常識",
         ]
         return random.choice(templates)
 
