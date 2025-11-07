@@ -32,26 +32,75 @@ class WordPressClient:
 
     def test_connection(self) -> Dict:
         """REST API接続とユーザー権限をテスト"""
+        print("\n=== WordPress REST API 診断 ===")
+
+        # Step 1: REST API自体が有効かチェック
         try:
-            # 現在のユーザー情報を取得
+            print("1. REST APIの可用性をチェック中...")
+            base_endpoint = f"{self.site_url}/wp-json"
+            base_response = requests.get(base_endpoint)
+
+            if base_response.status_code == 200:
+                print("   ✓ REST APIは有効です")
+            else:
+                print(f"   ✗ REST APIが無効または制限されています (HTTP {base_response.status_code})")
+                print("   対処: REST APIを有効にするか、セキュリティプラグインの設定を確認してください")
+                return {}
+        except Exception as e:
+            print(f"   ✗ REST APIに接続できません: {e}")
+            return {}
+
+        # Step 2: 認証をテスト
+        try:
+            print("2. 認証をテスト中...")
             endpoint = f"{self.site_url}/wp-json/wp/v2/users/me"
             response = requests.get(endpoint, headers=self.headers)
-            response.raise_for_status()
 
-            user_data = response.json()
-            print(f"✓ 認証成功: ユーザー '{user_data.get('name')}' (ID: {user_data.get('id')})")
-            print(f"  権限: {', '.join(user_data.get('capabilities', {}).keys())}")
+            # レスポンス詳細を表示
+            print(f"   リクエストURL: {endpoint}")
+            print(f"   レスポンスコード: {response.status_code}")
 
-            return user_data
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 403:
-                print("✗ 認証エラー: Application Passwordが無効または権限がありません")
-                print("  対処方法:")
-                print("  1. WordPressで新しいApplication Passwordを生成してください")
-                print("  2. ユーザーに「編集者」または「管理者」権限があることを確認してください")
+            if response.status_code == 200:
+                user_data = response.json()
+                print(f"   ✓ 認証成功: ユーザー '{user_data.get('name')}' (ID: {user_data.get('id')})")
+
+                # 権限の詳細チェック
+                caps = user_data.get('capabilities', {})
+                important_caps = ['edit_posts', 'publish_posts', 'edit_categories']
+                print(f"   重要な権限:")
+                for cap in important_caps:
+                    status = "✓" if caps.get(cap) else "✗"
+                    print(f"     {status} {cap}: {caps.get(cap, False)}")
+
+                return user_data
+            elif response.status_code == 403:
+                print("   ✗ 認証エラー: 403 Forbidden")
+                try:
+                    error_data = response.json()
+                    print(f"   エラーコード: {error_data.get('code', 'unknown')}")
+                    print(f"   エラーメッセージ: {error_data.get('message', 'No message')}")
+                except:
+                    print(f"   エラー詳細: {response.text[:200]}")
+
+                print("\n   考えられる原因:")
+                print("   1. Application Passwordの形式が間違っている")
+                print("      → スペースを削除してください（例: 'xxxx yyyy zzzz' → 'xxxxyyyyyyzzzz'）")
+                print("   2. WordPressのApplication Password機能が無効")
+                print("      → functions.phpに以下を追加: add_filter('wp_is_application_passwords_available', '__return_true');")
+                print("   3. セキュリティプラグインがREST APIをブロックしている")
+                print("      → Wordfence、iThemes Security等の設定を確認")
+                print("   4. .htaccessで認証ヘッダーが削除されている")
+                print("      → .htaccessに以下を追加: SetEnvIf Authorization \"(.*)\" HTTP_AUTHORIZATION=$1")
+                raise requests.exceptions.HTTPError(f"403 Forbidden: {response.text[:200]}")
+            else:
+                print(f"   ✗ 予期しないレスポンス: HTTP {response.status_code}")
+                print(f"   レスポンス: {response.text[:200]}")
+                response.raise_for_status()
+
+        except requests.exceptions.HTTPError:
             raise
         except Exception as e:
-            print(f"✗ 接続テストエラー: {e}")
+            print(f"   ✗ 接続テストエラー: {e}")
             raise
 
     def create_post(
