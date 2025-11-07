@@ -30,6 +30,30 @@ class WordPressClient:
             'Content-Type': 'application/json'
         }
 
+    def test_connection(self) -> Dict:
+        """REST API接続とユーザー権限をテスト"""
+        try:
+            # 現在のユーザー情報を取得
+            endpoint = f"{self.site_url}/wp-json/wp/v2/users/me"
+            response = requests.get(endpoint, headers=self.headers)
+            response.raise_for_status()
+
+            user_data = response.json()
+            print(f"✓ 認証成功: ユーザー '{user_data.get('name')}' (ID: {user_data.get('id')})")
+            print(f"  権限: {', '.join(user_data.get('capabilities', {}).keys())}")
+
+            return user_data
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 403:
+                print("✗ 認証エラー: Application Passwordが無効または権限がありません")
+                print("  対処方法:")
+                print("  1. WordPressで新しいApplication Passwordを生成してください")
+                print("  2. ユーザーに「編集者」または「管理者」権限があることを確認してください")
+            raise
+        except Exception as e:
+            print(f"✗ 接続テストエラー: {e}")
+            raise
+
     def create_post(
         self,
         title: str,

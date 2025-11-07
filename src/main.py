@@ -32,7 +32,10 @@ def main():
     # WordPress クライアント初期化
     try:
         wp_client = WordPressClient(wp_site_url, wp_username, wp_app_password)
-        print("✓ WordPress REST API に接続しました。")
+        print("✓ WordPress REST API クライアントを初期化しました。")
+
+        # 接続と認証のテスト
+        wp_client.test_connection()
     except Exception as e:
         print(f"エラー: WordPress接続に失敗しました - {e}")
         sys.exit(1)
