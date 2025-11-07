@@ -34,6 +34,8 @@ class WordPressClient:
         }
 
         print(f"認証情報デバッグ:")
+        print(f"  サイトURL: {self.site_url}")
+        print(f"  API URL: {self.api_url}")
         print(f"  ユーザー名: {username}")
         print(f"  パスワード長: {len(self.app_password)}文字")
         print(f"  Authorization ヘッダー長: {len(token)}文字")
@@ -46,13 +48,23 @@ class WordPressClient:
         try:
             print("1. REST APIの可用性をチェック中...")
             base_endpoint = f"{self.site_url}/wp-json"
+            print(f"   テストURL: {base_endpoint}")
             base_response = requests.get(base_endpoint)
 
             if base_response.status_code == 200:
                 print("   ✓ REST APIは有効です")
+                # レスポンスからWordPressのネームスペースを確認
+                try:
+                    data = base_response.json()
+                    if 'namespaces' in data:
+                        has_wp_v2 = 'wp/v2' in data['namespaces']
+                        print(f"   wp/v2 エンドポイント: {'✓ 利用可能' if has_wp_v2 else '✗ 利用不可'}")
+                except:
+                    pass
             else:
                 print(f"   ✗ REST APIが無効または制限されています (HTTP {base_response.status_code})")
-                print("   対処: REST APIを有効にするか、セキュリティプラグインの設定を確認してください")
+                print(f"   レスポンス: {base_response.text[:200]}")
+                print("   対処: WordPressのパーマリンク設定を「投稿名」に変更してください")
                 return {}
         except Exception as e:
             print(f"   ✗ REST APIに接続できません: {e}")
