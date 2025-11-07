@@ -146,15 +146,16 @@ def main():
     print(f"SEOキーワード: {seo_keywords}")
     print("-" * 50)
 
-    # カテゴリーの準備
+    # カテゴリーの準備（403エラーの場合はスキップ）
+    category_id = None
     try:
-        # カテゴリーの取得または作成
+        # カテゴリーの取得または作成を試みる
         category_id = wp_client.get_or_create_category(product.category)
         print(f"✓ カテゴリー設定: {product.category} (ID: {category_id})")
-
     except Exception as e:
-        print(f"警告: カテゴリーの設定中にエラーが発生しました - {e}")
-        category_id = None
+        # カテゴリー設定に失敗してもスキップして続行
+        print(f"⚠ カテゴリー設定をスキップします: {str(e)[:100]}")
+        print("  カテゴリーなしで投稿を続行します...")
 
     # 記事を投稿
     try:
