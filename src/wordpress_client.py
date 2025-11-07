@@ -20,15 +20,23 @@ class WordPressClient:
         self.site_url = site_url.rstrip('/')
         self.api_url = f"{self.site_url}/wp-json/wp/v2"
         self.username = username
-        self.app_password = app_password
+
+        # Application Passwordからスペースを削除（WordPressが生成時にスペース区切りで表示するため）
+        self.app_password = app_password.replace(' ', '').replace('\n', '').replace('\r', '').strip()
 
         # Basic認証のヘッダー作成
-        credentials = f"{username}:{app_password}"
+        credentials = f"{username}:{self.app_password}"
         token = base64.b64encode(credentials.encode()).decode()
         self.headers = {
             'Authorization': f'Basic {token}',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'User-Agent': 'WordPress-Automation/1.0'
         }
+
+        print(f"認証情報デバッグ:")
+        print(f"  ユーザー名: {username}")
+        print(f"  パスワード長: {len(self.app_password)}文字")
+        print(f"  Authorization ヘッダー長: {len(token)}文字")
 
     def test_connection(self) -> Dict:
         """REST API接続とユーザー権限をテスト"""

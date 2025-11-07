@@ -34,10 +34,16 @@ def main():
         wp_client = WordPressClient(wp_site_url, wp_username, wp_app_password)
         print("✓ WordPress REST API クライアントを初期化しました。")
 
-        # 接続と認証のテスト
-        wp_client.test_connection()
+        # 接続と認証のテスト（エラーでも続行）
+        try:
+            wp_client.test_connection()
+        except Exception as test_error:
+            print(f"⚠ 接続テストに失敗しましたが続行します: {test_error}")
+            print("実際の投稿で再度認証を試みます...")
     except Exception as e:
-        print(f"エラー: WordPress接続に失敗しました - {e}")
+        print(f"エラー: WordPress初期化に失敗しました - {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
     # 前回の投稿を取得（関連記事セクション用）
