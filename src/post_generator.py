@@ -184,13 +184,12 @@ class BlogPostGenerator:
         # PA-APIから取得した特徴をスペック表に追加（タイトル部分のみ）
         if product.features and len(product.features) > 0:
             for i, feature in enumerate(product.features, 1):
-                # コロン（日本語・英語）で分割してタイトル部分のみを取得
-                if '：' in feature:
-                    feature_title = feature.split('：')[0] + '：'
-                elif ':' in feature:
-                    feature_title = feature.split(':')[0] + ':'
-                else:
-                    feature_title = feature
+                # 区切り文字（:, ;, ｜）で分割してタイトル部分のみを取得
+                feature_title = feature
+                for delimiter in ['：', ':', '；', ';', '｜']:
+                    if delimiter in feature:
+                        feature_title = feature.split(delimiter)[0] + delimiter
+                        break
                 html += f"<tr>\n<td>特徴 {i}</td>\n<td>{feature_title}</td>\n</tr>\n"
 
         # 商品説明
@@ -210,24 +209,21 @@ class BlogPostGenerator:
         html = "<h2>主な特徴と機能</h2>\n"
 
         for feature in product.features:
-            # コロン（日本語・英語）で分割
-            if '：' in feature:
-                parts = feature.split('：', 1)
-                feature_title = parts[0] + '：'
-                feature_description = parts[1].strip() if len(parts) > 1 else ''
-            elif ':' in feature:
-                parts = feature.split(':', 1)
-                feature_title = parts[0] + ':'
-                feature_description = parts[1].strip() if len(parts) > 1 else ''
-            else:
-                # コロンがない場合はそのまま表示
-                feature_title = feature
-                feature_description = ''
+            # 区切り文字（:, ;, ｜）で分割
+            feature_title = feature
+            feature_description = ''
+
+            for delimiter in ['：', ':', '；', ';', '｜']:
+                if delimiter in feature:
+                    parts = feature.split(delimiter, 1)
+                    feature_title = parts[0] + delimiter
+                    feature_description = parts[1].strip() if len(parts) > 1 else ''
+                    break
 
             # 見出し（タイトル部分のみ）
             html += f"<h3>{feature_title}</h3>\n"
 
-            # 説明文（コロンの後の部分）
+            # 説明文（区切り文字の後の部分）
             if feature_description:
                 html += f"<p>{feature_description}</p>\n"
 
