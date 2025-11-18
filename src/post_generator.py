@@ -184,9 +184,9 @@ class BlogPostGenerator:
         # PA-APIから取得した特徴をスペック表に追加（タイトル部分のみ）
         if product.features and len(product.features) > 0:
             for i, feature in enumerate(product.features, 1):
-                # 区切り文字（:, ;, ｜）で分割してタイトル部分のみを取得
+                # 区切り文字（:, ;, ｜, 】）で分割してタイトル部分のみを取得
                 feature_title = feature
-                for delimiter in ['：', ':', '；', ';', '｜']:
+                for delimiter in ['：', ':', '；', ';', '｜', '】']:
                     if delimiter in feature:
                         feature_title = feature.split(delimiter)[0] + delimiter
                         break
@@ -209,11 +209,11 @@ class BlogPostGenerator:
         html = "<h2>主な特徴と機能</h2>\n"
 
         for feature in product.features:
-            # 区切り文字（:, ;, ｜）で分割
+            # 区切り文字（:, ;, ｜, 】）で分割
             feature_title = feature
             feature_description = ''
 
-            for delimiter in ['：', ':', '；', ';', '｜']:
+            for delimiter in ['：', ':', '；', ';', '｜', '】']:
                 if delimiter in feature:
                     parts = feature.split(delimiter, 1)
                     feature_title = parts[0] + delimiter
