@@ -22,6 +22,11 @@ GitHub Actionsを使用して、Amazonのガジェット商品レビュー記事
 
 詳細は [TRAFFIC_STRATEGY.md](TRAFFIC_STRATEGY.md) を参照してください。
 
+### AI支援のワークフロー修正 🤖NEW
+- **Claude Code Bot**（IssueコメントでAIがコード修正）
+- **GitHub Actions統合**（自動プッシュ・自動テスト対応）
+- **簡単なセットアップ**（4ステップで導入完了）
+
 ## セットアップ手順
 
 ### 1. WordPressの準備
@@ -75,6 +80,7 @@ GitHubリポジトリの `Settings` → `Secrets and variables` → `Actions` �
 | `AMAZON_ACCESS_KEY` | Amazon PA-APIのAccess Key |
 | `AMAZON_SECRET_KEY` | Amazon PA-APIのSecret Key |
 | `AMAZON_ASSOCIATE_TAG` | AmazonアソシエイトのトラッキングID |
+| `GOOGLE_SERVICE_ACCOUNT_JSON` | Google Service AccountのJSONキー（Google Indexing API用） |
 
 ### 5. 動作確認
 
@@ -108,6 +114,52 @@ GitHub Actionsで商品データを自動更新できます：
 - リクエスト上限は商品購入により増加
 
 詳細は [PRODUCT_UPDATE_GUIDE.md](PRODUCT_UPDATE_GUIDE.md) を参照してください。
+
+### 7. Google Indexing APIの設定（オプション）
+
+Google Indexing APIを使用すると、記事公開後すぐにGoogleにクロールをリクエストできます。
+
+#### Google Cloud Platformでの設定
+
+1. [Google Cloud Console](https://console.cloud.google.com/)にアクセス
+2. 新しいプロジェクトを作成（またはg既存のプロジェクトを選択）
+3. **APIとサービス** → **ライブラリ** に移動
+4. 「Indexing API」を検索して有効化
+5. **認証情報** → **認証情報を作成** → **サービスアカウント** を選択
+6. サービスアカウント名を入力（例：`wordpress-indexing-bot`）
+7. 作成したサービスアカウントをクリック
+8. **キー** タブ → **鍵を追加** → **新しい鍵を作成** → **JSON** を選択
+9. ダウンロードされたJSONファイルの内容をコピー
+
+#### Search Consoleでの設定
+
+1. [Google Search Console](https://search.google.com/search-console)にアクセス
+2. 対象のプロパティを選択
+3. **設定** → **ユーザーと権限** に移動
+4. **ユーザーを追加** をクリック
+5. サービスアカウントのメールアドレス（`xxxxx@xxxxx.iam.gserviceaccount.com`）を入力
+6. 権限を「所有者」に設定して追加
+
+#### GitHub Secretsに追加
+
+GitHubリポジトリの `Settings` → `Secrets and variables` → `Actions` で以下を追加：
+
+| Secret名 | 値 |
+|---------|---|
+| `GOOGLE_SERVICE_ACCOUNT_JSON` | ダウンロードしたJSONファイルの内容全体 |
+
+#### 動作確認
+
+1. GitHubリポジトリの `Actions` タブを開く
+2. `Scheduled Google Indexing` ワークフローを選択
+3. `Run workflow` をクリックして手動実行
+4. ワークフローが成功すれば、設定完了です
+
+**機能:**
+- 毎日JST 9:00に自動実行
+- 最新10件の公開済み記事をGoogle Indexing APIに送信
+- レート制限対策：2秒間隔で送信（1日200リクエスト制限）
+- 成功・失敗の詳細なログ出力
 
 #### データファイル
 
@@ -161,7 +213,13 @@ python src/main.py
 wordpress-gadget-automation/
 ├── .github/
 │   └── workflows/
-│       └── auto-post.yml          # GitHub Actionsワークフロー
+│       ├── auto-post.yml                      # WordPress自動投稿
+│       ├── scheduled-google-indexing.yml      # Google Indexing API
+│       ├── scheduled-twitter-post.yml         # X(Twitter)自動投稿
+│       ├── ping-submit.yml                    # Ping送信
+│       ├── bulk-twitter-post.yml              # 一括Twitter投稿
+│       ├── refresh-products-slow.yml          # 商品データ更新
+│       └── claude-code-bot.yml                # Claude Code Bot（AI支援）
 ├── src/
 │   ├── wordpress_client.py        # WordPress REST APIクライアント
 │   ├── amazon_scraper.py          # Amazon商品データ管理
@@ -169,9 +227,110 @@ wordpress-gadget-automation/
 │   └── main.py                    # メインスクリプト
 ├── data/
 │   └── products.json              # 商品データ
+├── scripts/                       # 各種スクリプト
 ├── requirements.txt               # Python依存関係
-└── README.md                      # このファイル
+├── README.md                      # このファイル
+├── SETUP.md                       # 詳細なセットアップガイド
+├── TRAFFIC_STRATEGY.md            # トラフィック増加戦略
+└── PRODUCT_UPDATE_GUIDE.md        # 商品データ更新ガイド
 ```
+
+## Claude Code Botによるワークフロー修正 🤖
+
+IssueコメントでAIにワークフローを修正してもらう機能です。Claude Code（Maxプラン）を使用します。
+
+### 導入に必要な4つのステップ
+
+#### ステップ1：認証トークンの生成（手元のPCで実行）
+
+まず、GitHub Actions（無人のロボット）に「あなたのアカウントですよ」と証明させるための「合鍵（OAuthトークン）」を、手元のPCで発行します。
+
+**前提条件：**
+- 手元のPCに `claude-code` CLI がインストールされていること
+- `claude-code` CLIで、Maxプランのアカウントにログイン済みであること
+
+**手順：**
+
+1. 手元のPCでターミナル（コマンドプロンプトやPowerShellなど）を開きます
+
+2. 以下のコマンドを実行します：
+   ```bash
+   claude setup-token
+   ```
+
+3. ブラウザが自動で開き、Anthropicの認証画面が表示されます。ログインと承認を求められるので、許可してください
+
+4. 認証が完了すると、ターミナルに `claudecode_oauth_...` から始まる非常に長い文字列（これが認証トークン）が表示されます
+
+5. この文字列（トークン）をすべてコピーし、安全な場所に一時的にメモします
+
+#### ステップ2：GitHubリポジトリに「合鍵」を登録
+
+次に、自動化したいGitHubリポジトリに、発行した「合鍵（トークン）」を安全に登録します。
+
+1. 自動化したいプライベートリポジトリをGitHubで開きます
+
+2. `Settings` タブ → `Secrets and variables` → `Actions` を選択します
+
+3. `Repository secrets` のセクションにある `New repository secret` ボタンをクリックします
+
+4. 以下の2項目を入力します：
+   - **Name**: `CLAUDE_CODE_OAUTH_TOKEN`
+     （この名前は後でYAMLファイルが参照するので、一字一句正確に）
+   - **Secret**: ステップ1でコピーした長いトークン文字列 (`claudecode_oauth_...`) を貼り付けます
+
+5. `Add secret` ボタンを押して保存します
+
+#### ステップ3：ワークフローファイル (.yml) の作成
+
+このリポジトリには既に `.github/workflows/claude-code-bot.yml` が含まれています。
+
+このファイルがGitHubにプッシュされていることを確認してください。
+
+**ワークフローの動作:**
+- Issueにコメントが作成されたら起動
+- コメントが `@claude` で始まる場合のみ実行
+- AIがコードを修正して自動的にコミット＆プッシュ
+- Issue に結果を報告
+
+#### ステップ4：動作確認
+
+1. このリポジトリで、テスト用のIssueを作成します（例：「テストIssue」）
+
+2. 作成したIssueのコメント欄に、以下のように書き込んで送信します：
+   ```
+   @claude README.mdに「こんにちは、世界！」と追記してください。
+   ```
+
+3. リポジトリの `Actions` タブを開きます
+
+4. `Claude Code Issue Bot (Max Plan)` というワークフローが実行中（または実行完了）になっていることを確認します
+
+5. ワークフローがエラーなく完了すると、数分後に「Claude Code Bot」という名前で新しいコミットがプッシュされ、README.mdが書き換わっているはずです
+
+### 使用例
+
+**ワークフローを修正する場合：**
+```
+@claude scheduled-google-indexing.ymlのcron設定を毎日午後6時（JST）に変更してください。
+```
+
+**新しい機能を追加する場合：**
+```
+@claude WordPress投稿後にSlackに通知を送る機能を追加してください。
+```
+
+**バグ修正：**
+```
+@claude main.pyのエラーハンドリングを改善してください。例外が発生した場合にログを出力するようにしてください。
+```
+
+### 注意事項
+
+- Claude Code Botは**Maxプラン**が必要です
+- プライベートリポジトリでの使用を推奨します（トークン漏洩防止）
+- AIによる変更は自動的にコミットされますが、必ず内容を確認してください
+- 大規模な変更の場合は、段階的に指示を出すことをおすすめします
 
 ## カスタマイズ
 
