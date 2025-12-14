@@ -181,10 +181,16 @@ class BlogPostGenerator:
         if product.price:
             html += f"<tr>\n<td>価格</td>\n<td>{product.price}</td>\n</tr>\n"
 
-        # PA-APIから取得した特徴をスペック表に追加
+        # PA-APIから取得した特徴をスペック表に追加（タイトル部分のみ）
         if product.features and len(product.features) > 0:
             for i, feature in enumerate(product.features, 1):
-                html += f"<tr>\n<td>特徴 {i}</td>\n<td>{feature}</td>\n</tr>\n"
+                # 区切り文字（:, ;, ｜, 】）で分割してタイトル部分のみを取得
+                feature_title = feature
+                for delimiter in ['：', ':', '；', ';', '｜', '】']:
+                    if delimiter in feature:
+                        feature_title = feature.split(delimiter)[0] + delimiter
+                        break
+                html += f"<tr>\n<td>特徴 {i}</td>\n<td>{feature_title}</td>\n</tr>\n"
 
         # 商品説明
         if product.description:
@@ -196,53 +202,30 @@ class BlogPostGenerator:
         return html
 
     def generate_features_section(self, product: GadgetProduct) -> str:
-        """特徴セクションを生成（見出しを5-25文字に短縮）"""
+        """特徴セクションを生成（タイトルと説明を分割して表示）"""
         if not product.features:
             return ""
 
         html = "<h2>主な特徴と機能</h2>\n"
 
         for feature in product.features:
-            # 見出しを5-25文字に短縮
-            short_heading = self._shorten_feature_heading(feature)
-            html += f"<h3>{short_heading}</h3>\n"
+            # 区切り文字（:, ;, ｜, 】）で分割
+            feature_title = feature
+            feature_description = ''
 
-            # 各特徴に詳細説明を追加
-            if "DPI" in feature or "センサー" in feature:
-                html += "<p>高精度センサーにより、細かな作業から素早い操作まで、あらゆるシーンで正確なカーソル移動を実現します。"
-                html += "DPI設定は専用ソフトウェアで自由にカスタマイズ可能で、用途に応じて最適な感度に調整できます。</p>\n"
+            for delimiter in ['：', ':', '；', ';', '｜', '】']:
+                if delimiter in feature:
+                    parts = feature.split(delimiter, 1)
+                    feature_title = parts[0] + delimiter
+                    feature_description = parts[1].strip() if len(parts) > 1 else ''
+                    break
 
-            elif "バッテリー" in feature:
-                html += "<p>長時間のバッテリー寿命により、頻繁な充電から解放されます。"
-                html += "USB-Cケーブルでの充電にも対応しており、わずか数分の充電で数時間の使用が可能です。</p>\n"
+            # 見出し（タイトル部分のみ）
+            html += f"<h3>{feature_title}</h3>\n"
 
-            elif "静音" in feature or "クリック" in feature:
-                html += "<p>静音設計により、オフィスや図書館など静かな環境でも周囲を気にせず使用できます。"
-                html += "従来モデルと比較してクリック音を大幅に削減しており、快適な作業環境を提供します。</p>\n"
-
-            elif "デバイス" in feature or "Bluetooth" in feature:
-                html += "<p>複数のデバイス間を瞬時に切り替えられるマルチデバイス機能を搭載。"
-                html += "PCとタブレット、スマートフォンなど、複数のデバイスをボタン一つで切り替えて使用できます。</p>\n"
-
-            elif "キー" in feature or "タイピング" in feature:
-                html += "<p>快適なタイピング感を実現するキースイッチにより、長時間の文字入力でも疲れにくい設計です。"
-                html += "キーストロークの深さとアクチュエーションポイントが最適化されており、正確で心地よい入力体験を提供します。</p>\n"
-
-            elif "速度" in feature or "MB/s" in feature:
-                html += "<p>圧倒的な読み書き速度により、大容量ファイルの転送やアプリケーションの起動が劇的に高速化されます。"
-                html += "従来のSATA SSDと比較して大幅な速度向上を実現し、作業効率が大幅に向上します。</p>\n"
-
-            elif "MHz" in feature or "メモリ" in feature:
-                html += "<p>高速なメモリ動作により、マルチタスク作業やクリエイティブワーク、ゲームプレイが快適に行えます。"
-                html += "低レイテンシ設計により、システム全体のレスポンスが向上します。</p>\n"
-
-            elif "保証" in feature:
-                html += "<p>メーカーによる長期保証が付帯しており、万が一の故障時にも安心です。"
-                html += "サポート体制も充実しており、技術的な質問にも迅速に対応してもらえます。</p>\n"
-
-            else:
-                html += f"<p>この機能により、{product.category}としての基本性能が大幅に向上しています。"
-                html += "日常的な使用はもちろん、プロフェッショナルな用途にも十分対応できる仕様となっています。</p>\n"
+            # 説明文（区切り文字の後の部分）
+            if feature_description:
+                html += f"<p>{feature_description}</p>\n"
 
         return html
 
