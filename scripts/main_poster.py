@@ -355,14 +355,6 @@ STATIC_PRODUCT_DATA = {
 # scripts/main_poster.py の get_product_data 関数を以下のように変更
 
 def get_product_data(asin: str) -> dict or None:
-    """
-    Amazon PA-APIを使用して、特定ASINのガジェット情報を取得する。
-    PA-APIが使えない場合は、静的データを使用する。
-    """
-    
-    # -----------------------------------------------------
-    # 1. 静的データの確認と利用
-    # -----------------------------------------------------
     if asin in STATIC_PRODUCT_DATA:
         print(f"ASIN: {asin} - PA-API回避のため静的データを使用します。")
         temp_data = STATIC_PRODUCT_DATA[asin].copy()
@@ -401,3 +393,4 @@ def get_product_data(asin: str) -> dict or None:
         # PA-APIが使えない場合やエラーの場合の処理
         print(f"PA-API処理中にエラーが発生しました (ASIN: {asin}): {e}")
         return None # 静的データもなく、PA-APIも失敗した場合は None を返す
+        # Test comment to force git change
