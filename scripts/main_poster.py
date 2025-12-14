@@ -216,19 +216,34 @@ def post_article_to_wordpress(title: str, content: str):
     post_data = {
         'title': title,
         'content': content,
-        'status': 'publish', # 公開設定
+        'status': 'publish', # 公開設定 ('draft' にすると下書きになりますが、今回は 'publish' で進めます)
     }
+    
+    print(f"--- WP投稿開始: {title} ---") # デバッグ情報
     
     try:
         response = requests.post(api_url, headers=headers, json=post_data, auth=auth)
         response.raise_for_status()
+        
+        # 成功時の処理
         print(f"✅ 記事の投稿に成功しました！ URL: {response.json()['link']}")
         return True
+        
     except requests.exceptions.HTTPError as err:
-        print(f"❌ WordPress投稿エラー: {err}")
-        print(f"レスポンス: {response.text}")
+        # HTTPエラー（401 Unauthorized, 403 Forbidden, 400 Bad Requestなど）
+        print(f"❌ WordPress投稿エラー (HTTP): {err}")
+        print(f"ステータスコード: {response.status_code}")
+        # レスポンス本文をJSONとしてパースし、エラーの詳細を表示
+        try:
+            error_details = response.json()
+            print(f"エラーコード: {error_details.get('code')}")
+            print(f"エラーメッセージ: {error_details.get('message')}")
+        except json.JSONDecodeError:
+            print(f"エラーレスポンス本文: {response.text}")
         return False
+        
     except Exception as e:
+        # 予期せぬエラー
         print(f"❌ 予期せぬ投稿エラー: {e}")
         return False
 
