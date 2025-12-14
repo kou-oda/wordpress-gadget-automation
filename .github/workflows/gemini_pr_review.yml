@@ -1,0 +1,21 @@
+name: Gemini PR Review Agent
+
+on:
+  # PRが開かれたり、更新されたりしたときに実行
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  gemini_review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # コメント書き込みに必須
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Gemini PR Review
+        uses: google-gemini/gemini-cli-action@v0 
+        with:
+          api_key: ${{ secrets.GEMINI_API_KEY }} 
+          command: |
+            review-pr
