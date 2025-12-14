@@ -49,10 +49,30 @@ except Exception as e:
 # 例として、ゲーミングマウスとノイキャンイヤホンのASINを仮置きします。
 
 POST_ASINS = [
-    'B07YQ4J3V7', # 例: ロジクール G502 HERO (ゲーミングマウス)
+    'B08VN76PLB', # 例: ロジクール G502 HERO (ゲーミングマウス)
     'B0CSHCD6R1', # 例: Sony WF-1000XM5 (ノイキャンイヤホン)
 ]
 # scripts/main_poster.py に追記
+
+# PA-APIが使えない間の静的データ
+STATIC_PRODUCT_DATA = {
+    'B08VN76PLB': {
+        'asin': 'B08VN76PLB',
+        'title': '【静的データ】ロジクール G502 HERO ゲーミングマウス レビュー',
+        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Placeholder_for_discussion.png/240px-Placeholder_for_discussion.png', 
+        'affiliate_url': 'https://amzn.to/4oWfQdE', # ここは実際のAmazon URLに修正してください
+        'features': ['HERO 25Kセンサー搭載', 'ウェイト調整機能', 'プログラム可能な11個のボタン'],
+        'description': 'Eスポーツでも人気のロジクールの名作有線ゲーミングマウス。正確性とカスタム性が魅力。',
+    },
+    'B0CSHCD6R1': {
+        'asin': 'B0CSHCD6R1',
+        'title': '【静的データ】Anker Soundcore Liberty 4 NC ワイヤレスイヤホン レビュー',
+        'image_url': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Placeholder_for_discussion.png/240px-Placeholder_for_discussion.png',
+        'affiliate_url': 'https://www.amazon.co.jp/dp/B0CSHCD6R1',
+        'features': ['最大98.5%ノイズキャンセリング', 'LDAC対応', 'ワイヤレス充電対応'],
+        'description': '高音質と強力なノイズキャンセリングを両立した、人気の完全ワイヤレスイヤホン。',
+    },
+}
 
 def get_product_data(asin: str) -> dict or None:
     """
@@ -337,35 +357,47 @@ STATIC_PRODUCT_DATA = {
 def get_product_data(asin: str) -> dict or None:
     """
     Amazon PA-APIを使用して、特定ASINのガジェット情報を取得する。
-    資格がない場合は、静的データを使用する。
+    PA-APIが使えない場合は、静的データを使用する。
     """
     
     # -----------------------------------------------------
-    # 1. 最初に静的データを試みる (PA-API回避策)
+    # 1. 静的データの確認と利用
     # -----------------------------------------------------
     if asin in STATIC_PRODUCT_DATA:
         print(f"ASIN: {asin} - PA-API回避のため静的データを使用します。")
         temp_data = STATIC_PRODUCT_DATA[asin].copy()
         
-        # アソシエイトURLをここで確実に生成しておく
+        # 内部リンク生成で使うため、affiliate_urlを更新 (もし未設定なら)
         if 'affiliate_url' not in temp_data or not temp_data['affiliate_url']:
             temp_data['affiliate_url'] = f"https://www.amazon.co.jp/dp/{asin}?tag={AMAZON_PARTNER_TAG}"
 
-        return temp_data
+        return temp_data # 静的データがあればここで処理を終了し、データを返す
     
     # -----------------------------------------------------
-    # 2. PA-APIによる取得ロジック
+    # 2. PA-APIによる取得ロジック（静的データがないASINの場合のみ実行）
     # -----------------------------------------------------
-    # 静的データがないASINの場合はPA-APIを叩く
     try:
+        # ItemsResultの取得: 'item_ids' は古い！ 'items' に修正
         response = amazon_api.get_items(
-            items=[
-                {'id': asin, 'ItemType': 'ASIN'} # 新しい引数名と辞書形式
-            ],
+            items=[{'id': asin, 'ItemType': 'ASIN'}], # ← 修正後の正しい形式
+            resources=[
+                'ItemInfo.Title', 
+                'Images.Primary.Large', 
+                'Offers.Listings.0.Price', 
+                'Offers.Listings.0.URLs',
+                'ItemInfo.ContentInfo', 
+                'ItemInfo.Features',
+            ]
         )
-        # ... (成功時のデータ抽出ロジック) ...
         
+        # ... (成功時のデータ抽出ロジックはそのまま) ...
+        item = response.items_result.items[0]
+        # ... (必要な情報の抽出ロジック) ...
+        # ... (return product_data) ...
+        
+        # ここにデータ抽出とreturn product_dataのコードを記述してください
+
     except Exception as e:
+        # PA-APIが使えない場合やエラーの場合の処理
         print(f"PA-API処理中にエラーが発生しました (ASIN: {asin}): {e}")
-        # PA-APIが使えない場合も静的データがなければNoneを返す
-        return None
+        return None # 静的データもなく、PA-APIも失敗した場合は None を返す
