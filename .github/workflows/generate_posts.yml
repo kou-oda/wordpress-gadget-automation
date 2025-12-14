@@ -1,0 +1,39 @@
+# .github/workflows/generate_posts.yml
+
+name: 'Automated Gadget Blog Post Generator'
+
+on:
+  workflow_dispatch: # 手動で実行できるようにする
+  schedule:
+    # 毎日 午前11時 (JST) に実行 (UTCの午前2時)
+    # JST = UTC + 9時間なので '0 2 * * *' です
+    - cron: '0 2 * * *' 
+    
+jobs:
+  generate-and-post:
+    runs-on: ubuntu-latest
+    
+    # 依存関係のインストールとPythonスクリプトの実行を定義
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies (requests, amazon-paapi, google-genai)
+        # 実際には requirements.txt に記述するのがベストですが、ここでは直接インストール
+        run: pip install requests python-amazon-paapi google-genai
+
+      - name: Run Python script to generate and post articles
+        run: python scripts/main_poster.py
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AMAZON_ACCESS_KEY: ${{ secrets.AMAZON_ACCESS_KEY }}
+          AMAZON_SECRET_KEY: ${{ secrets.AMAZON_SECRET_KEY }}
+          AMAZON_PARTNER_TAG: ${{ secrets.AMAZON_PARTNER_TAG }}
+          WORDPRESS_URL: ${{ secrets.WORDPRESS_URL }}
+          WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
+          WORDPRESS_PASSWORD: ${{ secrets.WORDPRESS_PASSWORD }}
