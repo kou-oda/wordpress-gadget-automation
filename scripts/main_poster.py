@@ -321,29 +321,34 @@ STATIC_PRODUCT_DATA = {
 
 def get_product_data(asin: str) -> dict or None:
     """
-    Amazon PA-APIを使用して、特定ASINのガジェット情報を取得する。（PA-APIが使えない場合は静的データを使用）
+    Amazon PA-APIを使用して、特定ASINのガジェット情報を取得する。
+    資格がない場合は、静的データを使用する。
     """
     
-    # 1. PA-APIが使えるかテスト（ここでは仮にスキップ）
-    # 実際には、PA-APIのエラーコードをチェックして分岐させる
-    
+    # -----------------------------------------------------
+    # 1. 最初に静的データを試みる (PA-API回避策)
+    # -----------------------------------------------------
     if asin in STATIC_PRODUCT_DATA:
-        print("PA-API接続をスキップし、静的データを使用します。")
-        # 暫定画像URLのaffiliate_urlを実際のリンクに置き換える処理が必要
+        print(f"ASIN: {asin} - PA-API回避のため静的データを使用します。")
         temp_data = STATIC_PRODUCT_DATA[asin].copy()
         
-        # 内部リンク生成で使うため、affiliate_urlを更新
+        # アソシエイトURLをここで確実に生成しておく
         if 'affiliate_url' not in temp_data or not temp_data['affiliate_url']:
-            # ここでアソシエイトタグを使って手動でURLを生成する（ライブラリ外の処理）
             temp_data['affiliate_url'] = f"https://www.amazon.co.jp/dp/{asin}?tag={AMAZON_PARTNER_TAG}"
 
         return temp_data
     
-    # 2. PA-APIによる取得ロジック（そのまま残す）
+    # -----------------------------------------------------
+    # 2. PA-APIによる取得ロジック
+    # -----------------------------------------------------
+    # 静的データがないASINの場合はPA-APIを叩く
     try:
-        # ... (PA-APIによるデータ取得のコード) ...
-        # ... (成功したら return product_data) ...
-        pass # ここにPA-APIのコードを記述
+        response = amazon_api.get_items(
+            items=[
+                {'id': asin, 'ItemType': 'ASIN'} # 新しい引数名と辞書形式
+            ],
+        )
+        # ... (成功時のデータ抽出ロジック) ...
         
     except Exception as e:
         print(f"PA-API処理中にエラーが発生しました (ASIN: {asin}): {e}")
