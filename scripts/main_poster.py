@@ -4,7 +4,7 @@ import os
 import json
 import requests
 from google import genai
-from amazon_paapi import AmazonAPI # Amazon PA-APIのライブラリによってインポート名が異なる場合があります
+from amazon_paapi import AmazonApi # Amazon PA-APIのライブラリによってインポート名が異なる場合があります
 
 # --- 1. 環境変数の読み込み ---
 try:
