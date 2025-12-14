@@ -31,12 +31,14 @@ gemini_client = genai.Client(api_key=GEMINI_API_KEY)
 
 # Amazon PA-API クライアント（リージョンは日本を想定）
 try:
-    amazon_api = AmazonAPI(
+    # ↓↓↓ ここを修正: AmazonAPI ではなく AmazonApi (小文字の 'i') に変更 ↓↓↓
+    amazon_api = AmazonApi( 
         AMAZON_ACCESS_KEY, 
         AMAZON_SECRET_KEY, 
         AMAZON_PARTNER_TAG, 
         'JP' # 日本のリージョン
     )
+    # ↑↑↑ ここを修正 ↑↑↑
 except Exception as e:
     print(f"Amazon APIの初期化に失敗しました: {e}")
     exit(1)
@@ -296,3 +298,54 @@ if __name__ == '__main__':
                 'description': product_data['description'],
                 'affiliate_url': '投稿完了後にWPから取得したURL', # URLをアソシエイトURLとして再利用
             }
+            # scripts/main_poster.py に追記
+
+# PA-APIが使えない間の静的データ
+STATIC_PRODUCT_DATA = {
+    'B07YQ4J3V7': {
+        'asin': 'B07YQ4J3V7',
+        'title': 'ロジクール G502 HERO ゲーミングマウス',
+        'image_url': 'https://example.com/g502.jpg', # 暫定画像URL（Amazonから手動で取得）
+        'affiliate_url': 'https://amzn.to/xxxxxx', # 暫定アソシエイトURL（Amazonリンク作成ツールで作成）
+        'features': [
+            'HERO 25Kセンサー搭載', 
+            'ウェイト調整機能', 
+            'プログラム可能な11個のボタン', 
+            '高速スクロールホイール'
+        ],
+        'description': 'Eスポーツでも人気のロジクールの名作有線ゲーミングマウス。正確性とカスタム性が魅力。',
+    },
+    # 2つ目のASINも同様に静的データを用意
+}
+# scripts/main_poster.py の get_product_data 関数を以下のように変更
+
+def get_product_data(asin: str) -> dict or None:
+    """
+    Amazon PA-APIを使用して、特定ASINのガジェット情報を取得する。（PA-APIが使えない場合は静的データを使用）
+    """
+    
+    # 1. PA-APIが使えるかテスト（ここでは仮にスキップ）
+    # 実際には、PA-APIのエラーコードをチェックして分岐させる
+    
+    if asin in STATIC_PRODUCT_DATA:
+        print("PA-API接続をスキップし、静的データを使用します。")
+        # 暫定画像URLのaffiliate_urlを実際のリンクに置き換える処理が必要
+        temp_data = STATIC_PRODUCT_DATA[asin].copy()
+        
+        # 内部リンク生成で使うため、affiliate_urlを更新
+        if 'affiliate_url' not in temp_data or not temp_data['affiliate_url']:
+            # ここでアソシエイトタグを使って手動でURLを生成する（ライブラリ外の処理）
+            temp_data['affiliate_url'] = f"https://www.amazon.co.jp/dp/{asin}?tag={AMAZON_PARTNER_TAG}"
+
+        return temp_data
+    
+    # 2. PA-APIによる取得ロジック（そのまま残す）
+    try:
+        # ... (PA-APIによるデータ取得のコード) ...
+        # ... (成功したら return product_data) ...
+        pass # ここにPA-APIのコードを記述
+        
+    except Exception as e:
+        print(f"PA-API処理中にエラーが発生しました (ASIN: {asin}): {e}")
+        # PA-APIが使えない場合も静的データがなければNoneを返す
+        return None
