@@ -37,3 +37,4 @@ jobs:
           WORDPRESS_URL: ${{ secrets.WORDPRESS_URL }}
           WORDPRESS_USER: ${{ secrets.WORDPRESS_USER }}
           WORDPRESS_PASSWORD: ${{ secrets.WORDPRESS_PASSWORD }}
+          # 強制同期のためのコメント
