@@ -50,7 +50,7 @@ jobs:
         run: |
           # ファイル（prompt.txt）から指示を読み込ませる
           # --yes オプションで、確認ステップをスキップし自動で変更を適用
-          claude code --file prompt.txt --yes
+          claude code --prompt prompt.txt --yes
       # 6. AIによる変更をコミット＆プッシュ
       - name: Commit and push changes
         run: |
