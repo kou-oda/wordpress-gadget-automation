@@ -42,15 +42,15 @@ jobs:
           # "@claude " の部分を除去して、指示内容だけをファイルに保存
           echo "${{ github.event.comment.body }}" | sed 's/^@claude //' > prompt.txt
 
-      # 5. claude-code CLI を実行
-      - name: Run claude-code
-        env:
-          # ステップ2で登録した合鍵（トークン）をここで渡す
-          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-        run: |
-          # ファイル（prompt.txt）の内容を標準入力としてclaude codeに渡す
-          # `--yes` オプションで、確認ステップをスキップし自動で変更を適用
-          claude code --yes < prompt.txt
+     # 5. claude-code CLI を実行（★修正箇所）
+      - name: Run claude-code
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          # `yes` コマンドで無限に 'y' を出力し、`claude code` の標準入力に流し込む。
+          # これにより、確認プロンプト（"Apply changes? (y/n)"）を自動で通過させる。
+          # プロンプトの内容は、以前の修正で標準入力リダイレクト（< prompt.txt）により渡す。
+          yes | claude code < prompt.txt
 
       # 6. AIによる変更をコミット＆プッシュ
       - name: Commit and push changes
